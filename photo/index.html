@@ -1,122 +1,186 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Image Studio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>satu.pro.bd | Image Resizer</title>
+    <link rel="icon" type="image/svg+xml" href="/icon.svg">
+    <!-- Scripts & Fonts matching your site -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
+    
     <style>
         :root {
-            --bg: #ffffff; --card: #f9fafb; --text: #111827;
-            --border: #e5e7eb; --primary: #2563eb; --input: #ffffff;
+            --bg-main: #f1f5f9;
+            --bg-gradient: radial-gradient(circle at top right, #e2e8f0, #f1f5f9);
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-hover: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --accent-cyan: #0891b2;
+            --accent-gold: #b45309;
+            --accent-red: #e11d48;
+            --text-main: #0f172a;
+            --text-dim: #475569;
+            --header-bg: rgba(255, 255, 255, 0.85);
         }
+
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg: #0f172a; --card: #1e293b; --text: #f8fafc;
-                --border: #334155; --input: #334155;
+                --bg-main: #0a0f1d;
+                --bg-gradient: radial-gradient(circle at top right, #1e293b, #0a0f1d);
+                --glass: rgba(30, 41, 59, 0.7);
+                --glass-hover: rgba(51, 65, 85, 0.9);
+                --glass-border: rgba(255, 255, 255, 0.1);
+                --accent-cyan: #22d3ee;
+                --accent-gold: #fbbf24;
+                --accent-red: #f43f5e;
+                --text-main: #f1f5f9;
+                --text-dim: #94a3b8;
+                --header-bg: rgba(10, 15, 29, 0.85);
             }
         }
 
-        body {
-            font-family: system-ui, sans-serif;
-            background: var(--bg); color: var(--text);
-            margin: 0; display: flex; justify-content: center; padding: 20px;
+        html, body {
+            margin: 0; padding: 0;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            font-family: 'SolaimanLipi', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
         }
 
-        .app-container {
-            width: 100%; max-width: 600px;
-            background: var(--card); border-radius: 20px;
-            padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        header {
+            display: flex; justify-content: center; align-items: center;
+            padding: 12px 15px; background: var(--header-bg);
+            backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-border);
+            position: sticky; top: 0; z-index: 1000;
         }
 
-        /* Drag & Drop Zone */
+        .header-img {
+            height: 35px; filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.4));
+        }
+
+        main {
+            max-width: 600px; margin: 40px auto; padding: 0 15px;
+        }
+
+        .tool-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
         .drop-zone {
-            border: 2px dashed var(--border);
-            border-radius: 12px; padding: 40px 20px;
-            text-align: center; cursor: pointer;
-            transition: 0.3s; margin-bottom: 20px;
+            border: 2px dashed var(--accent-cyan);
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s ease;
+            margin-bottom: 25px;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
         }
-        .drop-zone.dragover { border-color: var(--primary); background: rgba(37, 99, 235, 0.1); }
+
+        .drop-zone:hover { background: rgba(34, 211, 238, 0.05); border-color: var(--accent-gold); }
 
         .settings-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;
         }
-
-        .full-width { grid-column: span 2; }
 
         .field { display: flex; flex-direction: column; gap: 6px; }
-        label { font-size: 13px; font-weight: 600; opacity: 0.8; }
+        label { font-size: 0.9rem; color: var(--accent-cyan); font-weight: 700; }
         
         input, select {
-            padding: 12px; border-radius: 8px; border: 1px solid var(--border);
-            background: var(--input); color: var(--text); font-size: 16px;
+            padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border);
+            background: var(--glass); color: var(--text-main); font-size: 16px;
+            font-family: inherit;
         }
 
-        input[type="range"] { padding: 0; cursor: pointer; }
+        input[type="range"] { padding: 0; cursor: pointer; accent-color: var(--accent-cyan); }
 
-        button {
+        .btn-process {
             width: 100%; padding: 16px; border-radius: 12px;
-            background: var(--primary); color: white; border: none;
-            font-weight: 700; cursor: pointer; font-size: 16px;
-            transition: transform 0.1s;
+            background: var(--accent-cyan); color: #fff; border: none;
+            font-weight: 700; font-size: 1.1rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 4px 15px rgba(34, 211, 238, 0.3);
         }
-        button:active { transform: scale(0.98); }
-        button:disabled { opacity: 0.4; }
+
+        .btn-process:disabled { background: var(--text-dim); opacity: 0.5; box-shadow: none; }
 
         #preview-wrap {
-            margin-top: 20px; border-radius: 12px; overflow: hidden;
-            background: #000; display: none; position: relative;
+            margin-top: 25px; border-radius: 15px; overflow: hidden;
+            border: 1px solid var(--glass-border); display: none;
         }
-        img { max-width: 100%; display: block; }
+        img { width: 100%; display: block; }
+
+        footer { text-align: center; padding: 40px 20px; opacity: 0.7; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <h2 style="margin-top:0">Image Studio</h2>
+<header>
+    <a href="/"><img src="/logo.svg" alt="satu.pro.bd" class="header-img"></a>
+</header>
 
-    <div class="drop-zone" id="dropZone">
-        <p id="dropText">Drag & drop image or click to upload</p>
-        <input type="file" id="fileInput" accept="image/*" style="display:none">
+<main>
+    <div class="tool-card">
+        <h2 style="text-align:center; margin-top:0; color:var(--accent-gold);">ইমেজ রিসাইজার</h2>
+
+        <div class="drop-zone" id="dropZone">
+            <i data-lucide="image-plus" size="40" style="color:var(--accent-cyan)"></i>
+            <span id="dropText">ছবি ড্রাগ করুন অথবা এখানে ক্লিক করুন</span>
+            <input type="file" id="fileInput" accept="image/*" style="display:none">
+        </div>
+
+        <div class="settings-grid">
+            <div class="field">
+                <label>প্রস্থ (Width px)</label>
+                <input type="number" id="wInput">
+            </div>
+            <div class="field">
+                <label>উচ্চতা (Height px)</label>
+                <input type="number" id="hInput">
+            </div>
+            <div class="field">
+                <label>ফরম্যাট</label>
+                <select id="format">
+                    <option value="image/png">PNG</option>
+                    <option value="image/jpeg">JPEG</option>
+                    <option value="image/webp">WebP</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>কোয়ালিটি (<span id="qVal">90</span>%)</label>
+                <input type="range" id="quality" min="1" max="100" value="90">
+            </div>
+        </div>
+
+        <button class="btn-process" id="saveBtn" disabled>
+            <i data-lucide="download"></i> ডাউনলোড করুন
+        </button>
+
+        <div id="preview-wrap">
+            <img id="previewImg">
+        </div>
     </div>
+</main>
 
-    <div class="settings-grid">
-        <div class="field">
-            <label>Width (px)</label>
-            <input type="number" id="wInput">
-        </div>
-        <div class="field">
-            <label>Height (px)</label>
-            <input type="number" id="hInput">
-        </div>
-        <div class="field">
-            <label>Format</label>
-            <select id="format">
-                <option value="image/png">PNG</option>
-                <option value="image/jpeg">JPEG</option>
-                <option value="image/webp">WebP</option>
-            </select>
-        </div>
-        <div class="field">
-            <label>Quality (<span id="qVal">90</span>%)</label>
-            <input type="range" id="quality" min="1" max="100" value="90">
-        </div>
-    </div>
+<footer>
+    &copy; 2026 <b>satu.pro.bd</b> | All Rights Reserved.
+</footer>
 
-    <button id="saveBtn" disabled>Process & Download</button>
-
-    <div id="preview-wrap">
-        <img id="previewImg">
-    </div>
-
-    <canvas id="canvas" style="display:none"></canvas>
-</div>
+<canvas id="canvas" style="display:none"></canvas>
 
 <script>
     const $ = id => document.getElementById(id);
     let originalImg = new Image();
     let ratio = 1;
 
-    // Handle Uploads
+    // Logic for loading and processing remains the same for stability
     const handleFile = file => {
         if (!file || !file.type.startsWith('image/')) return;
         const reader = new FileReader();
@@ -128,12 +192,10 @@
     $('dropZone').onclick = () => $('fileInput').click();
     $('fileInput').onchange = e => handleFile(e.target.files[0]);
 
-    // Drag & Drop
-    $('dropZone').ondragover = e => { e.preventDefault(); $('dropZone').classList.add('dragover'); };
-    $('dropZone').ondragleave = () => $('dropZone').classList.remove('dragover');
+    $('dropZone').ondragover = e => { e.preventDefault(); $('dropZone').style.borderColor = 'var(--accent-gold)'; };
+    $('dropZone').ondragleave = () => $('dropZone').style.borderColor = 'var(--accent-cyan)';
     $('dropZone').ondrop = e => {
         e.preventDefault();
-        $('dropZone').classList.remove('dragover');
         handleFile(e.dataTransfer.files[0]);
     };
 
@@ -146,35 +208,27 @@
         $('saveBtn').disabled = false;
     };
 
-    // Aspect Ratio Logic
     $('wInput').oninput = () => $('hInput').value = Math.round($('wInput').value / ratio);
     $('hInput').oninput = () => $('wInput').value = Math.round($('hInput').value * ratio);
     $('quality').oninput = e => $('qVal').innerText = e.target.value;
 
-    // Processing
     $('saveBtn').onclick = () => {
         const canvas = $('canvas');
         const ctx = canvas.getContext('2d');
         const w = parseInt($('wInput').value);
         const h = parseInt($('hInput').value);
-        
-        canvas.width = w;
-        canvas.height = h;
-        
-        // Quality & Smoothing
+        canvas.width = w; canvas.height = h;
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
-        
         ctx.drawImage(originalImg, 0, 0, w, h);
-
         const format = $('format').value;
-        const quality = $('quality').value / 100;
-        
         const link = document.createElement('a');
-        link.download = `resized-${Date.now()}.${format.split('/')[1]}`;
-        link.href = canvas.toDataURL(format, quality);
+        link.download = `satu-pro-resized-${Date.now()}.${format.split('/')[1]}`;
+        link.href = canvas.toDataURL(format, $('quality').value / 100);
         link.click();
     };
+
+    lucide.createIcons();
 </script>
 
 </body>
