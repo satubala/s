@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser-Side Image Resizer</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h2 { margin-top: 0; color: #1e293b; text-align: center; }
+
+        .upload-section {
+            border: 2px dashed #cbd5e1;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+
+        .upload-section:hover { border-color: var(--primary-color); }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group { display: flex; flex-direction: column; }
+
+        label { font-size: 0.875rem; margin-bottom: 5px; color: #64748b; }
+
+        input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .aspect-ratio-box {
+            grid-column: span 2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.9; }
+        button:disabled { background-color: #cbd5e1; cursor: not-allowed; }
+
+        #preview-container {
+            margin-top: 20px;
+            text-align: center;
+            max-height: 300px;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        img { max-width: 100%; height: auto; display: none; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Image Resizer</h2>
+    
+    <div class="upload-section">
+        <input type="file" id="imageInput" accept="image/*">
+    </div>
+
+    <div class="controls">
+        <div class="input-group">
+            <label>Width (px)</label>
+            <input type="number" id="widthInput" placeholder="Width">
+        </div>
+        <div class="input-group">
+            <label>Height (px)</label>
+            <input type="number" id="heightInput" placeholder="Height">
+        </div>
+        <div class="aspect-ratio-box">
+            <input type="checkbox" id="aspectRatio" checked>
+            <label for="aspectRatio">Lock Aspect Ratio</label>
+        </div>
+    </div>
+
+    <button id="downloadBtn" disabled>Download Resized Image</button>
+
+    <div id="preview-container">
+        <img id="previewImg" alt="Preview">
+    </div>
+
+    <!-- Hidden Canvas for Processing -->
+    <canvas id="canvas" style="display:none;"></canvas>
+</div>
+
+<script>
+    const imageInput = document.getElementById('imageInput');
+    const widthInput = document.getElementById('widthInput');
+    const heightInput = document.getElementById('heightInput');
+    const aspectRatio = document.getElementById('aspectRatio');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const previewImg = document.getElementById('previewImg');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let originalImg = new Image();
+    let ratio = 1;
+
+    // Load image
+    imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            originalImg.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    originalImg.onload = () => {
+        ratio = originalImg.width / originalImg.height;
+        widthInput.value = originalImg.width;
+        heightInput.value = originalImg.height;
+        
+        previewImg.src = originalImg.src;
+        previewImg.style.display = 'block';
+        downloadBtn.disabled = false;
+    };
+
+    // Maintain aspect ratio logic
+    widthInput.addEventListener('input', () => {
+        if (aspectRatio.checked) {
+            heightInput.value = Math.round(widthInput.value / ratio);
+        }
+    });
+
+    heightInput.addEventListener('input', () => {
+        if (aspectRatio.checked) {
+            widthInput.value = Math.round(heightInput.value * ratio);
+        }
+    });
+
+    // Process and Download
+    downloadBtn.addEventListener('click', () => {
+        const w = parseInt(widthInput.value);
+        const h = parseInt(heightInput.value);
+
+        if (!w || !h) return alert("Please enter valid dimensions");
+
+        canvas.width = w;
+        canvas.height = h;
+
+        // Use drawImage to scale
+        ctx.drawImage(originalImg, 0, 0, w, h);
+
+        // Download
+        const link = document.createElement('a');
+        link.download = `resized-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png', 1.0);
+        link.click();
+    });
+</script>
+
+</body>
+</html>
