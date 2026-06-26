@@ -350,13 +350,14 @@
 
         async function syncServerPlay() {
             try {
-                const response = await fetch(`/play.m3u?t=${Date.now()}`);
+                // FIXED: Changed from '/play.m3u' to 'play.m3u' to target the current /tv/ directory
+                const response = await fetch(`play.m3u?t=${Date.now()}`);
                 if (!response.ok) throw new Error('Offline');
                 const rawData = await response.text();
                 compileM3URegistry(rawData);
             } catch (err) {
                 streamTitle.textContent = "প্লে-লিস্ট ফাইল পাওয়া যায়নি";
-                deckContainer.innerHTML = `<div style="text-align:center; padding:30px; color:var(--accent-red); font-size:0.9rem;">playlist.m3u ফাইলটি অনুপস্থিত।</div>`;
+                deckContainer.innerHTML = `<div style="text-align:center; padding:30px; color:var(--accent-red); font-size:0.9rem;">সঠিক ফোল্ডারে play.m3u ফাইলটি পাওয়া যায়নি।</div>`;
             }
         }
 
@@ -434,7 +435,7 @@
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-                    // Added mode: 'no-cors' to avoid browser blocking background checks on third-party streams
+                    // FIXED: Configured mode: 'no-cors' to support stream validation without strict domain matching rules
                     const response = await fetch(targetChannel.url, { 
                         method: 'GET', 
                         mode: 'no-cors',
@@ -501,7 +502,7 @@
         });
 
         lucide.createIcons();
-        // Fixed: Corrected function call name from syncServerPlaylist() to syncServerPlay()
+        // FIXED: Corrected running initialization call name to match function definition declaration
         syncServerPlay();
     </script>
 </body>
