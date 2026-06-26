@@ -3,236 +3,288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>satu.pro | Premium IPTV Player</title>
-    <!-- Tailwind CSS for modern styling -->
+    <title>satu.pro | Ultimate Live Streaming Hub</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Hls.js library for cross-browser live stream playback -->
+    <!-- Hls.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <!-- Lucide Icons for clean UI elements -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Custom scrollbar styling for a cleaner look */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #1f2937; }
-        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        /* Modern Glassmorphism & Custom Accents */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .neon-glow-green {
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+        }
+        .neon-glow-red {
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+        }
+        /* Scannable thin scrollbars */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4f46e5; }
     </style>
 </head>
-<body class="bg-gray-950 text-gray-100 font-sans h-screen flex flex-col overflow-hidden">
+<body class="bg-[#070a13] text-gray-100 font-sans h-screen flex flex-col overflow-hidden selection:bg-indigo-500 selection:text-white">
 
     <!-- Header Navigation -->
-    <header class="bg-gray-900 border-b border-gray-800 px-6 py-4 flex items-center justify-between shadow-lg z-10">
+    <header class="glass-panel border-b border-gray-900/50 px-6 py-4 flex items-center justify-between shadow-xl z-30 shrink-0">
         <div class="flex items-center space-x-3">
-            <div class="bg-indigo-600 p-2 rounded-lg text-white">
-                <i data-lucide="tv"></i>
+            <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-500/20">
+                <i data-lucide="tv-2" class="h-5 w-5"></i>
             </div>
-            <span class="text-xl font-bold tracking-wider text-white">satu<span class="text-indigo-500">.pro</span></span>
+            <span class="text-2xl font-black tracking-tight text-white bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-400">satu<span class="text-indigo-500 font-medium">.pro</span></span>
         </div>
-        <div class="flex items-center space-x-4 text-sm text-gray-400">
-            <span id="stream-status" class="flex items-center space-x-2">
-                <span class="h-2.5 w-2.5 rounded-full bg-gray-500 animate-pulse"></span>
-                <span>No Stream Loaded</span>
+        <div class="flex items-center space-x-6 text-xs tracking-wider uppercase font-semibold text-gray-400">
+            <span id="stream-status" class="flex items-center space-x-2 bg-gray-900/80 px-3 py-1.5 rounded-full border border-gray-800">
+                <span class="h-2 w-2 rounded-full bg-gray-500"></span>
+                <span>System Idle</span>
             </span>
         </div>
     </header>
 
-    <!-- Main Application Interface -->
+    <!-- Top Shelf Carousel Area: Active Channels Broadcast Deck -->
+    <section class="bg-[#0b1020]/40 border-b border-gray-900/40 p-4 shrink-0 z-10 overflow-hidden">
+        <div class="max-w-[1600px] mx-auto">
+            <h3 class="text-xs font-bold uppercase tracking-widest text-indigo-400 mb-3 flex items-center gap-2">
+                <span class="flex h-2 w-2 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
+                Verified Online Channels
+            </h3>
+            <div id="top-active-deck" class="flex gap-3 overflow-x-auto pb-2 scroll-smooth">
+                <p class="text-xs text-gray-500 italic py-2 px-1">Checking stream diagnostics map...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Workspace Frame Layout -->
     <main class="flex-1 flex overflow-hidden relative">
         
-        <!-- Sidebar: Channel Selector -->
-        <aside class="w-full md:w-80 bg-gray-900 border-r border-gray-800 flex flex-col z-20 absolute md:relative inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out" id="sidebar">
-            <!-- Search & Filter Bar -->
-            <div class="p-4 border-b border-gray-800 space-y-3">
+        <!-- Sidebar Navigation Deck -->
+        <aside class="w-full md:w-80 bg-[#090d1a]/95 border-r border-gray-900/50 flex flex-col z-20 absolute md:relative inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl" id="sidebar">
+            <!-- Search Deck controls -->
+            <div class="p-4 border-b border-gray-900/50 space-y-3 bg-[#090d1a]/50">
                 <div class="relative">
-                    <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-500"></i>
-                    <input type="text" id="search-input" placeholder="Search channels..." class="w-full bg-gray-950 border border-gray-800 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-indigo-500 text-gray-200 placeholder-gray-500 transition-colors">
+                    <i data-lucide="search" class="absolute left-3 top-3 h-4 w-4 text-gray-500"></i>
+                    <input type="text" id="search-input" placeholder="Search entire index..." class="w-full bg-gray-950/80 border border-gray-800/80 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-gray-200 placeholder-gray-500 transition-all">
                 </div>
-                <div class="flex justify-between items-center text-xs text-gray-400 px-1">
-                    <span id="channel-count">0 Channels Loaded</span>
-                    <button id="reload-btn" class="hover:text-indigo-400 transition-colors flex items-center gap-1">
-                        <i data-lucide="rotate-cw" class="h-3 w-3"></i> Refresh
+                <div class="flex justify-between items-center text-xs font-mono text-gray-400 px-1">
+                    <span id="channel-count">0 Nodes Loaded</span>
+                    <button id="reload-btn" class="hover:text-indigo-400 transition-colors flex items-center gap-1.5">
+                        <i data-lucide="refresh-cw" class="h-3 w-3"></i> Sync
                     </button>
                 </div>
             </div>
 
-            <!-- Scrollable Channel List -->
-            <div class="flex-1 overflow-y-auto p-2 space-y-1" id="channel-list">
-                <div class="text-center py-8 text-gray-500 flex flex-col items-center gap-2">
-                    <i data-lucide="loader-2" class="animate-spin h-6 w-6 text-indigo-500"></i>
-                    <p class="text-sm">Fetching playlist...</p>
-                </div>
-            </div>
+            <!-- Main Menu Stack Container -->
+            <div class="flex-1 overflow-y-auto p-3 space-y-1.5" id="channel-list"></div>
         </aside>
 
-        <!-- Main Content Viewport: Video Player & Visualizations -->
-        <section class="flex-1 bg-gray-950 flex flex-col justify-center items-center p-4 md:p-6 relative">
+        <!-- Dynamic Viewing Theater Screen Frame -->
+        <section class="flex-1 bg-[#05070d] flex flex-col justify-center items-center p-4 lg:p-8 relative overflow-y-auto">
             
-            <!-- Mobile Sidebar Toggle Overlay Button -->
-            <button id="sidebar-toggle" class="md:hidden absolute top-4 left-4 bg-gray-900/80 border border-gray-800 p-3 rounded-xl text-white z-30 shadow-md backdrop-blur-sm">
+            <!-- Mobile Toggle Menu Trigger Floating Control Button -->
+            <button id="sidebar-toggle" class="md:hidden absolute top-4 left-4 bg-gray-900/80 border border-gray-800 p-3 rounded-xl text-white z-30 shadow-lg backdrop-blur-md">
                 <i data-lucide="menu" id="toggle-icon"></i>
             </button>
 
-            <!-- Video Player Window Container -->
-            <div class="w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex items-center justify-center relative group">
-                <video id="video-element" controls class="w-full h-full hidden pointer-events-auto"></video>
+            <!-- Video Context Viewport Deck Canvas container layout -->
+            <div class="w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden border border-gray-900 shadow-2xl shadow-indigo-950/10 flex items-center justify-center relative group">
+                <video id="video-element" controls class="w-full h-full hidden pointer-events-auto z-10"></video>
                 
-                <!-- Player Empty/Idle Placeholder State -->
-                <div id="player-placeholder" class="text-center space-y-4 px-6">
-                    <div class="mx-auto w-16 h-16 bg-gray-900 border border-gray-800 text-indigo-400 flex items-center justify-center rounded-2xl shadow-inner">
-                        <i data-lucide="play-circle" class="w-8 h-8"></i>
+                <!-- Player Placeholder Home Engine Displays -->
+                <div id="player-placeholder" class="text-center space-y-5 px-6 max-w-sm">
+                    <div class="mx-auto w-16 h-16 bg-gradient-to-b from-gray-900 to-gray-950 border border-gray-800 text-indigo-400 flex items-center justify-center rounded-2xl shadow-inner">
+                        <i data-lucide="clapperboard" class="w-7 h-7"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-200" id="placeholder-title">Ready to Stream</h3>
-                        <p class="text-xs text-gray-500 mt-1 max-w-sm mx-auto">Select a live television channel or broadcast stream from the left panel to begin playback.</p>
+                        <h3 class="text-lg font-bold text-gray-200 tracking-wide">Awaiting Signal</h3>
+                        <p class="text-xs text-gray-500 mt-1 leading-relaxed">Select a live television broadcast stream node from the structural index to verify network handshake.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Active Channel Metadata Dashboard Banner -->
-            <div class="w-full max-w-5xl mt-6 bg-gray-900 border border-gray-800 rounded-xl p-4 flex items-center space-x-4 shadow-md hidden" id="meta-container">
-                <div class="h-12 w-12 bg-gray-950 border border-gray-800 rounded-lg flex items-center justify-center text-indigo-400 font-bold shrink-0 shadow-inner overflow-hidden" id="channel-logo-box">
-                    <i data-lucide="tv-2" class="h-5 w-5"></i>
+            <!-- Lower Level Stream Attributes Dynamic Data Banner Info Screen -->
+            <div class="w-full max-w-5xl mt-6 glass-panel rounded-2xl p-4 flex items-center justify-between shadow-xl hidden" id="meta-container">
+                <div class="flex items-center space-x-4 min-w-0">
+                    <div class="h-12 w-12 bg-gray-950 border border-gray-800 rounded-xl flex items-center justify-center text-indigo-400 font-bold shrink-0 shadow-inner overflow-hidden" id="channel-logo-box">
+                        <i data-lucide="tv" class="h-5 w-5"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <h2 class="text-base font-bold text-white tracking-wide truncate" id="current-title">Channel Name</h2>
+                        <p class="text-xs text-gray-500 mt-0.5 truncate font-mono" id="current-url">Stream Source URL</p>
+                    </div>
                 </div>
-                <div class="overflow-hidden">
-                    <h2 class="text-md font-bold text-white tracking-wide truncate" id="current-title">Channel Name</h2>
-                    <p class="text-xs text-indigo-400 mt-0.5 truncate font-mono tracking-tight" id="current-url">Stream Source URL</p>
+                <div id="current-status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-900/50 border border-gray-800 shrink-0 text-xs font-medium">
+                    <span class="h-2 w-2 rounded-full bg-gray-500"></span>
+                    <span class="text-gray-400">Checking Stream</span>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Script Application Logic -->
+    <!-- Script Runtime Engine Controllers -->
     <script>
-        // Use the raw GitHub content link to read plain M3U text directly
         const PLAYLIST_URL = "https://raw.githubusercontent.com/abusaeeidx/IP-Stream/9e8ecae10122c041ae764cf51ca4e03c4273e8d3/playlist.m3u";
         
         let channels = [];
         const video = document.getElementById('video-element');
         let hls = null;
 
-        // UI Target Selectors
+        // Interface Cache DOM targets elements
         const channelListContainer = document.getElementById('channel-list');
+        const activeDeckContainer = document.getElementById('top-active-deck');
         const channelCountEl = document.getElementById('channel-count');
         const searchInput = document.getElementById('search-input');
         const playerPlaceholder = document.getElementById('player-placeholder');
-        const placeholderTitle = document.getElementById('placeholder-title');
         const metaContainer = document.getElementById('meta-container');
         const currentTitle = document.getElementById('current-title');
         const currentUrl = document.getElementById('current-url');
         const channelLogoBox = document.getElementById('channel-logo-box');
         const streamStatus = document.getElementById('stream-status');
+        const currentStatusBadge = document.getElementById('current-status-badge');
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const toggleIcon = document.getElementById('toggle-icon');
         const reloadBtn = document.getElementById('reload-btn');
 
-        // Fetch & Client-Side Parse the M3U Playlist 
+        // Fetch & App Lifecycle initialization setup routing configurations
         async function loadPlaylist() {
             try {
-                showLoadingState();
+                channelListContainer.innerHTML = `<div class="text-center py-12 text-gray-500 flex flex-col items-center gap-2"><i data-lucide="loader-2" class="animate-spin h-6 w-6 text-indigo-500"></i><p class="text-xs font-mono">Parsing M3U...</p></div>`;
+                lucide.createIcons();
+                
                 const response = await fetch(PLAYLIST_URL);
-                if (!response.ok) throw new Error('Network response script failure.');
+                if (!response.ok) throw new Error('CORS profile network roadblock context failure.');
                 const m3uText = await response.text();
                 
                 channels = parseM3U(m3uText);
-                channelCountEl.textContent = `${channels.length} Channels Loaded`;
+                channelCountEl.textContent = `${channels.length} Nodes Indexed`;
+                
+                // Initialize channel maps UI lists structures
                 renderChannels(channels);
+                
+                // Begin evaluating health parameters asynchronously inside client engine pipelines
+                checkChannelHealth();
             } catch (error) {
-                console.error("Failed to fetch/parse playlist:", error);
-                channelListContainer.innerHTML = `
-                    <div class="text-center py-8 text-red-400 px-4">
-                        <i data-lucide="alert-triangle" class="mx-auto h-6 w-6 mb-2"></i>
-                        <p class="text-sm font-semibold">Error Loading Playlist</p>
-                        <p class="text-xs text-gray-500 mt-1">Make sure you are connected to the internet. Access might be blocked by CORS configurations.</p>
-                    </div>
-                `;
+                console.error(error);
+                channelListContainer.innerHTML = `<div class="text-center py-12 text-rose-400 px-4"><i data-lucide="shield-alert" class="mx-auto h-6 w-6 mb-2"></i><p class="text-xs font-mono">Index Sync Interrupted</p></div>`;
                 lucide.createIcons();
             }
         }
 
-        function showLoadingState() {
-            channelListContainer.innerHTML = `
-                <div class="text-center py-8 text-gray-500 flex flex-col items-center gap-2">
-                    <i data-lucide="loader-2" class="animate-spin h-6 w-6 text-indigo-500"></i>
-                    <p class="text-sm">Fetching playlist...</p>
-                </div>
-            `;
-            lucide.createIcons();
-        }
-
-        // Lightweight structured string layout processing for M3U formats
         function parseM3U(text) {
             const lines = text.split('\n');
-            const parsedChannels = [];
-            let currentChannel = null;
+            const parsed = [];
+            let current = null;
 
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
-                
                 if (line.startsWith('#EXTINF:')) {
-                    currentChannel = {};
-                    
-                    // Match channel name (trailing part after comma)
-                    const commaIndex = line.lastIndexOf(',');
-                    if (commaIndex !== -1) {
-                        currentChannel.name = line.substring(commaIndex + 1).trim();
-                    } else {
-                        currentChannel.name = "Unknown Stream";
-                    }
-
-                    // Extract logo parsing metadata targets safely if they exist
+                    current = { status: 'checking' }; 
+                    const commaIdx = line.lastIndexOf(',');
+                    current.name = commaIdx !== -1 ? line.substring(commaIdx + 1).trim() : "Unnamed Stream";
                     const logoMatch = line.match(/tvg-logo="([^"]+)"/);
-                    if (logoMatch && logoMatch[1]) {
-                        currentChannel.logo = logoMatch[1];
-                    }
-                } else if (line && !line.startsWith('#') && currentChannel) {
-                    currentChannel.url = line;
-                    parsedChannels.push(currentChannel);
-                    currentChannel = null; // Clean out object instance for tracking loop
+                    if (logoMatch) current.logo = logoMatch[1];
+                } else if (line && !line.startsWith('#') && current) {
+                    current.url = line;
+                    parsed.push(current);
+                    current = null;
                 }
             }
-            return parsedChannels;
+            return parsed;
         }
 
-        // Render Channel UI blocks cleanly to list UI viewport
+        // Asynchronous Channel Status Scanner Pipeline
+        async function checkChannelHealth() {
+            // Check headers using parallel worker chunks safely without crashing thread layouts
+            const checkNode = async (channel) => {
+                try {
+                    // Send lightweight HEAD diagnostic requests to mitigate link bandwidth usages
+                    const res = await fetch(channel.url, { method: 'HEAD', mode: 'cors' });
+                    channel.status = res.ok ? 'online' : 'offline';
+                } catch (e) {
+                    // Fallback verification mapping checks (catches structural network drops/CORS blockages)
+                    channel.status = 'offline';
+                }
+                updateChannelElementUI(channel);
+            };
+
+            // Execute diagnostics sequentially or in small groups to limit client overhead tracking
+            for (let i = 0; i < channels.length; i += 3) {
+                const chunk = channels.slice(i, i + 3).map(c => checkNode(c));
+                await Promise.all(chunk);
+                // Refresh Top Display Array constantly as status profiles compile
+                renderActiveDeck();
+            }
+        }
+
+        function updateChannelElementUI(channel) {
+            const targets = document.querySelectorAll(`[data-url="${btoa(channel.url)}"]`);
+            targets.forEach(el => {
+                const indicator = el.querySelector('.status-indicator');
+                if (indicator) {
+                    indicator.className = `status-indicator h-2 w-2 rounded-full shrink-0 transition-all ${channel.status === 'online' ? 'bg-emerald-500 neon-glow-green' : 'bg-rose-500 neon-glow-red'}`;
+                }
+            });
+        }
+
         function renderChannels(channelData) {
             if (channelData.length === 0) {
-                channelListContainer.innerHTML = `
-                    <div class="text-center py-8 text-gray-500">
-                        <p class="text-sm">No matching channels found.</p>
-                    </div>
-                `;
+                channelListContainer.innerHTML = `<p class="text-xs text-gray-500 text-center py-8">No matching channels tracked.</p>`;
                 return;
             }
 
-            channelListContainer.innerHTML = channelData.map((channel, index) => {
-                const fallbackChar = channel.name.charAt(0).toUpperCase();
-                const iconLayout = channel.logo 
-                    ? `<img src="${channel.logo}" alt="" class="w-full h-full object-contain" onerror="this.outerHTML='<span class=\"text-indigo-400 text-xs font-bold\">${fallbackChar}</span>'">`
-                    : `<span class="text-indigo-400 text-xs font-bold">${fallbackChar}</span>`;
-
+            channelListContainer.innerHTML = channelData.map(c => {
+                const fallbackChar = c.name.charAt(0).toUpperCase();
+                const icon = c.logo ? `<img src="${c.logo}" class="w-full h-full object-contain" onerror="this.outerHTML='<span class=\"text-indigo-400 text-xs font-bold font-mono\">${fallbackChar}</span>'">` : `<span class="text-indigo-400 text-xs font-bold font-mono">${fallbackChar}</span>`;
+                const dotColor = c.status === 'online' ? 'bg-emerald-500 neon-glow-green' : (c.status === 'offline' ? 'bg-rose-500 neon-glow-red' : 'bg-gray-600 animate-pulse');
+                
                 return `
-                    <button onclick="playStream('${encodeURIComponent(channel.url)}', '${encodeURIComponent(channel.name)}', '${encodeURIComponent(channel.logo || '')}')" 
-                            class="w-full text-left flex items-center space-x-3 p-2.5 rounded-lg hover:bg-gray-800/60 transition-all border border-transparent hover:border-gray-800 text-gray-300 group">
-                        <div class="h-9 w-9 bg-gray-950 border border-gray-800 rounded-md flex items-center justify-center shrink-0 overflow-hidden group-hover:border-indigo-500/30 transition-colors">
-                            ${iconLayout}
+                    <button onclick="playStream('${encodeURIComponent(c.url)}', '${encodeURIComponent(c.name)}', '${encodeURIComponent(c.logo || '')}')" 
+                            data-url="${btoa(c.url)}"
+                            class="w-full text-left flex items-center space-x-3 p-2.5 rounded-xl hover:bg-gray-900/60 transition-all border border-transparent hover:border-gray-800/80 group">
+                        <div class="h-9 w-9 bg-gray-950 border border-gray-900 rounded-xl flex items-center justify-center shrink-0 overflow-hidden transition-all group-hover:border-indigo-500/20">
+                            ${icon}
                         </div>
-                        <span class="text-sm font-medium truncate group-hover:text-white transition-colors flex-1">${channel.name}</span>
-                        <i data-lucide="play" class="h-3.5 w-3.5 text-gray-600 group-hover:text-indigo-400 opacity-0 group-hover:opacity-100 transition-all transform translate-x-1 group-hover:translate-x-0"></i>
+                        <span class="text-xs font-medium truncate group-hover:text-white transition-colors flex-1">${c.name}</span>
+                        <span class="status-indicator h-2 w-2 rounded-full shrink-0 ${dotColor}"></span>
                     </button>
                 `;
             }).join('');
+        }
+
+        // Render Active Deck to the horizontal carousel layout element on top
+        function renderActiveDeck() {
+            const onlineChannels = channels.filter(c => c.status === 'online');
             
+            if (onlineChannels.length === 0) {
+                activeDeckContainer.innerHTML = `<p class="text-xs text-gray-500 font-mono tracking-tight py-2 px-1">Analyzing connectivity maps...</p>`;
+                return;
+            }
+
+            activeDeckContainer.innerHTML = onlineChannels.map(c => {
+                return `
+                    <button onclick="playStream('${encodeURIComponent(c.url)}', '${encodeURIComponent(c.name)}', '${encodeURIComponent(c.logo || '')}')" 
+                            class="flex items-center space-x-2 px-3 py-2 bg-gradient-to-b from-[#0f172a] to-[#090d1a] border border-emerald-500/20 rounded-xl hover:border-indigo-500/50 hover:from-[#131c33] text-gray-300 transition-all shrink-0 shadow-md">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 neon-glow-green animate-pulse"></span>
+                        <span class="text-xs font-semibold max-w-[120px] truncate text-gray-200">${c.name}</span>
+                        <i data-lucide="arrow-up-right" class="h-3 w-3 text-gray-600 group-hover:text-indigo-400"></i>
+                    </button>
+                `;
+            }).join('');
             lucide.createIcons();
         }
 
-        // Core streaming control setup
         window.playStream = function(url, name, logo) {
             const decodedUrl = decodeURIComponent(url);
             const decodedName = decodeURIComponent(name);
             const decodedLogo = decodeURIComponent(logo);
 
-            // Display components setup configurations
             video.classList.remove('hidden');
             playerPlaceholder.classList.add('hidden');
             metaContainer.classList.remove('hidden');
@@ -240,74 +292,59 @@
             currentTitle.textContent = decodedName;
             currentUrl.textContent = decodedUrl;
 
-            // Display dynamic channel identities natively inside the browser frames
             if (decodedLogo) {
-                channelLogoBox.innerHTML = `<img src="${decodedLogo}" alt="" class="w-full h-full object-contain" onerror="this.outerHTML='<i data-lucide=\"tv-2\" class=\"h-5 w-5 text-indigo-400\"></i>'; lucide.createIcons();">`;
+                channelLogoBox.innerHTML = `<img src="${decodedLogo}" class="w-full h-full object-contain" onerror="this.outerHTML='<i data-lucide=\"tv\" class=\"h-5 w-5 text-indigo-400\"></i>'; lucide.createIcons();">`;
             } else {
-                channelLogoBox.innerHTML = `<i data-lucide="tv-2" class="h-5 w-5 text-indigo-400"></i>`;
+                channelLogoBox.innerHTML = `<i data-lucide="tv" class="h-5 w-5 text-indigo-400"></i>`;
                 lucide.createIcons();
             }
 
-            // Destruct preceding streams buffers before shifting pointers
-            if (hls) {
-                hls.destroy();
-            }
+            // Sync structural parameters on bottom indicator panel
+            const matchedObj = channels.find(c => c.url === decodedUrl);
+            const statusStr = matchedObj ? matchedObj.status : 'checking';
+            
+            const badgeDot = currentStatusBadge.querySelector('span:first-child');
+            const badgeTxt = currentStatusBadge.querySelector('span:last-child');
+            
+            badgeTxt.textContent = statusStr === 'online' ? 'Signal Live' : (statusStr === 'offline' ? 'Offline / Restricted' : 'Scanning Link');
+            badgeDot.className = `h-2 w-2 rounded-full ${statusStr === 'online' ? 'bg-emerald-500 neon-glow-green' : (statusStr === 'offline' ? 'bg-rose-500 neon-glow-red' : 'bg-gray-500')}`;
 
-            // HLS Stream initiation engine rules logic checking parameters
+            if (hls) hls.destroy();
+
             if (Hls.isSupported()) {
-                hls = new Hls({
-                    maxMaxBufferLength: 10, // Optimize latency for live IP streams
-                    enableWorker: true
-                });
+                hls = new Hls({ maxMaxBufferLength: 8, enableWorker: true });
                 hls.loadSource(decodedUrl);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play().catch(e => console.log("Autoplay blocked, waiting for user integration click interface context rules."));
+                    video.play().catch(() => console.log("Autoplay context restriction holding."));
                 });
-                hls.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                        updateStatusIndicator('error', 'Playback Failure');
-                    }
+                hls.on(Hls.Events.ERROR, (e, data) => {
+                    if (data.fatal) updateStatusIndicator('error', `Decoder Error`);
                 });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // Native platform routing layout rules targeting Apple architectures
                 video.src = decodedUrl;
-                video.addEventListener('loadedmetadata', () => {
-                    video.play();
-                });
+                video.addEventListener('loadedmetadata', () => video.play());
             }
 
-            updateStatusIndicator('active', `Streaming: ${decodedName}`);
-            
-            // Auto close mobile drawer navigation frames immediately upon selection sequences
-            if (window.innerWidth < 768) {
-                toggleSidebar();
-            }
+            updateStatusIndicator('active', `Playing: ${decodedName}`);
+            if (window.innerWidth < 768) toggleSidebar();
         };
 
         function updateStatusIndicator(state, message) {
             const dot = streamStatus.querySelector('span:first-child');
             const text = streamStatus.querySelector('span:last-child');
             text.textContent = message;
-            
-            dot.className = "h-2.5 w-2.5 rounded-full animate-pulse ";
-            if (state === 'active') {
-                dot.className += "bg-emerald-500";
-            } else if (state === 'error') {
-                dot.className += "bg-rose-500";
-            } else {
-                dot.className += "bg-gray-500";
-            }
+            dot.className = `h-2 w-2 rounded-full ${state === 'active' ? 'bg-indigo-500 shadow-[0_0_8px_rgba(79,70,229,0.5)]' : (state === 'error' ? 'bg-rose-500' : 'bg-gray-500')}`;
         }
 
-        // Live Event Target Input Filtering
         searchInput.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
             const filtered = channels.filter(c => c.name.toLowerCase().includes(term));
             renderChannels(filtered);
+            // Reapply styling indicators for current views
+            channels.forEach(c => updateChannelElementUI(c));
         });
 
-        // Responsive Drawer Toggle Layout Control Logic Rules
         function toggleSidebar() {
             const isOpen = !sidebar.classList.contains('-translate-x-full');
             if (isOpen) {
@@ -322,12 +359,7 @@
 
         sidebarToggle.addEventListener('click', toggleSidebar);
         reloadBtn.addEventListener('click', loadPlaylist);
-
-        // Core App Lifecycle Bootstrap Initialization
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            loadPlaylist();
-        });
+        document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); loadPlaylist(); });
     </script>
 </body>
 </html>
