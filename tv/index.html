@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>satu.pro.bd | Live TV</title>
+    <title>Live TV | satu.pro.bd</title>
     <link class="icon" type="image/svg+xml" href="/icon.svg"> 
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
@@ -362,7 +362,7 @@
 
         async function syncServerPlaylist() {
             try {
-                const response = await fetch(`/playlist.m3u?t=${Date.now()}`);
+                const response = await fetch(`/play.m3u?t=${Date.now()}`);
                 if (!response.ok) throw new Error('Offline');
                 const rawData = await response.text();
                 compileM3URegistry(rawData);
