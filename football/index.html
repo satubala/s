@@ -3,270 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlayZ TV Portal</title>
+    <title>T Sports Live | Satu Pro Theme</title>
+    <!-- HLS.js Library for universal .m3u8 playback -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!-- Premium Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
+        /* Base Styling & Theme Variables */
         :root {
-            --bg-color: #0f172a;
-            --sidebar-bg: #1e293b;
-            --accent-color: #3b82f6;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
-            --card-hover: #334155;
+            --bg-main: #0a0b0e;
+            --bg-card: #12141c;
+            --accent: #e50914; /* Dynamic Sports Red */
+            --text-main: #ffffff;
+            --text-muted: #707584;
+            --glow: rgba(229, 9, 20, 0.4);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--bg-main);
+            color: var(--text-main);
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
         }
 
+        /* Header Navigation */
         header {
-            background-color: var(--sidebar-bg);
-            padding: 15px 20px;
+            width: 100%;
+            max-width: 1000px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #2e3e56;
-            z-index: 10;
+            padding: 15px 0;
+            border-bottom: 1px solid #1f222e;
+            margin-bottom: 30px;
         }
 
-        header h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-color);
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
-        .search-box {
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: 1px solid #475569;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            width: 250px;
-            outline: none;
-            transition: border-color 0.2s;
+        .logo span {
+            color: var(--accent);
         }
 
-        .search-box:focus {
-            border-color: var(--accent-color);
-        }
-
-        .main-container {
-            display: flex;
-            flex: 1;
-            height: calc(100vh - 70px);
+        /* Streaming Player Container */
+        .player-container {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--bg-card);
+            border-radius: 16px;
             overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
         }
 
-        .player-section {
-            flex: 3;
-            background-color: #000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+        .video-wrapper {
             position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            background: #000;
         }
 
         video {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        .sidebar {
-            flex: 1;
-            min-width: 320px;
-            max-width: 400px;
-            background-color: var(--sidebar-bg);
-            display: flex;
-            flex-direction: column;
-            border-left: 1px solid #2e3e56;
-        }
-
-        .filter-container {
-            padding: 10px;
-            border-bottom: 1px solid #2e3e56;
-        }
-
-        .category-select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            border: 1px solid #475569;
             outline: none;
-            cursor: pointer;
         }
 
-        .channel-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
+        /* Channel Details Block */
+        .channel-info {
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        .channel-item {
+        .channel-meta h1 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .channel-meta p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Status Badges */
+        .status-badges {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .badge-live {
+            background: var(--accent);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             display: flex;
             align-items: center;
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            background-color: rgba(255, 255, 255, 0.02);
-            transition: background-color 0.2s, transform 0.1s;
+            gap: 6px;
+            box-shadow: 0 0 12px var(--glow);
         }
 
-        .channel-item:hover {
-            background-color: var(--card-hover);
-            transform: translateX(2px);
-        }
-
-        .channel-item.active {
-            background-color: var(--accent-color);
-        }
-
-        .channel-logo {
-            width: 45px;
-            height: 45px;
-            border-radius: 6px;
-            object-fit: contain;
-            background-color: #1e293b;
-            margin-right: 15px;
-            border: 1px solid #334155;
-        }
-
-        .channel-info {
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .channel-name {
-            font-size: 0.95rem;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .channel-group {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .channel-item.active .channel-group {
-            color: #e2e8f0;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
+        .badge-live::before {
+            content: '';
             width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--sidebar-bg);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #475569;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            display: inline-block;
+            animation: blink 1.2s infinite;
         }
 
-        /* Responsive Breakpoints */
-        @media (max-width: 900px) {
-            .main-container {
+        .badge-category {
+            background: #1f222e;
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Keyframe Animations */
+        @keyframes blink {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .channel-info {
                 flex-direction: column;
-                overflow-y: auto;
-            }
-            .player-section {
-                flex: none;
-                height: 56.25vw; /* 16:9 Aspect Ratio */
-            }
-            .sidebar {
-                flex: 1;
-                max-width: 100%;
-                min-width: 100%;
-                height: auto;
+                align-items: flex-start;
             }
         }
     </style>
 </head>
 <body>
 
+    <!-- Header -->
     <header>
-        <h1>PlayZ TV Portal</h1>
-        <input type="text" id="search" class="search-box" placeholder="Search channels...">
+        <div class="logo">Satu<span>Pro</span></div>
+        <div class="badge-category" style="color: #fff; background: var(--accent);">Premium IPTV</div>
     </header>
 
-    <div class="main-container">
-        <section class="player-section">
-            <video id="video" controls autoplay playsinline></video>
-        </section>
-
-        <aside class="sidebar">
-            <div class="filter-container">
-                <select id="categoryFilter" class="category-select">
-                    <option value="all">All Categories</option>
-                </select>
+    <!-- Main Player Structure -->
+    <div class="player-container">
+        <div class="video-wrapper">
+            <video id="video" controls autoplay playsinline preload="auto"></video>
+        </div>
+        
+        <div class="channel-info">
+            <div class="channel-meta">
+                <h1>T Sports Live</h1>
+                <p>Enjoy live sports, cricket matches, and localized broadcasting instantly.</p>
             </div>
-            <div id="channelList" class="channel-list">
-                </div>
-        </aside>
+            <div class="status-badges">
+                <span class="badge-live">Live</span>
+                <span class="badge-category">Sports</span>
+            </div>
+        </div>
     </div>
 
+    <!-- HLS Stream Engine Integration -->
     <script>
-        // Raw M3U Data string injected directly into the script
-        const m3uRawData = `#EXTM3U
-#EXTINF:-1 tvg-name="Welcome to PlayZ TV" group-title="Welcome to PlayZ TV | New App" tvg-logo="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgyniKyW9pUz1OKx5bgzLASwGVSuP0e7hX9FxVMTJMHxhu8X0tpucgSplBZgM8pCYrJJH0P2_dTC1-wzp4mMUU4sKnOzghGPCwWdbYOOa4jTyhpr7ydNj-UK-bc56IMsk2H3WZJ-SzSZIk0dTpyABCFR2_zjC2_c86W1pv7odFBT_Y-hyJs62g-3zCJkPGd/s1024/1000398131.png",Welcome to PlayZ TV
-https://playztv.pages.dev/promo/master.m3u8
-#EXTINF:-1 tvg-logo="https://s4.gifyu.com/images/image534fa27d7683f33d.png" group-title="Akash Go",Ekushey TV
-http://210.4.72.204/hls-live/livepkgr/_definst_/liveevent/livestream3.m3u8
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/en/3/31/Deepto_TV_logo.png" group-title="Akash Go",Deepto TV
-https://byphdgllyk.gpcdn.net/hls/deeptotv/0_1/index.m3u8
-#EXTINF:-1 tvg-logo="https://pbs.twimg.com/profile_images/739539785304281088/zMwNO936_400x400.jpg" group-title="BANGLA",Deshe Bideshe
-https://dbcanada.sonarbanglatv.com/deshebideshe/dbtv/index.m3u8
-#EXTINF:-1 tvg-logo="https://seeklogo.com/images/B/bbc-news-logo-8648ABD044-seeklogo.com.png" group-title="Akash Go",BBC News
-https://cdn4.skygo.mn/live/disk1/BBC_News/HLSv3-FTA/BBC_News-avc1_3000000=8-mp4a_208000_eng=2.m3u8
-#EXTINF:-1 group-title="Bangla" tvg-id="MUSICBANGLA" tvg-logo="https://static.wikia.nocookie.net/logopedia/images/7/75/Music_Bangla_new.jpeg",MUSIC BANGLA
-http://live.matribhumitv.com/music-bangla/index.m3u8
-#EXTINF:-1 group-title="Bangla" tvg-id="deshitv.bd" tvg-logo="https://raw.githubusercontent.com/subirkumarpaul/Logo/main/My%20TV.svg.png",MY TV
-https://mytvbangla.com/0.m3u8
-#EXTINF:-1 group-title="Bangla" tvg-id="MAASRANGA.bd" tvg-logo="https://static.wikia.nocookie.net/etv-gspn-bangla/images/a/a3/Maasranga_TV_HD_logo.png",MAASRANGA HD
-http://mtv.sunplex.live/MAASRANGA-TV/index.m3u8
-#EXTINF:-1 tvg-id="98000" tvg-name="Somoy TV" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1735560559088.png" group-title="News",Somoy TV
-https://owrcovcrpy.gpcdn.net/bpk-tv/1702/output/index.m3u8
-#EXTINF:-1 tvg-id="97000" tvg-name="Jamuna TV" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1735560213832.png" group-title="News",Jamuna TV
-https://owrcovcrpy.gpcdn.net/bpk-tv/1701/output/index.m3u8
-#EXTINF:-1 tvg-id="185000" tvg-name="DBC News HD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770186306600.png" group-title="News",DBC News HD
-https://owrcovcrpy.gpcdn.net/bpk-tv/1728/output/index.m3u8
-#EXTINF:-1 tvg-id="229000" tvg-name="Maasranga TV" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1773680325498.png" group-title="Entertainment",Maasranga TV
-https://owrcovcrpy.gpcdn.net/bpk-tv/1722/output/index.m3u8
-#EXTINF:-1 tvg-id="102000" tvg-name="Ekattor HD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1739963327549.png" group-title="News",Ekattor HD
-https://owrcovcrpy.gpcdn.net/bpk-tv/1705/output/index.m3u8
-#EXTINF:-1 tvg-id="94000" tvg-name="Channel 24 HD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1735556516924.png" group-title="News",Channel 24 HD
-https://owrcovcrpy.gpcdn.net/bpk-tv/1703/output/index.m3u8
-#EXTINF:-1 tvg-id="93000" tvg-name="ATN News" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1739962961772.png" group-title="News",ATN News
-https://owrcovcrpy.gpcdn.net/bpk-tv/1706/output/index.m3u8
-#EXTINF:-1 tvg-id="186000" tvgo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770186895850.png" group-title="News",News 24 HD
-https://owrcovcrpy.gpcdn.net/bpk-tv/1708/output/index.m3u8
-#EXTINF:-1 tvg-id="191000" tvg-name="Star News" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1770189826301.png" group-title="News",Star News
-https://owrcovcrpy.gpcdn.net/bpk-tv/1710/output/index.m3u8
-#EXTINF:-1 tvg-id="223000" tvg-name="Islamic TV" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1772728412891.png" group-title="Infotainment",Islamic TV
-https://owrcovcrpy.gpcdn.net/bpk-tv/1724/output/index.m3u8
-#EXTINF:-1 tvg-id="134000" tvg-name="Deepto TV HD" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1742713000749.png" group-title="Entertainment",Deepto TV HD
-https://owrcovcrpy.gpcdn.net/bpk-tv/1711/output/index.m3u8
-#EXTINF:-1 tvg-id="188000" tvg-name="Channel 9 HD" tvg-logo="
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('video');
+            // Your exact live M3U8 source link
+            const streamUrl = 'https://trs1.aynaott.com/tsports/index.m3u8';
+
+            if (Hls.isSupported()) {
+                const hls = new Hls({
+                    maxSubtitleBufferSize: 20 * 1024 * 1024,
+                    lowLatencyMode: true,
+                });
+                hls.loadSource(streamUrl);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play().catch(() => {
+                        console.log("Autoplay blocked by browser. Awaiting user interaction.");
+                    });
+                });
+            } 
+            // Fallback for native HLS players (Safari / iOS browsers)
+            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = streamUrl;
+                video.addEventListener('loadedmetadata', () => {
+                    video.play().catch(() => {
+                        console.log("Autoplay blocked natively.");
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
