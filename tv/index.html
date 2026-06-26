@@ -11,7 +11,6 @@
     
     <style>
         :root {
-            /* --- Dark Premium Mode --- */
             --bg-main: #070a13;
             --bg-gradient: radial-gradient(circle at top left, #111827, #070a13);
             --glass: rgba(17, 24, 39, 0.7);
@@ -41,7 +40,6 @@
             transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease; 
         }
 
-        /* মোবাইল লোগো হেডার (ডিফল্টভাবে হাইড থাকবে) */
         .mobile-logo-header {
             display: none;
             justify-content: center;
@@ -51,7 +49,7 @@
         }
 
         main { 
-            padding: 15px;
+            padding: 8px;
             max-width: 1440px;
             width: 100%;
             margin: 0 auto;
@@ -63,7 +61,7 @@
         .tv-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 20px;
+            gap: 8px;
             width: 100%;
         }
 
@@ -74,15 +72,13 @@
                 max-height: 720px;
             }
         }
-
-        /* --- Video Player Styles --- */
         .player-wrapper {
             background: var(--glass);
-            backdrop-filter: blur(16px);
+            backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
-            border-radius: 15px;
-            padding: 12px;
+            border-radius: 8px;
+            padding: 8px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -94,7 +90,7 @@
             width: 100%;
             aspect-ratio: 16 / 9;
             background: #000;
-            border-radius: 12px;
+            border-radius: 8px;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.05);
             box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
@@ -109,8 +105,8 @@
         .meta-container {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-top: 14px;
+            gap: 8px;
+            margin-top: 8px;
         }
 
         .live-tag {
@@ -133,16 +129,14 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
-        /* --- Sidebar & Logo Section --- */
         .sidebar-deck {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 8px;
             background: rgba(10, 15, 30, 0.4);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
-            padding: 16px;
+            padding: 10px;
             height: 100%;
             overflow: hidden;
         }
