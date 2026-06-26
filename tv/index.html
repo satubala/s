@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>satu.pro.bd | Live TV</title>
+    <link class="icon" type="image/svg+xml" href="/icon.svg"> 
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> 
+    
+    <style>
+        :root {
+            /* --- Dark Premium Mode --- */
+            --bg-main: #070a13;
+            --bg-gradient: radial-gradient(circle at top left, #111827, #070a13);
+            --glass: rgba(17, 24, 39, 0.7);
+            --glass-hover: rgba(31, 41, 55, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --accent-cyan: #06b6d4;
+            --accent-red: #ef4444;
+            --text-main: #f3f4f6;
+            --text-dim: #9ca3af;
+            --player-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'SolaimanLipi', sans-serif;
+            min-height: 100vh;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease; 
+        }
+
+        /* মোবাইল লোগো হেডার (ডিফল্টভাবে হাইড থাকবে) */
+        .mobile-logo-header {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 10px 5px 10px;
+            width: 100%;
+        }
+
+        main { 
+            padding: 20px;
+            max-width: 1440px;
+            width: 100%;
+            margin: 0 auto;
+            min-height: calc(100vh - 60px);
+            display: flex;
+            align-items: flex-start; /* অতিরিক্ত ফাঁকা জায়গা দূর করা হয়েছে */
+        }
+
+        .tv-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            width: 100%;
+        }
+
+        @media (min-width: 992px) {
+            .tv-grid {
+                grid-template-columns: 1fr 310px;
+                height: calc(100vh - 120px);
+                max-height: 720px;
+            }
+        }
+
+        /* --- Video Player Styles --- */
+        .player-wrapper {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: var(--player-shadow);
+            position: relative;
+        }
+
+        .video-container {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .meta-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .live-tag {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            animation: pulse 2s infinite;
+        }
+
+        .meta-container h1 {
+            font-size: 1.15rem;
+            margin: 0;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* --- Sidebar & Logo Section --- */
+        .sidebar-deck {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            background: rgba(10, 15, 30, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 16px;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding-bottom: 4px;
+            padding-left: 4px;
+        }
+
+        .header-img {
+            height: 28px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.3));
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.1);
+        }
+
+        /* --- Channel List Container --- */
+        .list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 4px;
+        }
+
+        @media (max-width: 991px) {
+            .list-container {
+                max-height: 350px;
+            }
+        }
+
+        .list-container::-webkit-scrollbar { width: 4px; }
+        .list-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+
+        /* --- Modern Channel Item Row --- */
+        .ch-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .ch-item:hover { 
+            border-color: rgba(6, 182, 212, 0.4); 
+            background: var(--glass-hover); 
+            transform: translateX(2px); 
+        }
+
+        .ch-item.active {
+            border-color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.08);
+            box-shadow: inset 0 0 10px rgba(6, 182, 212, 0.05);
+        }
+
+        .ch-num {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 500;
+            width: 18px;
+        }
+
+        .ch-item.active .ch-num {
+            color: var(--accent-cyan);
+            font-weight: 700;
+        }
+
+        .ch-img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1px;
+        }
+
+        .ch-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            min-width: 0;
+            padding-right: 35px;
+        }
+
+        /* --- Minimal Glowing Dot Badge --- */
+        .status-badge {
+            position: absolute;
+            right: 14px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .status-checking { 
+            background-color: var(--text-dim); 
+            box-shadow: 0 0 8px var(--text-dim); 
+        }
+        
+        .status-online { 
+            background-color: #10b981; 
+            box-shadow: 0 0 10px #10b981; 
+            animation: pulse 1.5s infinite; 
+        }
+        
+        .status-broken { 
+            background-color: var(--accent-red); 
+            box-shadow: 0 0 10px var(--accent-red); 
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        footer { 
+            padding: 16px; 
+            border-top: 1px solid var(--glass-border); 
+            text-align: center; 
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            background: rgba(7, 10, 19, 0.8);
+        }
+
+        /* --- রেসপনসিভ লোগো মিডিয়া কোয়েরি (সঠিক ক্রমানুসারে নিচে রাখা হয়েছে) --- */
+        @media (max-width: 991px) {
+            .mobile-logo-header {
+                display: flex !important;
+            }
+            .sidebar-logo {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="mobile-logo-header">
+        <a href="/">
+            <img src="/logo.svg" alt="satu.pro.bd" class="header-img">
+        </a>
+    </header>
+
+    <main>
+        <div class="tv-grid">
+            
+            <div class="player-wrapper">
+                <div class="video-container">
+                    <video id="tv-screen" controls autoplay playsinline></video>
+                </div>
+                <div class="meta-container">
+                    <span class="live-tag">LIVE</span>
+                    <h1 id="stream-title">চ্যানেল লোড করা হচ্ছে...</h1>
+                </div>
+            </div>
+
+            <div class="sidebar-deck">
+                <div class="sidebar-logo">
+                    <a href="/">
+                        <img src="/logo.svg" alt="satu.pro.bd" class="header-img">
+                    </a>
+                </div>
+                
+                <input type="text" id="filterInput" class="search-box" placeholder="চ্যানেল খুঁজুন...">
+                
+                <div class="list-container" id="deckContainer">
+                    <div style="text-align:center; color:var(--text-dim); padding:40px; font-size: 0.9rem;">লিস্ট প্রসেস হচ্ছে...</div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div>&copy; 2026 <b>SATU</b> | All Rights Reserved.</div>
+    </footer>
+
+    <script>
+        const tvScreen = document.getElementById('tv-screen');
+        const deckContainer = document.getElementById('deckContainer');
+        const streamTitle = document.getElementById('stream-title');
+        const filterInput = document.getElementById('filterInput');
+
+        let coreRegistry = [];
+        let activeHls = null;
+
+        const defaultLogo = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239ca3af'><path d='M21 6H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 14H3V8h18v12zM8.5 17l6-5-6-5v10z'/></svg>`;
+
+        async function syncServerPlaylist() {
+            try {
+                const response = await fetch(`/playlist.m3u?t=${Date.now()}`);
+                if (!response.ok) throw new Error('Offline');
+                const rawData = await response.text();
+                compileM3URegistry(rawData);
+            } catch (err) {
+                streamTitle.textContent = "প্লে-লিস্ট ফাইল পাওয়া যায়নি";
+                deckContainer.innerHTML = `<div style="text-align:center; padding:30px; color:var(--accent-red); font-size:0.9rem;">playlist.m3u ফাইলটি অনুপস্থিত।</div>`;
+            }
+        }
+
+        function compileM3URegistry(text) {
+            const architecturalLines = text.split('\n');
+            coreRegistry = [];
+            let currentName = '';
+            let currentLogo = '';
+
+            for (let i = 0; i < architecturalLines.length; i++) {
+                const cleanLine = architecturalLines[i].trim();
+                
+                if (cleanLine.startsWith('#EXTINF:')) {
+                    const logoMatch = cleanLine.match(/(?:tvg-logo|logo)=["']([^"']+)["']/i);
+                    currentLogo = logoMatch ? logoMatch[1] : '';
+                    const commaIndex = cleanLine.lastIndexOf(',');
+                    currentName = commaIndex !== -1 ? cleanLine.substring(commaIndex + 1).trim() : 'Unnamed Channel';
+                } else if (cleanLine !== '' && !cleanLine.startsWith('#')) {
+                    coreRegistry.push({
+                        name: currentName || `চ্যানেল ${coreRegistry.length + 1}`,
+                        url: cleanLine,
+                        logo: currentLogo
+                    });
+                    currentName = '';
+                    currentLogo = '';
+                }
+            }
+
+            if (coreRegistry.length > 0) {
+                buildInterfaceRows(coreRegistry);
+                mountLivePlayback(coreRegistry[0].url, coreRegistry[0].name);
+                document.querySelector('.ch-item').classList.add('active');
+                autoCheckLinksHealth();
+            } else {
+                streamTitle.textContent = "প্লে-লিস্ট খালি";
+                deckContainer.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-dim); font-size:0.9rem;">কোনো ডেটা পাওয়া যায়নি।</div>`;
+            }
+        }
+
+        function buildInterfaceRows(items) {
+            deckContainer.innerHTML = '';
+            items.forEach((item, index) => {
+                const row = document.createElement('div');
+                row.className = 'ch-item';
+                row.setAttribute('data-target', item.name.toLowerCase());
+                
+                const logoSrc = item.logo ? item.logo : defaultLogo;
+                const paddedIndex = String(index + 1).padStart(2, '0');
+
+                row.innerHTML = `
+                    <span class="ch-num">${paddedIndex}</span>
+                    <img class="ch-img" src="${logoSrc}" alt="" onerror="this.src='${defaultLogo}'">
+                    <span class="ch-title">${item.name}</span>
+                    <span class="status-badge status-checking" id="status-${index}"></span>
+                `;
+
+                row.addEventListener('click', () => {
+                    document.querySelectorAll('.ch-item').forEach(el => el.classList.remove('active'));
+                    row.classList.add('active');
+                    mountLivePlayback(item.url, item.name);
+                });
+
+                deckContainer.appendChild(row);
+            });
+        }
+
+        // --- ব্যাকগ্রাউনড হেলথ চেকার (শুধুমাত্র কালার ডট আপডেট করবে) ---
+        async function autoCheckLinksHealth() {
+            for (let i = 0; i < coreRegistry.length; i++) {
+                const targetChannel = coreRegistry[i];
+                const badgeElement = document.getElementById(`status-${i}`);
+                
+                if (!badgeElement) continue;
+
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+                    const response = await fetch(targetChannel.url, { 
+                        method: 'GET', 
+                        signal: controller.signal 
+                    });
+
+                    clearTimeout(timeoutId);
+                    
+                    if(response.ok) {
+                        badgeElement.className = "status-badge status-online";
+                    } else {
+                        throw new Error('Not streamable');
+                    }
+
+                } catch (networkError) {
+                    badgeElement.className = "status-badge status-broken";
+                }
+            }
+        }
+
+        // --- প্লেয়ার কন্ট্রোল এবং রিয়েল-টাইম অচল ডট সিঙ্ক ---
+        function mountLivePlayback(url, name) {
+            streamTitle.textContent = name;
+            if (activeHls) activeHls.destroy();
+
+            const currentIndex = coreRegistry.findIndex(item => item.url === url);
+
+            function markCurrentAsBroken() {
+                streamTitle.textContent = `⚠️ অফলাইন: ${name}`;
+                if (currentIndex !== -1) {
+                    const badgeElement = document.getElementById(`status-${currentIndex}`);
+                    if (badgeElement) {
+                        badgeElement.className = "status-badge status-broken";
+                    }
+                }
+            }
+
+            if (Hls.isSupported()) {
+                activeHls = new Hls();
+                activeHls.loadSource(url);
+                activeHls.attachMedia(tvScreen);
+                activeHls.on(Hls.Events.MANIFEST_PARSED, () => tvScreen.play());
+                activeHls.on(Hls.Events.ERROR, (event, data) => {
+                    if (data.fatal) {
+                        markCurrentAsBroken();
+                    }
+                });
+            } else if (tvScreen.canPlayType('application/vnd.apple.mpegurl')) {
+                tvScreen.src = url;
+                
+                const nativeErrorHandler = () => {
+                    markCurrentAsBroken();
+                    tvScreen.removeEventListener('error', nativeErrorHandler);
+                };
+                
+                tvScreen.addEventListener('error', nativeErrorHandler);
+                tvScreen.addEventListener('loadedmetadata', () => {
+                    tvScreen.play();
+                    tvScreen.removeEventListener('error', nativeErrorHandler);
+                });
+            }
+        }
+
+        filterInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('.ch-item').forEach(row => {
+                const title = row.getAttribute('data-target');
+                row.style.display = title.includes(query) ? "flex" : "none";
+            });
+        });
+
+        lucide.createIcons();
+        syncServerPlaylist();
+    </script>
+</body>
+</html>
