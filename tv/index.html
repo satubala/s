@@ -349,7 +349,7 @@
 
         const defaultLogo = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239ca3af'><path d='M21 6H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 14H3V8h18v12zM8.5 17l6-5-6-5v10z'/></svg>`;
 
-        async function syncServerPlaylist() {
+        async function syncServerPlay() {
             try {
                 const response = await fetch(`/play.m3u?t=${Date.now()}`);
                 if (!response.ok) throw new Error('Offline');
