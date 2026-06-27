@@ -337,7 +337,7 @@
                 <input type="text" id="filterInput" class="search-box" placeholder="Search cricket & sports channels...">
                 
                 <div class="list-container" id="deckContainer">
-                    <div style="text-align:center; color:var(--text-dim); padding:40px; font-size: 0.9rem;">Processing live channels...</div>
+                    <div style="text-align:center; color:var(--text-dim); padding:40px; font-size: 0.9rem;">Processing Indian sports channels...</div>
                 </div>
             </div>
 
@@ -361,15 +361,35 @@
 
         async function syncServerPlaylist() {
             try {
-                // Dynamically parsing the requested Sports ecosystem playlist
-                const response = await fetch(`https://iptv-org.github.io/iptv/categories/sports.m3u?t=${Date.now()}`);
+                // Swapped configuration to target the direct India ecosystem stream index
+                const response = await fetch(`https://raw.githubusercontent.com/iptv-org/iptv/refs/heads/master/streams/in.m3u?t=${Date.now()}`);
                 if (!response.ok) throw new Error('Offline');
                 const rawData = await response.text();
                 compileM3URegistry(rawData);
             } catch (err) {
-                streamTitle.textContent = "Sports playlist unavailable";
+                streamTitle.textContent = "Indian streams unavailable";
                 deckContainer.innerHTML = `<div style="text-align:center; padding:30px; color:var(--accent-red); font-size:0.9rem;">Unable to load streaming source.</div>`;
             }
+        }
+
+        // Dedicated strict validation to completely drop non-sports entries from the broader country playlist
+        function isStrictSportsChannel(name, details) {
+            const lowerName = name.toLowerCase();
+            const lowerDetails = details.toLowerCase();
+
+            // Match structural category tags 
+            if (lowerDetails.includes('group-title="sports"') || lowerDetails.includes('category="sports"')) {
+                return true;
+            }
+
+            // High-confidence sports & cricket network keywords
+            const sportsKeywords = [
+                'sports', 'cricket', 'willow', 'sony ten', 'star sports', 'sports18', 
+                'dd sports', 'fancode', 'ten sports', 'prime sports', 'eurosport', 
+                'neo prime', 'neo sports', 'wwe', 'ufc', 'racing', 't20', 'ipl', 'icc'
+            ];
+
+            return sportsKeywords.some(keyword => lowerName.includes(keyword));
         }
 
         function compileM3URegistry(text) {
@@ -390,12 +410,15 @@
                     currentName = commaIndex !== -1 ? cleanLine.substring(commaIndex + 1).trim() : 'Unnamed Channel';
                 } else if (cleanLine !== '' && !cleanLine.startsWith('#')) {
                     if (currentName) {
-                        coreRegistry.push({
-                            name: currentName,
-                            url: cleanLine,
-                            logo: currentLogo,
-                            rawExtInf: rawExtInf
-                        });
+                        // Strict isolation: only store item if it explicitly belongs to the sports framework
+                        if (isStrictSportsChannel(currentName, rawExtInf)) {
+                            coreRegistry.push({
+                                name: currentName,
+                                url: cleanLine,
+                                logo: currentLogo,
+                                rawExtInf: rawExtInf
+                            });
+                        }
                     }
                     currentName = '';
                     currentLogo = '';
@@ -404,39 +427,38 @@
             }
 
             if (coreRegistry.length > 0) {
-                // Custom Matrix sorting logic prioritizing Cricket and Indian sports networks
+                // Sorting array matrix prioritizing prime live cricket configurations
                 coreRegistry.sort((a, b) => {
                     const scoreA = calculatePriorityScore(a);
                     const scoreB = calculatePriorityScore(b);
-                    return scoreB - scoreA; // Higher structural match goes to index 0
+                    return scoreB - scoreA; 
                 });
 
                 buildInterfaceRows(coreRegistry);
                 autoCheckLinksHealth();
             } else {
-                streamTitle.textContent = "No Channels Found";
-                deckContainer.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-dim); font-size:0.9rem;">No data returned from directory.</div>`;
+                streamTitle.textContent = "No Sports Channels Found";
+                deckContainer.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-dim); font-size:0.9rem;">No active sports channels matches discovered in source file.</div>`;
             }
         }
 
         function calculatePriorityScore(item) {
             const name = item.name.toLowerCase();
-            const details = item.rawExtInf.toLowerCase();
             let score = 0;
 
-            // Direct Premium Target Match: Cricket Focus
-            if (name.includes('cricket') || name.includes('willow') || name.includes('icc') || name.includes('ipl') || name.includes('t20') || name.includes('astro cricket')) {
+            // Tier 1 Match: Live Cricket Direct Targets
+            if (name.includes('cricket') || name.includes('willow') || name.includes('icc') || name.includes('ipl') || name.includes('t20')) {
+                score += 50;
+            }
+
+            // Tier 2 Match: Major Indian Broadcaster Networks
+            if (name.includes('star sports') || name.includes('sony ten') || name.includes('sony sports') || name.includes('sports18') || name.includes('dd sports') || name.includes('fancode') || name.includes('ten sports')) {
                 score += 30;
             }
 
-            // Geographic Premium Target Match: India
-            if (details.includes('tvg-country="in"') || details.includes('group-title="india"') || name.includes('(india)') || name.includes('[in]')) {
-                score += 20;
-            }
-
-            // Indian Broadcaster Matches
-            if (name.includes('star sports') || name.includes('sony ten') || name.includes('sony sports') || name.includes('sports18') || name.includes('dd sports') || name.includes('fancode') || name.includes('ten sports')) {
-                score += 25;
+            // Tier 3 Match: Standard sports markers
+            if (name.includes('sports')) {
+                score += 10;
             }
 
             return score;
@@ -469,7 +491,7 @@
             });
         }
 
-        // Sequential validation loops: ensures prioritized channels are played instantly if online
+        // Sequential validation loops
         async function autoCheckLinksHealth() {
             let initialPlayMounted = false;
 
@@ -481,7 +503,7 @@
 
                 try {
                     const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 4000); // 4 seconds optimization ping
+                    const timeoutId = setTimeout(() => controller.abort(), 4000); 
 
                     const response = await fetch(targetChannel.url, { 
                         method: 'GET', 
@@ -493,7 +515,7 @@
                     if (response.ok) {
                         badgeElement.className = "status-badge status-online";
                         
-                        // Fire up the player instantly with the highest ranked live channel discovered
+                        // Instantly fire player with the highest ranked live channel discovered
                         if (!initialPlayMounted) {
                             mountLivePlayback(targetChannel.url, targetChannel.name);
                             document.querySelectorAll('.ch-item').forEach(el => el.classList.remove('active'));
@@ -513,7 +535,7 @@
                 }
             }
 
-            // Ultimate fallback if entire sport catalog ping fails on initial load
+            // Ultimate fallback safety loop
             if (!initialPlayMounted && coreRegistry.length > 0) {
                 mountLivePlayback(coreRegistry[0].url, coreRegistry[0].name);
                 const firstRow = document.querySelector('.ch-item');
