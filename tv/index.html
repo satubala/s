@@ -376,7 +376,7 @@
             coreRegistry = [];
             let currentName = '';
             let currentLogo = '';
-            let rawExtInf = ''; // গ্রুপ নেম বা এক্সট্রা ডাটা ফিল্টার করার জন্য ট্র্যাক রাখা হচ্ছে
+            let rawExtInf = '';
 
             for (let i = 0; i < architecturalLines.length; i++) {
                 const cleanLine = architecturalLines[i].trim();
@@ -392,10 +392,8 @@
                     const lowerName = currentName.toLowerCase();
                     const lowerExtInf = rawExtInf.toLowerCase();
                     
-                    // বাদ দেওয়ার জন্য নির্দিষ্ট কি-ওয়ার্ডের তালিকা (গ্রুপ এবং চ্যানেল নেম ফিল্টারিং)
                     const excludeKeywords = ['islam', 'religious', 'quran', 'soudi', 'saudi', 'iran', 'peace tv', 'welcome to playz tv'];
                     
-                    // কোনো একটি কি-ওয়ার্ডের মিল পাওয়া গেলে ট্রু রিটার্ন করবে
                     const matchesExclude = excludeKeywords.some(keyword => 
                         lowerName.includes(keyword) || lowerExtInf.includes(keyword)
                     );
@@ -416,6 +414,15 @@
             }
 
             if (coreRegistry.length > 0) {
+                // পরিবর্তন করা হয়েছে: বাংলাদেশি চ্যানেলগুলোকে সবার উপরে সর্ট করা হচ্ছে
+                coreRegistry.sort((a, b) => {
+                    const isABangla = /[\u0980-\u09FF]/.test(a.name) || /\bbd\b|bangla|bangladesh/i.test(a.name);
+                    const isBBangla = /[\u0980-\u09FF]/.test(b.name) || /\bbd\b|bangla|bangladesh/i.test(b.name);
+                    if (isABangla && !isBBangla) return -1;
+                    if (!isABangla && isBBangla) return 1;
+                    return 0;
+                });
+
                 buildInterfaceRows(coreRegistry);
                 mountLivePlayback(coreRegistry[0].url, coreRegistry[0].name);
                 document.querySelector('.ch-item').classList.add('active');
@@ -459,6 +466,7 @@
                 const badgeElement = document.getElementById(`status-${i}`);
                 
                 if (!badgeElement) continue;
+                const rowElement = badgeElement.closest('.ch-item');
 
                 try {
                     const controller = new AbortController();
@@ -479,6 +487,11 @@
 
                 } catch (networkError) {
                     badgeElement.className = "status-badge status-broken";
+                    // পরিবর্তন করা হয়েছে: লিংক অচল হলে চ্যানেলটি লিস্ট থেকে হাইড করা হচ্ছে
+                    if (rowElement) {
+                        rowElement.classList.add('is-broken');
+                        rowElement.style.display = 'none';
+                    }
                 }
             }
         }
@@ -495,6 +508,12 @@
                     const badgeElement = document.getElementById(`status-${currentIndex}`);
                     if (badgeElement) {
                         badgeElement.className = "status-badge status-broken";
+                        // পরিবর্তন করা হয়েছে: প্লে করার সময় লিংক ফেইল করলেও সাথে সাথে লিস্ট থেকে হাইড হবে
+                        const rowElement = badgeElement.closest('.ch-item');
+                        if (rowElement) {
+                            rowElement.classList.add('is-broken');
+                            rowElement.style.display = 'none';
+                        }
                     }
                 }
             }
@@ -528,6 +547,11 @@
         filterInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
             document.querySelectorAll('.ch-item').forEach(row => {
+                // পরিবর্তন করা হয়েছে: সার্চ করার সময় অচল (is-broken) চ্যানেলগুলোকে ফিল্টারিং থেকে সম্পূর্ণ বাইরে রাখা হয়েছে
+                if (row.classList.contains('is-broken')) {
+                    row.style.display = "none";
+                    return;
+                }
                 const title = row.getAttribute('data-target');
                 row.style.display = title.includes(query) ? "flex" : "none";
             });
@@ -538,4 +562,3 @@
     </script>
 </body>
 </html>
-
