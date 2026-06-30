@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>satu.pro.bd | Live TV</title>
     <link class="icon" type="image/svg+xml" href="/icon.svg"> 
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> 
     
     <style>
@@ -49,8 +49,10 @@
             background: var(--bg-gradient);
             background-attachment: fixed;
             color: var(--text-main);
-            font-family: 'SolaimanLipi', sans-serif;
+            font-family: 'Inter', sans-serif;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         * { 
@@ -58,7 +60,7 @@
             transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease; 
         }
 
-        /* মোবাইল লোগো হেডার (ডিফল্টভাবে হাইড থাকবে) */
+        /* Mobile Logo Header (Hidden by default) */
         .mobile-logo-header {
             display: none;
             justify-content: center;
@@ -68,11 +70,11 @@
         }
 
         main { 
-            padding: 6px;
+            padding: 12px;
             max-width: 1440px;
             width: 100%;
             margin: 0 auto;
-            min-height: calc(100vh - 60px);
+            flex: 1; /* Pushes the footer down naturally */
             display: flex;
             align-items: flex-start;
         }
@@ -80,14 +82,16 @@
         .tv-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 6px;
+            gap: 12px;
             width: 100%;
+            margin-bottom: 24px; /* Fixes cropping behavior by ensuring margin below layout */
         }
 
         @media (min-width: 992px) {
             .tv-grid {
                 grid-template-columns: 1fr 310px;
-                height: calc(100vh - 120px);
+                /* Replaced fixed height constraint to let contents flow dynamically without overlapping footer */
+                min-height: calc(100vh - 180px);
                 max-height: 720px;
             }
         }
@@ -127,7 +131,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-top: 6px;
+            margin-top: 10px;
+            padding: 0 4px;
         }
 
         .live-tag {
@@ -161,6 +166,7 @@
             border-radius: 8px;
             padding: 10px;
             height: 100%;
+            min-height: 450px;
             overflow: hidden;
         }
         @media (prefers-color-scheme: light) {
@@ -340,6 +346,10 @@
             border-top: 1px solid var(--glass-border); 
             text-align: center; 
             background: rgba(7, 10, 19, 0.9);
+            width: 100%;
+            position: relative;
+            z-index: 10;
+            clear: both;
         }
         @media (prefers-color-scheme: light) {
             footer {
@@ -399,7 +409,7 @@
                 </div>
                 <div class="meta-container">
                     <span class="live-tag">LIVE</span>
-                    <h1 id="stream-title">চ্যানেল যাচাই করা হচ্ছে...</h1>
+                    <h1 id="stream-title">Verifying channel...</h1>
                 </div>
             </div>
 
@@ -410,10 +420,10 @@
                     </a>
                 </div>
                 
-                <input type="text" id="filterInput" class="search-box" placeholder="চ্যানেল খুঁজুন...">
+                <input type="text" id="filterInput" class="search-box" placeholder="Search channel...">
                 
                 <div class="list-container" id="deckContainer">
-                    <div style="text-align:center; color:var(--text-dim); padding:40px; font-size: 0.9rem;">লিস্ট প্রসেস হচ্ছে...</div>
+                    <div style="text-align:center; color:var(--text-dim); padding:40px; font-size: 0.9rem;">Processing list...</div>
                 </div>
             </div>
 
@@ -426,7 +436,7 @@
                 &copy; 2026 <b>SATU</b> | All Rights Reserved.
             </div>
             <div class="disclaimer-box">
-                <b>Disclaimer:</b> এই ওয়েবসাইটটি শুধুমাত্র একটি ডিজিটাল ইনডেক্স এবং স্ট্রিম এগ্রিগেটর হিসেবে কাজ করে। এখানে প্রদর্শিত সমস্ত লাইভ টিভি লিংক ও M3U প্লে-লিস্টগুলো ইন্টারনেট এবং GitHub-এর বিভিন্ন পাবলিক রিপোজিটরি থেকে সংগৃহীত। আমরা নিজস্ব কোনো কন্টেন্ট হোস্ট, স্ট্রিম, সংরক্ষণ বা পরিবর্তন করি না। এই সাইটে লিংক করা যেকোনো কন্টেন্টের বৈধতা, কপিরাইট বা অন্য কোনো সমস্যার জন্য এই ওয়েবসাইট কর্তৃপক্ষ কোনোভাবেই দায়বদ্ধ থাকবে না। কপিরাইট সংক্রান্ত কোনো অভিযোগ বা আইনি জটিলতা থাকলে সরাসরি মূল কন্টেন্ট হোস্টকারী বা সংশ্লিষ্ট গিটহাব রিপোজিটরি মালিকের সাথে যোগাযোগ করার জন্য অনুরোধ করা হলো।
+                <b>Disclaimer:</b> This website acts solely as a digital index and stream aggregator. All live TV links and M3U playlists displayed here are collected from various public repositories across the internet and GitHub. We do not host, stream, store, or modify any content ourselves. The management of this website shall not be held liable under any circumstances for the legality, copyright conformity, or any other issues pertaining to the linked content. If there are any copyright complaints or statutory conflicts, you are requested to directly contact the original content hosting providers or the respective GitHub repository owners.
             </div>
         </div>
     </footer>
@@ -449,8 +459,8 @@
                 const rawData = await response.text();
                 compileM3URegistry(rawData);
             } catch (err) {
-                streamTitle.textContent = "প্লে-লিস্ট ফাইল পাওয়া যায়নি";
-                deckContainer.innerHTML = `<div style="text-align:center; padding:30px; color:var(--accent-red); font-size:0.9rem;">playlist.m3u ফাইলটি অনুপস্থিত।</div>`;
+                streamTitle.textContent = "Playlist file not found";
+                deckContainer.innerHTML = `<div style="text-align:center; padding:30px; color:var(--accent-red); font-size:0.9rem;">The playlist.m3u file is missing.</div>`;
             }
         }
 
@@ -485,7 +495,7 @@
                     
                     if (!matchesExclude && !isWelcomeUrl) {
                         coreRegistry.push({
-                            name: currentName || `চ্যানেল ${coreRegistry.length + 1}`,
+                            name: currentName || `Channel ${coreRegistry.length + 1}`,
                             url: cleanLine,
                             logo: currentLogo
                         });
@@ -508,8 +518,8 @@
                 buildInterfaceRows(coreRegistry);
                 autoCheckLinksHealth();
             } else {
-                streamTitle.textContent = "প্লে-লিস্ট খালি";
-                deckContainer.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-dim); font-size:0.9rem;">কোনো ডেটা পাওয়া যায়নি।</div>`;
+                streamTitle.textContent = "Playlist is empty";
+                deckContainer.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-dim); font-size:0.9rem;">No data discovered.</div>`;
             }
         }
 
@@ -540,15 +550,11 @@
             });
         }
 
-        // আপডেটেড ফাংশন: নির্ধারিত প্রায়োরিটি অনুযায়ী ক্রমান্বয়ে প্রথম সচল চ্যানেল ডিটেক্ট করবে
         async function autoCheckLinksHealth() {
             let initialPlayMounted = false;
-
-            // প্রায়োরিটি কিওয়ার্ডের অ্যারে
             const priorityKeywords = ['jamuna', 'dbc news', 'channel i', 'atn news', 'news 24'];
             const checkedIndices = new Set();
 
-            // ১. প্রায়োরিটি লিস্ট অনুযায়ী চ্যানেলগুলো চেক করা হবে
             for (const keyword of priorityKeywords) {
                 if (initialPlayMounted) break;
 
@@ -565,9 +571,8 @@
                 }
             }
 
-            // ২. লুপ চালিয়ে বাকি অন্যান্য সব চ্যানেলের হেলথ চেক করা হবে
             for (let i = 0; i < coreRegistry.length; i++) {
-                if (checkedIndices.has(i)) continue; // অলরেডি চেক হয়ে থাকলে স্কিপ করবে
+                if (checkedIndices.has(i)) continue;
 
                 const isOnline = await checkSingleChannel(i);
 
@@ -578,7 +583,6 @@
                 }
             }
 
-            // ৩. ফলব্যাক: যদি ভাগ্যের ফেরে একটি চ্যানেলও অনলাইন না পাওয়া যায়
             if (!initialPlayMounted && coreRegistry.length > 0) {
                 mountLivePlayback(coreRegistry[0].url, coreRegistry[0].name);
                 setActiveRow(0);
@@ -634,7 +638,7 @@
             const currentIndex = coreRegistry.findIndex(item => item.url === url);
 
             function markCurrentAsBroken() {
-                streamTitle.textContent = `⚠️ অফলাইন: ${name}`;
+                streamTitle.textContent = `⚠️ Offline: ${name}`;
                 if (currentIndex !== -1) {
                     const badgeElement = document.getElementById(`status-${currentIndex}`);
                     if (badgeElement) {
