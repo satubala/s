@@ -99,12 +99,12 @@
             }
         }
 
-        /* --- Video Stage --- */
+        /* --- Tight Bezel Video Stage --- */
         .stage-area {
-            padding: 20px;
+            padding: 10px; /* Dropped padding to achieve ultra-narrow bezels around the framing */
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start; /* Removed center positioning to eliminate whitespace on top */
             background: rgba(0, 0, 0, 0.1);
         }
         
@@ -117,7 +117,7 @@
             position: relative;
             aspect-ratio: 16 / 9;
             background: #000000;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
@@ -135,8 +135,8 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-top: 16px;
-            padding-left: 2px;
+            margin-top: 12px;
+            padding: 4px 6px;
         }
 
         .live-tag {
@@ -188,7 +188,6 @@
             width: auto;
         }
 
-        /* --- Clean Absolute Fixed Input Box Icon --- */
         .search-container {
             position: relative;
             width: 100%;
@@ -378,7 +377,7 @@
             .mobile-logo-header { display: flex; }
             .panel-header { display: none; }
             main { padding: 12px 8px; }
-            .stage-area { padding: 12px; }
+            .stage-area { padding: 8px; }
             .deck-panel { padding: 16px 12px; }
         }
     </style>
