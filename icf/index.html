@@ -4,42 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ICF Fans Player</title>
-    <!-- Tailwind CSS for Modern Styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- HLS.js for cross-browser live stream compatibility -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <!-- Google Fonts for sleek typography -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0b0c10;
-        }
-        .glass {
-            background: rgba(30, 41, 59, 0.45);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        /* Custom scrollbar for channel lists */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.02);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 99px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(52, 211, 153, 0.4);
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #0b0c10; }
+        .glass { background: rgba(30, 41, 59, 0.45); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(52, 211, 153, 0.4); }
     </style>
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col justify-between">
 
-    <!-- Header Navigation -->
     <header class="glass sticky top-0 z-50 px-6 py-4 flex items-center justify-between border-b border-white/5">
         <div class="flex items-center gap-2 select-none">
             <div class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></div>
@@ -50,30 +28,25 @@
         </div>
     </header>
 
-    <!-- Main Content Grid -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <!-- Video Player Section (Takes 2 columns on large screens) -->
         <div class="lg:col-span-2 flex flex-col gap-4">
-            <!-- Video Container -->
             <div class="relative aspect-video w-full rounded-2xl overflow-hidden bg-black/60 shadow-2xl border border-white/5 group">
-                <video id="video-player" class="w-full h-full object-contain" controls autoplay playsinline></video>
+                <video id="video-player" class="w-full h-full object-contain" controls autoplay muted playsinline></video>
                 
-                <!-- Loading Overlay -->
-                <div id="player-loader" class="absolute inset-0 bg-slate-950/80 flex flex-col items-center justify-center gap-3 transition-opacity duration-300 pointer-events-none">
-                    <div class="w-10 h-10 border-4 border-emerald-400/20 border-t-emerald-400 rounded-full animate-spin"></div>
-                    <p class="text-sm text-slate-400 tracking-wide font-light">Connecting to source...</p>
+                <div id="player-loader" class="absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center gap-3 transition-opacity duration-300">
+                    <div id="loader-spinner" class="w-10 h-10 border-4 border-emerald-400/20 border-t-emerald-400 rounded-full animate-spin"></div>
+                    <p id="loader-text" class="text-sm text-slate-400 tracking-wide font-light">Connecting to source...</p>
+                    <button id="retry-btn" class="hidden mt-2 bg-emerald-500 text-slate-950 text-xs font-semibold px-4 py-2 rounded-xl shadow-lg">Tap to Play / Retry</button>
                 </div>
             </div>
 
-            <!-- Current Channel Metadata & Navigation Controls -->
             <div class="glass rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <span id="current-category" class="text-xs font-semibold text-emerald-400 tracking-wider uppercase block mb-1">Cricket</span>
                     <h1 id="current-channel-title" class="text-lg font-bold text-white tracking-tight truncate max-w-md">Selecting channel...</h1>
                 </div>
                 
-                <!-- Quick Navigation Buttons -->
                 <div class="flex items-center gap-3">
                     <button id="prev-btn" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 active:scale-95 text-sm font-medium px-5 py-3 rounded-xl transition border border-white/5">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
@@ -87,9 +60,7 @@
             </div>
         </div>
 
-        <!-- Sidebar Channel Navigation List -->
         <div class="glass rounded-2xl flex flex-col h-[500px] lg:h-auto overflow-hidden">
-            <!-- Tabs Header -->
             <div class="flex border-b border-white/5 bg-slate-900/40 p-2 gap-1">
                 <button id="tab-cricket" class="flex-1 py-3 text-center text-sm font-semibold rounded-xl transition-all duration-200 bg-emerald-500 text-slate-950 shadow-md">
                     🏏 Cricket
@@ -99,10 +70,7 @@
                 </button>
             </div>
 
-            <!-- Scrollable Channel Stack -->
-            <div id="channel-container" class="flex-1 overflow-y-auto p-3 space-y-1.5">
-                <!-- Dynamically injected items go here -->
-            </div>
+            <div id="channel-container" class="flex-1 overflow-y-auto p-3 space-y-1.5"></div>
         </div>
 
     </main>
@@ -111,7 +79,6 @@
         &copy; 2026 icf fans Player. Engineered for seamless live broadcasting.
     </footer>
 
-    <!-- Logic Engine handles Fetching, Filtering, Partitioning and Tracking state -->
     <script>
         const PLAYLIST_URL = 'https://raw.githubusercontent.com/satu38434-sudo/satu/refs/heads/main/icf/satu.m3u';
         
@@ -122,11 +89,13 @@
 
         const playerElement = document.getElementById('video-player');
         const loaderElement = document.getElementById('player-loader');
+        const loaderSpinner = document.getElementById('loader-spinner');
+        const loaderText = document.getElementById('loader-text');
+        const retryBtn = document.getElementById('retry-btn');
         const titleElement = document.getElementById('current-channel-title');
         const categoryElement = document.getElementById('current-category');
         const listContainer = document.getElementById('channel-container');
 
-        // Initial setup and event registration
         document.addEventListener('DOMContentLoaded', () => {
             fetchAndParsePlaylist();
             
@@ -134,11 +103,34 @@
             document.getElementById('tab-football').addEventListener('click', () => switchTab('football'));
             document.getElementById('next-btn').addEventListener('click', playNext);
             document.getElementById('prev-btn').addEventListener('click', playPrev);
+            retryBtn.addEventListener('click', () => {
+                playerElement.play().then(() => hideLoader()).catch(err => console.log("Retry failed", err));
+            });
 
-            // Handle video error states
-            playerElement.addEventListener('waiting', () => loaderElement.style.opacity = '1');
-            playerElement.addEventListener('playing', () => loaderElement.style.opacity = '0');
+            playerElement.addEventListener('waiting', () => showLoader("Buffering stream feed..."));
+            playerElement.addEventListener('playing', () => hideLoader());
         });
+
+        function showLoader(msg = "Connecting to source...") {
+            loaderElement.style.opacity = '1';
+            loaderElement.style.pointerEvents = 'auto';
+            loaderSpinner.classList.remove('hidden');
+            loaderText.innerText = msg;
+        }
+
+        function hideLoader() {
+            loaderElement.style.opacity = '0';
+            loaderElement.style.pointerEvents = 'none';
+            retryBtn.classList.add('hidden');
+        }
+
+        function showPlaybackError(msg) {
+            loaderElement.style.opacity = '1';
+            loaderElement.style.pointerEvents = 'auto';
+            loaderSpinner.classList.add('hidden');
+            loaderText.innerText = msg;
+            retryBtn.classList.remove('hidden');
+        }
 
         async function fetchAndParsePlaylist() {
             try {
@@ -147,11 +139,9 @@
                 const m3uRawText = await response.text();
                 
                 processM3UData(m3uRawText);
-                switchTab('cricket'); // Open with Live Cricket by default
+                switchTab('cricket'); 
             } catch (err) {
-                console.error(err);
-                titleElement.innerText = "Error loading playlist streaming data.";
-                loaderElement.querySelector('p').innerText = "Failed to synchronize media stream source.";
+                showPlaybackError("Failed to synchronize media source.");
             }
         }
 
@@ -176,8 +166,6 @@
                     cacheItem.url = line;
                     
                     const marker = (cacheItem.title + " " + cacheItem.group).toLowerCase();
-                    
-                    // Filter: Skip verified offline tags or standard non-sports indicators
                     const isOffline = marker.includes('offline') || marker.includes('down') || marker.includes('test');
                     
                     if (!isOffline) {
@@ -197,7 +185,7 @@
             const targetedArray = playlists[currentTab];
 
             if (targetedArray.length === 0) {
-                listContainer.innerHTML = `<p class="text-sm text-slate-500 p-4 text-center">No active streams found in this segment.</p>`;
+                listContainer.innerHTML = `<p class="text-sm text-slate-500 p-4 text-center">No active streams found.</p>`;
                 return;
             }
 
@@ -210,7 +198,6 @@
                     : 'border-transparent hover:bg-white/5 text-slate-300 hover:text-white'
                 }`;
 
-                // Default dynamic fallback icon if thumbnail asset fails
                 const imgNode = item.logo 
                     ? `<img src="${item.logo}" class="w-10 h-10 rounded-lg object-cover bg-slate-800" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%2364748b\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z\'/></svg>'">`
                     : `<div class="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center text-slate-500 font-bold text-sm uppercase">${item.title.substring(0,2)}</div>`;
@@ -235,7 +222,6 @@
             const currentList = playlists[currentTab];
             if (!currentList || currentList.length === 0) return;
 
-            // Constrain boundaries safely
             if (idx >= currentList.length) idx = 0;
             if (idx < 0) idx = currentList.length - 1;
 
@@ -245,51 +231,58 @@
             titleElement.innerText = channel.title;
             categoryElement.innerText = currentTab;
             
-            // Re-render highlight references inside sidebar list UI
             renderChannelList();
-            loaderElement.style.opacity = '1';
+            showLoader("Connecting to stream...");
 
-            // Clean up old streaming loops to optimize system memory footprint
             if (hlsInstance) {
                 hlsInstance.destroy();
                 hlsInstance = null;
             }
 
-            // HLS Parsing execution engine
+            // Secure Protocol Alert Check
+            if (window.location.protocol === 'https:' && channel.url.startsWith('http:')) {
+                showPlaybackError("Security Block: This link is unsecure (HTTP). Change site to HTTP or update link to HTTPS.");
+                return;
+            }
+
             if (channel.url.includes('.m3u8')) {
                 if (Hls.isSupported()) {
-                    hlsInstance = new Hls({ maxBufferSize: 30 * 1024 * 1024 }); // 30MB buffer headroom
+                    hlsInstance = new Hls({ maxBufferSize: 15 * 1024 * 1024 }); 
                     hlsInstance.loadSource(channel.url);
                     hlsInstance.attachMedia(playerElement);
                     hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-                        playerElement.play().catch(() => console.log("Playback interaction deferred."));
+                        playerElement.play().catch(() => {
+                            showPlaybackError("Autoplay blocked. Tap play button below.");
+                        });
                     });
                     hlsInstance.on(Hls.Events.ERROR, function (event, data) {
                         if (data.fatal) {
                             switch (data.type) {
                                 case Hls.ErrorTypes.NETWORK_ERROR:
-                                    hlsInstance.startLoad();
+                                    showPlaybackError("Network error. The stream server might be down.");
                                     break;
                                 case Hls.ErrorTypes.MEDIA_ERROR:
                                     hlsInstance.recoverMediaError();
                                     break;
                                 default:
-                                    console.error("Unrecoverable internal decoder error.");
+                                    showPlaybackError("Unplayable stream link format.");
                                     break;
                             }
                         }
                     });
                 } else if (playerElement.canPlayType('application/vnd.apple.mpegurl')) {
-                    // Fallback baseline for Native Apple WebKit engine (Safari macOS/iOS)
                     playerElement.src = channel.url;
                     playerElement.addEventListener('canplay', () => {
-                        playerElement.play().catch(() => console.log("Playback interaction deferred."));
+                        playerElement.play().catch(() => {
+                            showPlaybackError("Autoplay blocked. Tap below to play.");
+                        });
                     });
                 }
             } else {
-                // Handling standard fallback mp4 / progressive codecs
                 playerElement.src = channel.url;
-                playerElement.play().catch(() => console.log("Playback interaction deferred."));
+                playerElement.play().catch(() => {
+                    showPlaybackError("Autoplay blocked. Tap below to play.");
+                });
             }
         }
 
@@ -312,13 +305,8 @@
             launchStreamIndex(0);
         }
 
-        function playNext() {
-            launchStreamIndex(currentIdx + 1);
-        }
-
-        function playPrev() {
-            launchStreamIndex(currentIdx - 1);
-        }
+        function playNext() { launchStreamIndex(currentIdx + 1); }
+        function playPrev() { launchStreamIndex(currentIdx - 1); }
     </script>
 </body>
 </html>
