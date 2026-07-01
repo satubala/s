@@ -34,9 +34,9 @@
             <div class="relative aspect-video w-full rounded-2xl overflow-hidden bg-black/60 shadow-2xl border border-white/5 group">
                 <video id="video-player" class="w-full h-full object-contain" controls autoplay muted playsinline></video>
                 
-                <div id="player-loader" class="absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center gap-3 transition-opacity duration-300">
+                <div id="player-loader" class="absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center gap-3 transition-opacity duration-300 px-6 text-center">
                     <div id="loader-spinner" class="w-10 h-10 border-4 border-emerald-400/20 border-t-emerald-400 rounded-full animate-spin"></div>
-                    <p id="loader-text" class="text-sm text-slate-400 tracking-wide font-light">Connecting to source...</p>
+                    <p id="loader-text" class="text-sm text-slate-400 tracking-wide font-light max-w-md">Connecting to source...</p>
                     <button id="retry-btn" class="hidden mt-2 bg-emerald-500 text-slate-950 text-xs font-semibold px-4 py-2 rounded-xl shadow-lg">Tap to Play / Retry</button>
                 </div>
             </div>
@@ -104,7 +104,7 @@
             document.getElementById('next-btn').addEventListener('click', playNext);
             document.getElementById('prev-btn').addEventListener('click', playPrev);
             retryBtn.addEventListener('click', () => {
-                playerElement.play().then(() => hideLoader()).catch(err => console.log("Retry failed", err));
+                playerElement.play().then(() => hideLoader()).catch(err => console.log("Playback forced fail:", err));
             });
 
             playerElement.addEventListener('waiting', () => showLoader("Buffering stream feed..."));
@@ -232,56 +232,56 @@
             categoryElement.innerText = currentTab;
             
             renderChannelList();
-            showLoader("Connecting to stream...");
+            showLoader("Connecting to secure stream wrapper...");
 
             if (hlsInstance) {
                 hlsInstance.destroy();
                 hlsInstance = null;
             }
 
-            // Secure Protocol Alert Check
-            if (window.location.protocol === 'https:' && channel.url.startsWith('http:')) {
-                showPlaybackError("Security Block: This link is unsecure (HTTP). Change site to HTTP or update link to HTTPS.");
-                return;
+            // DYNAMIC FIX: Auto-upgrade HTTP links to HTTPS on a secure site context
+            let targetUrl = channel.url;
+            if (window.location.protocol === 'https:' && targetUrl.startsWith('http:')) {
+                targetUrl = targetUrl.replace('http:', 'https:');
             }
 
-            if (channel.url.includes('.m3u8')) {
+            if (targetUrl.includes('.m3u8')) {
                 if (Hls.isSupported()) {
                     hlsInstance = new Hls({ maxBufferSize: 15 * 1024 * 1024 }); 
-                    hlsInstance.loadSource(channel.url);
+                    hlsInstance.loadSource(targetUrl);
                     hlsInstance.attachMedia(playerElement);
                     hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
                         playerElement.play().catch(() => {
-                            showPlaybackError("Autoplay blocked. Tap play button below.");
+                            showPlaybackError("Autoplay restricted. Tap play button below.");
                         });
                     });
                     hlsInstance.on(Hls.Events.ERROR, function (event, data) {
                         if (data.fatal) {
                             switch (data.type) {
                                 case Hls.ErrorTypes.NETWORK_ERROR:
-                                    showPlaybackError("Network error. The stream server might be down.");
+                                    showPlaybackError("Stream server link offline, or server rejects secure (HTTPS) requests.");
                                     break;
                                 case Hls.ErrorTypes.MEDIA_ERROR:
                                     hlsInstance.recoverMediaError();
                                     break;
                                 default:
-                                    showPlaybackError("Unplayable stream link format.");
+                                    showPlaybackError("Playback data corrupt or unsupported format.");
                                     break;
                             }
                         }
                     });
                 } else if (playerElement.canPlayType('application/vnd.apple.mpegurl')) {
-                    playerElement.src = channel.url;
+                    playerElement.src = targetUrl;
                     playerElement.addEventListener('canplay', () => {
                         playerElement.play().catch(() => {
-                            showPlaybackError("Autoplay blocked. Tap below to play.");
+                            showPlaybackError("Autoplay restricted. Tap below to play.");
                         });
                     });
                 }
             } else {
-                playerElement.src = channel.url;
+                playerElement.src = targetUrl;
                 playerElement.play().catch(() => {
-                    showPlaybackError("Autoplay blocked. Tap below to play.");
+                    showPlaybackError("Autoplay restricted. Tap below to play.");
                 });
             }
         }
