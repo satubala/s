@@ -189,7 +189,6 @@
             letter-spacing: -0.02em;
         }
 
-        /* Fixed empty gap setup */
         .deck-panel {
             display: flex;
             flex-direction: column;
@@ -198,7 +197,7 @@
             gap: 14px;
             background: rgba(0, 0, 0, 0.15);
             overflow: hidden;
-            justify-content: flex-start; 
+            justify-content: flex-start;
         }
 
         @media (min-width: 992px) {
@@ -227,7 +226,7 @@
             width: 100%;
             display: flex;
             align-items: center;
-            flex-shrink: 0; 
+            flex-shrink: 0;
         }
 
         .search-box {
@@ -259,13 +258,15 @@
             background: var(--glass-hover);
         }
 
+        /* Fixed structural sizing context */
         .list-container {
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* Forces vertical block stream orientation */
             gap: 6px;
             overflow-y: auto;
-            flex: 1; 
-            justify-content: flex-start; 
+            flex: 1;
+            justify-content: flex-start;
+            align-items: stretch;  /* Makes row items take full width of side panel */
         }
 
         @media (max-width: 991px) {
@@ -284,11 +285,13 @@
             border-radius: 10px;
             padding: 10px 12px;
             display: flex;
+            flex-direction: row; /* Fixes unexpected vertical height expansion inside list */
             align-items: center;
             gap: 12px;
             cursor: pointer;
             position: relative;
-            flex-shrink: 0; 
+            flex-shrink: 0; /* Prevents item compaction */
+            height: 54px;   /* Exact design constraint for pixel-perfect spacing */
         }
 
         .ch-item:hover { 
@@ -494,11 +497,4 @@
         let coreRegistry = [];
         let activeHls = null;
 
-        const defaultLogo = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239ca3af'><path d='M21 6H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 14H3V8h18v12zM8.5 17l6-5-6-5v10z'/></svg>`;
-
-        function toggleDisclaimer() {
-            document.getElementById('disclaimerAccordion').classList.toggle('open');
-        }
-
-        async function syncServerPlaylist() {
-            try {
+        const defaultLogo = `data:image/svg+xml;utf8,<svg
