@@ -540,13 +540,12 @@
             });
         }
 
-        // Parallelized pool runner preventing sequential network stall
+        // Multi-threaded background runner preventing sequential execution delays
         async function autoCheckLinksHealthParallel() {
             let initialPlayMounted = false;
             const priorityKeywords = ['jamuna', 'dbc news', 'channel i', 'atn news', 'news 24'];
             const totalChannels = coreRegistry.length;
             
-            // 1. Identify primary fallback targets
             const executionOrder = [];
             const targetedSet = new Set();
 
@@ -561,7 +560,6 @@
                 if (!targetedSet.has(i)) executionOrder.push(i);
             }
 
-            // 2. Concurrency Pool Mechanism (Max 4 parallel tasks)
             const maxConcurrency = 4;
             let poolIndex = 0;
 
@@ -584,7 +582,6 @@
                 
             await Promise.all(workers);
 
-            // Absolute baseline fallback rule
             if (!initialPlayMounted && totalChannels > 0) {
                 const absoluteFirstValid = coreRegistry.findIndex(c => !c.isBroken);
                 const ultimateIndex = absoluteFirstValid !== -1 ? absoluteFirstValid : 0;
@@ -612,7 +609,6 @@
                 targetChannel.isBroken = true;
                 badgeElement.className = "status-badge status-broken";
                 
-                // Hide dynamic container row dynamically safely
                 const rowElement = badgeElement.closest('.ch-item');
                 if (rowElement) rowElement.style.display = 'none';
                 return false;
@@ -647,9 +643,8 @@
 
             const playMediaSafe = () => {
                 tvScreen.play().catch(() => {
-                    // Mute and retry if browser rules block sound autoplay rules
                     tvScreen.muted = true;
-                    tvScreen.play().catch(err => console.log("Playback interaction blocked:", err));
+                    tvScreen.play().catch(err => console.log("Autoplay blocked:", err));
                 });
             };
 
@@ -667,7 +662,7 @@
                     if (data.fatal) {
                         switch (data.type) {
                             case Hls.ErrorTypes.NETWORK_ERROR:
-                                activeHls.startLoad(); // attempt automatic recovery
+                                activeHls.startLoad();
                                 break;
                             case Hls.ErrorTypes.MEDIA_ERROR:
                                 activeHls.recoverMediaError();
@@ -686,7 +681,7 @@
             }
         }
 
-        // Search engine optimization keeping state matching cleanly
+        // Search engine optimization mapping visibility arrays accurately
         filterInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
             document.querySelectorAll('.ch-item').forEach(row => {
@@ -700,6 +695,32 @@
                 const matchTitle = channelData ? channelData.name.toLowerCase() : '';
                 row.style.display = matchTitle.includes(query) ? "flex" : "none";
             });
+        });
+
+        // USB Keyboard Microcontroller Core Listener for Channel Switching
+        window.addEventListener('keydown', (event) => {
+            if (document.activeElement === filterInput) return;
+
+            const visibleChannels = Array.from(document.querySelectorAll('.ch-item'))
+                .filter(row => row.style.display !== 'none');
+
+            if (visibleChannels.length === 0) return;
+
+            const currentActiveRow = document.querySelector('.ch-item.active');
+            let currentIndex = visibleChannels.indexOf(currentActiveRow);
+
+            if (event.key === 'ArrowRight' || event.key === 'n') {
+                event.preventDefault();
+                currentIndex = (currentIndex + 1) % visibleChannels.length;
+                visibleChannels[currentIndex].click();
+                visibleChannels[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } 
+            else if (event.key === 'ArrowLeft' || event.key === 'p') {
+                event.preventDefault();
+                currentIndex = (currentIndex - 1 + visibleChannels.length) % visibleChannels.length;
+                visibleChannels[currentIndex].click();
+                visibleChannels[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         });
 
         lucide.createIcons();
