@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Live TV Player</title>
+    <link class="icon" type="image/svg+xml" href="/icon.svg"> 
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> 
+    
+    <style>
+        :root {
+            --bg-main: #060814;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #0f172a, #05070f);
+            --dashboard-bg: rgba(10, 15, 30, 0.7);
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-hover: rgba(255, 255, 255, 0.08);
+            --glass-active: rgba(6, 182, 212, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-cyan: #06b6d4;
+            --accent-red: #ef4444;
+            --text-main: #f3f4f6;
+            --text-dim: #9ca3af;
+            --container-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8);
+        }
+
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease; 
+        }
+
+        .mobile-logo-header {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 16px 16px 0 16px;
+            width: 100%;
+        }
+
+        main { 
+            padding: 32px 24px;
+            max-width: 1540px;
+            width: 100%;
+            margin: 0 auto;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theatre-dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            width: 100%;
+            background: var(--dashboard-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--container-shadow);
+            overflow: hidden;
+        }
+
+        @media (min-width: 992px) {
+            .theatre-dashboard {
+                grid-template-columns: 1fr 380px;
+                height: 680px;
+            }
+        }
+
+        .stage-area {
+            padding: 16px; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Video Container with Overlays */
+        .video-container {
+            width: 100%;
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background: #000000;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Transparent Nav Buttons Overlay */
+        .nav-overlay-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease, background 0.2s ease, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .video-container:hover .nav-overlay-btn {
+            opacity: 1;
+        }
+
+        .nav-overlay-btn:hover {
+            background: rgba(6, 182, 212, 0.4);
+            border-color: var(--accent-cyan);
+            color: #ffffff;
+        }
+
+        .nav-overlay-btn:active {
+            transform: translateY(-50%) scale(0.9);
+        }
+
+        .btn-prev { left: 16px; }
+        .btn-next { right: 16px; }
+
+        .meta-container {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 16px;
+            padding: 4px 8px;
+        }
+
+        .live-tag {
+            background: linear-gradient(135deg, var(--accent-red), #b91c1c);
+            color: #ffffff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .meta-container h1 {
+            font-size: 1.4rem;
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .deck-panel {
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid var(--glass-border);
+            padding: 24px;
+            gap: 16px;
+            background: rgba(5, 8, 20, 0.4);
+            overflow: hidden;
+        }
+
+        @media (min-width: 992px) {
+            .deck-panel {
+                border-top: none;
+                border-left: 1px solid var(--glass-border);
+                height: 100%;
+            }
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-img {
+            height: 32px;
+            width: auto;
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        .search-container .input-icon-wrapper {
+            position: absolute;
+            left: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            pointer-events: none;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+        }
+
+        .list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 4px;
+        }
+
+        @media (max-width: 991px) {
+            .list-container { max-height: 350px; }
+        }
+
+        .list-container::-webkit-scrollbar { width: 6px; }
+        .list-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .list-container::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+        .ch-item {
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .ch-item:hover { 
+            background: var(--glass-hover); 
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .ch-item.active {
+            background: var(--glass-active);
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+
+        .ch-num { 
+            font-size: 0.8rem; 
+            color: var(--text-dim); 
+            font-weight: 600; 
+            width: 24px; 
+        }
+        
+        .ch-item.active .ch-num {
+            color: var(--accent-cyan);
+        }
+
+        .ch-img { 
+            width: 38px; 
+            height: 38px; 
+            object-fit: contain; 
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .ch-title { 
+            font-size: 0.95rem; 
+            font-weight: 500;
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap; 
+            flex: 1; 
+        }
+
+        .status-badge { 
+            position: absolute; 
+            right: 16px; 
+            width: 8px; 
+            height: 8px; 
+            border-radius: 50%; 
+        }
+        .status-checking { background-color: var(--text-dim); }
+        .status-online { background-color: #10b981; box-shadow: 0 0 10px #10b981; }
+        .status-broken { background-color: var(--accent-red); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        footer { 
+            padding: 24px 16px; 
+            margin-top: auto;
+            width: 100%;
+        }
+
+        .disclaimer-accordion {
+            max-width: 720px;
+            margin: 0 auto;
+            background: var(--dashboard-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .accordion-trigger {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            padding: 14px 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .accordion-trigger:hover { color: var(--text-main); }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.25s ease-out;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .accordion-content p {
+            margin: 0;
+            padding: 18px 24px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .disclaimer-accordion.open .accordion-content { max-height: 250px; }
+        .chevron-icon { transition: transform 0.2s ease; }
+        .disclaimer-accordion.open .chevron-icon { transform: rotate(180deg); }
+
+        @media (max-width: 991px) {
+            .mobile-logo-header { display: flex; }
+            .panel-header { display: none; }
+            main { padding: 16px 12px; }
+            .stage-area { padding: 12px; }
+            .deck-panel { padding: 20px 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="mobile-logo-header">
+        <a href="/">
+            <img src="/logo.png" alt="satu.pro.bd" class="header-img">
+        </a>
+    </header>
+
+    <main>
+        <div class="theatre-dashboard">
+            
+            <div class="stage-area">
+                <div class="video-container">
+                    <button class="nav-overlay-btn btn-prev" id="prevBtn" title="Previous Channel">
+                        <i data-lucide="chevron-left"></i>
+                    </button>
+                    <button class="nav-overlay-btn btn-next" id="nextBtn" title="Next Channel">
+                        <i data-lucide="chevron-right"></i>
+                    </button>
+
+                    <video id="tv-screen" controls autoplay playsinline></video>
+                </div>
+                <div class="meta-container">
+                    <span class="live-tag">LIVE</span>
+                    <h1 id="stream-title">Verifying channel...</h1>
+                </div>
+            </div>
+
+            <div class="deck-panel">
+                <div class="panel-header">
+                    <a href="/">
+                        <img src="/logo.png" alt="satu.pro.bd" class="header-img">
+                    </a>
+                </div>
+                
+                <div class="search-container">
+                    <div class="input-icon-wrapper">
+                        <i data-lucide="search" style="width:18px; height:18px;"></i>
+                    </div>
+                    <input type="text" id="filterInput" class="search-box" placeholder="Search channel...">
+                </div>
+                
+                <div class="list-container" id="deckContainer">
+                    <div style="text-align:center; color:var(--text-dim); padding:40px; font-size:0.9rem;">Processing list...</div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="disclaimer-accordion" id="disclaimerAccordion">
+            <button class="accordion-trigger" onclick="toggleDisclaimer()">
+                <span>Legal Disclaimer</span>
+                <i data-lucide="chevron-down" class="chevron-icon" style="width:16px; height:16px;"></i>
+            </button>
+            <div class="accordion-content">
+                <p>
+                    <b>Disclaimer:</b> This website acts solely as a digital index and stream aggregator. All live TV links and M3U playlists displayed here are collected from various public repositories across the internet and GitHub. We do not host, stream, store, or modify any content ourselves. The management of this website shall not be held liable under any circumstances for the legality, copyright conformity, or any other issues pertaining to the linked content. If there are any copyright complaints or statutory conflicts, you are requested to directly contact the original content hosting providers or the respective GitHub repository owners.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const tvScreen = document.getElementById('tv-screen');
+        const deckContainer = document.getElementById('deckContainer');
+        const streamTitle = document.getElementById('stream-title');
+        const filterInput = document.getElementById('filterInput');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        let coreRegistry = [];
+        let activeHls = null;
+        let currentActiveIndex = 0;
+
+        const defaultLogo = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239ca3af'><path d='M21 6H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 14H3V8h18v12zM8.5 17l6-5-6-5v10z'/></svg>`;
+
+        function toggleDisclaimer() {
+            document.getElementById('disclaimerAccordion').classList.toggle('open');
+        }
+
+        async function syncServerPlaylist() {
+            try {
+                // Pointing directly to your new specified M3U target
+                const response = await fetch(`https://www.skym3u.top/geqz.m3u?t=${Date.now()}`);
+                if (!response.ok) throw new Error('Offline');
+                const rawData = await response.text();
+                compileM3URegistry(rawData);
+            } catch (err) {
+                streamTitle.textContent = "Playlist missing";
+                deckContainer.innerHTML = `<div style="text-align:center; padding:30px; color:var(--accent-red);">Playlist file unavailable.</div>`;
+            }
+        }
+
+        function compileM3URegistry(text) {
+            const architecturalLines = text.split('\n');
+            coreRegistry = [];
+            let currentName = '';
+            let currentLogo = '';
+            let rawExtInf = '';
+
+            for (let i = 0; i < architecturalLines.length; i++) {
+                const cleanLine = architecturalLines[i].trim();
+                
+                if (cleanLine.startsWith('#EXTINF:')) {
+                    rawExtInf = cleanLine;
+                    const logoMatch = cleanLine.match(/(?:tvg-logo|logo)=["']([^"']+)["']/i);
+                    currentLogo = logoMatch ? logoMatch[1] : '';
+                    const commaIndex = cleanLine.lastIndexOf(',');
+                    currentName = commaIndex !== -1 ? cleanLine.substring(commaIndex + 1).trim() : 'Unnamed Channel';
+                } else if (cleanLine !== '' && !cleanLine.startsWith('#')) {
+                    const lowerName = currentName.toLowerCase();
+                    const lowerExtInf = rawExtInf.toLowerCase();
+                    
+                    // Comprehensive filter configuration for hiding religious structures
+                    const excludeKeywords = ['islam', 'religious', 'quran', 'soudi', 'saudi', 'iran', 'peace tv', 'welcome to playz tv', 'makkah', 'madinah', 'islamic'];
+                    
+                    const matchesExclude = excludeKeywords.some(keyword => 
+                        lowerName.includes(keyword) || lowerExtInf.includes(keyword)
+                    );
+                    const isWelcomeUrl = cleanLine.includes("playztv.pages.dev");
+                    
+                    if (!matchesExclude && !isWelcomeUrl) {
+                        coreRegistry.push({
+                            name: currentName || `Channel ${coreRegistry.length + 1}`,
+                            url: cleanLine,
+                            logo: currentLogo
+                        });
+                    }
+                    currentName = ''; currentLogo = ''; rawExtInf = '';
+                }
+            }
+
+            if (coreRegistry.length > 0) {
+                // Optional sorting configuration prioritising Bangladeshi content structure
+                coreRegistry.sort((a, b) => {
+                    const isABangla = /[\u0980-\u09FF]/.test(a.name) || /\bbd\b|bangla|bangladesh/i.test(a.name);
+                    const isBBangla = /[\u0980-\u09FF]/.test(b.name) || /\bbd\b|bangla|bangladesh/i.test(b.name);
+                    if (isABangla && !isBBangla) return -1;
+                    if (!isABangla && isBBangla) return 1;
+                    return 0;
+                });
+                buildInterfaceRows(coreRegistry);
+                autoCheckLinksHealth();
+            } else {
+                streamTitle.textContent = "Playlist is empty";
+                deckContainer.innerHTML = `<div style="text-align:center; padding:20px;">No channels found.</div>`;
+            }
+        }
+
+        function buildInterfaceRows(items) {
+            deckContainer.innerHTML = '';
+            items.forEach((item, index) => {
+                const row = document.createElement('div');
+                row.className = 'ch-item';
+                row.setAttribute('data-target', item.name.toLowerCase());
+                row.setAttribute('id', `ch-item-${index}`);
+                
+                const logoSrc = item.logo ? item.logo : defaultLogo;
+                const paddedIndex = String(index + 1).padStart(2, '0');
+
+                row.innerHTML = `
+                    <span class="ch-num">${paddedIndex}</span>
+                    <img class="ch-img" src="${logoSrc}" alt="" onerror="this.src='${defaultLogo}'">
+                    <span class="ch-title">${item.name}</span>
+                    <span class="status-badge status-checking" id="status-${index}"></span>
+                `;
+
+                row.addEventListener('click', () => {
+                    changeActiveChannel(index);
+                });
+                deckContainer.appendChild(row);
+            });
+        }
+
+        function changeActiveChannel(index) {
+            if (index < 0 || index >= coreRegistry.length) return;
+            
+            // Check if current channel is broken, skip if needed during sequential switching
+            const targetRow = document.getElementById(`ch-item-${index}`);
+            if (targetRow && targetRow.classList.contains('is-broken')) {
+                return; 
+            }
+
+            currentActiveIndex = index;
+            document.querySelectorAll('.ch-item').forEach(el => el.classList.remove('active'));
+            
+            if (targetRow) {
+                targetRow.classList.add('active');
+                targetRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            
+            mountLivePlayback(coreRegistry[index].url, coreRegistry[index].name);
+        }
+
+        // Sequential Navigation Control Implementations
+        function switchNext() {
+            let nextIndex = currentActiveIndex;
+            let attempts = 0;
+            do {
+                nextIndex = (nextIndex + 1) % coreRegistry.length;
+                attempts++;
+                const row = document.getElementById(`ch-item-${nextIndex}`);
+                if (row && !row.classList.contains('is-broken')) {
+                    changeActiveChannel(nextIndex);
+                    break;
+                }
+            } while (nextIndex !== currentActiveIndex && attempts < coreRegistry.length);
+        }
+
+        function switchPrev() {
+            let prevIndex = currentActiveIndex;
+            let attempts = 0;
+            do {
+                prevIndex = (prevIndex - 1 + coreRegistry.length) % coreRegistry.length;
+                attempts++;
+                const row = document.getElementById(`ch-item-${prevIndex}`);
+                if (row && !row.classList.contains('is-broken')) {
+                    changeActiveChannel(prevIndex);
+                    break;
+                }
+            } while (prevIndex !== currentActiveIndex && attempts < coreRegistry.length);
+        }
+
+        prevBtn.addEventListener('click', (e) => { e.stopPropagation(); switchPrev(); });
+        nextBtn.addEventListener('click', (e) => { e.stopPropagation(); switchNext(); });
+
+        async function autoCheckLinksHealth() {
+            let initialPlayMounted = false;
+            const priorityKeywords = ['jamuna', 'dbc news', 'channel i', 'atn news', 'news 24', 'somoy'];
+            const checkedIndices = new Set();
+
+            for (const keyword of priorityKeywords) {
+                if (initialPlayMounted) break;
+                const targetIndex = coreRegistry.findIndex(item => item.name.toLowerCase().includes(keyword));
+                if (targetIndex !== -1 && !checkedIndices.has(targetIndex)) {
+                    checkedIndices.add(targetIndex);
+                    const isOnline = await checkSingleChannel(targetIndex);
+                    if (isOnline && !initialPlayMounted) {
+                        changeActiveChannel(targetIndex);
+                        initialPlayMounted = true;
+                    }
+                }
+            }
+
+            for (let i = 0; i < coreRegistry.length; i++) {
+                if (checkedIndices.has(i)) continue;
+                const isOnline = await checkSingleChannel(i);
+                if (!initialPlayMounted && isOnline) {
+                    changeActiveChannel(i);
+                    initialPlayMounted = true;
+                }
+            }
+
+            if (!initialPlayMounted && coreRegistry.length > 0) {
+                changeActiveChannel(0);
+            }
+        }
+
+        async function checkSingleChannel(i) {
+            const targetChannel = coreRegistry[i];
+            const badgeElement = document.getElementById(`status-${i}`);
+            if (!badgeElement) return false;
+            const rowElement = badgeElement.closest('.ch-item');
+
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 4000);
+                const response = await fetch(targetChannel.url, { method: 'GET', signal: controller.signal });
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    badgeElement.className = "status-badge status-online";
+                    return true;
+                } else { throw new Error('Unstreamable'); }
+            } catch (err) {
+                badgeElement.className = "status-badge status-broken";
+                if (rowElement) {
+                    rowElement.classList.add('is-broken');
+                    rowElement.style.display = 'none';
+                }
+                return false;
+            }
+        }
+
+        function mountLivePlayback(url, name) {
+            streamTitle.textContent = name;
+            if (activeHls) activeHls.destroy();
+
+            function markCurrentAsBroken() {
+                streamTitle.textContent = `⚠️ Offline: ${name}`;
+                const badgeElement = document.getElementById(`status-${currentActiveIndex}`);
+                if (badgeElement) {
+                    badgeElement.className = "status-badge status-broken";
+                    const rowElement = badgeElement.closest('.ch-item');
+                    if (rowElement) {
+                        rowElement.classList.add('is-broken');
+                        rowElement.style.display = 'none';
+                    }
+                }
+            }
+
+            if (Hls.isSupported()) {
+                activeHls = new Hls({
+                    manifestLoadingTimeOut: 10000,
+                    maxBufferLength: 10
+                });
+                activeHls.loadSource(url);
+                activeHls.attachMedia(tvScreen);
+                activeHls.on(Hls.Events.MANIFEST_PARSED, () => tvScreen.play().catch(()=>{}));
+                activeHls.on(Hls.Events.ERROR, (event, data) => { if (data.fatal) markCurrentAsBroken(); });
+            } else if (tvScreen.canPlayType('application/vnd.apple.mpegurl')) {
+                tvScreen.src = url;
+                const nativeErrorHandler = () => { markCurrentAsBroken(); tvScreen.removeEventListener('error', nativeErrorHandler); };
+                tvScreen.addEventListener('error', nativeErrorHandler);
+                tvScreen.addEventListener('loadedmetadata', () => { tvScreen.play().catch(()=>{}); tvScreen.removeEventListener('error', nativeErrorHandler); });
+            }
+        }
+
+        filterInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('.ch-item').forEach((row, idx) => {
+                if (row.classList.contains('is-broken')) { row.style.display = "none"; return; }
+                const title = row.getAttribute('data-target');
+                row.style.display = title.includes(query) ? "flex" : "none";
+            });
+        });
+
+        // Add keyboard hotkeys (Left/Right arrows) for navigation shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (document.activeElement === filterInput) return;
+            if (e.key === 'ArrowRight') switchNext();
+            if (e.key === 'ArrowLeft') switchPrev();
+        });
+
+        lucide.createIcons();
+        syncServerPlaylist();
+    </script>
+</body>
+</html>
