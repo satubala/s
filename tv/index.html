@@ -78,7 +78,6 @@
             justify-content: center;
         }
 
-        /* --- Unified Dashboard Panel --- */
         .theatre-dashboard {
             display: grid;
             grid-template-columns: 1fr;
@@ -99,12 +98,12 @@
             }
         }
 
-        /* --- Tight Bezel Video Stage --- */
+    
         .stage-area {
-            padding: 10px; /* Dropped padding to achieve ultra-narrow bezels around the framing */
+            padding: 10px; 
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* Removed center positioning to eliminate whitespace on top */
+            justify-content: flex-start; 
             background: rgba(0, 0, 0, 0.1);
         }
         
@@ -157,7 +156,7 @@
             letter-spacing: -0.02em;
         }
 
-        /* --- Channel Control Panel --- */
+   
         .deck-panel {
             display: flex;
             flex-direction: column;
@@ -224,7 +223,7 @@
             background: var(--glass-hover);
         }
 
-        /* --- Scroll List Container --- */
+    
         .list-container {
             display: flex;
             flex-direction: column;
@@ -386,14 +385,14 @@
 
     <header class="mobile-logo-header">
         <a href="/">
-            <img src="/logo.pngg" alt="satu.pro.bd" class="header-img">
+            <img src="/logo.png" alt="satu.pro.bd" class="header-img">
         </a>
     </header>
 
     <main>
         <div class="theatre-dashboard">
             
-            <!-- Left Stage: Fixed Frame Output Area -->
+            
             <div class="stage-area">
                 <div class="video-container">
                     <video id="tv-screen" controls autoplay playsinline></video>
