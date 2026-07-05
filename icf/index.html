@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Live Cricket</title>
+    <title>Live TV Player</title>
     <link rel="icon" type="image/svg+xml" href="https://satu.pro.bd/icon.svg"> 
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -298,9 +298,8 @@
             height: 7px; 
             border-radius: 50%; 
         }
-        .status-checking { background-color: var(--text-dim); }
-        .status-online { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
-        .status-broken { background-color: var(--accent-red); }
+        .status-ready { background-color: var(--accent-cyan); box-shadow: 0 0 6px var(--accent-cyan); }
+        .status-playing { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
 
         @keyframes pulse {
             0%, 100% { opacity: 0.6; }
@@ -395,10 +394,11 @@
                 </div>
                 <div class="meta-container">
                     <span class="live-tag">LIVE</span>
-                    <h1 id="stream-title">Verifying stream...</h1>
+                    <h1 id="stream-title">Select a stream</h1>
                 </div>
             </div>
 
+            <!-- Right Stage: Panel Management Core -->
             <div class="deck-panel">
                 <div class="panel-header">
                     <a href="/">
@@ -452,7 +452,6 @@
 
         async function syncServerPlaylist() {
             try {
-                // Modified to directly grab your new Crichd / Special Live Events repository source
                 const response = await fetch(`https://raw.githubusercontent.com/srhady/crichd-speical-live-event/main/playlist.m3u?t=${Date.now()}`);
                 if (!response.ok) throw new Error('Offline');
                 const rawData = await response.text();
@@ -479,7 +478,6 @@
                     const commaIndex = cleanLine.lastIndexOf(',');
                     currentName = commaIndex !== -1 ? cleanLine.substring(commaIndex + 1).trim() : 'Unnamed Stream';
                 } else if (cleanLine !== '' && !cleanLine.startsWith('#')) {
-                    // Optimized layout parser for high performance cross-origin live sports indexes
                     coreRegistry.push({
                         name: currentName || `Event Channel ${coreRegistry.length + 1}`,
                         url: cleanLine,
@@ -490,17 +488,9 @@
             }
 
             if (coreRegistry.length > 0) {
-                // Sports prioritization (keeps mainstream channels like Sky Sports, PTv, Willow or T-Sports at top if they exist)
-                coreRegistry.sort((a, b) => {
-                    const sportsKeywords = /\b(sky|willow|star|ptv|t-sports|sony|cricket|football|live|gazi|gtv)\b/i;
-                    const isASports = sportsKeywords.test(a.name);
-                    const isBSports = sportsKeywords.test(b.name);
-                    if (isASports && !isBSports) return -1;
-                    if (!isASports && isBSports) return 1;
-                    return 0;
-                });
                 buildInterfaceRows(coreRegistry);
-                autoCheckLinksHealth();
+                // Load the absolute first channel right out of the gate safely
+                mountLivePlayback(coreRegistry[0].url, coreRegistry[0].name, 0);
             } else {
                 streamTitle.textContent = "Playlist is empty";
                 deckContainer.innerHTML = `<div style="text-align:center; padding:20px;">No events active.</div>`;
@@ -521,125 +511,52 @@
                     <span class="ch-num">${paddedIndex}</span>
                     <img class="ch-img" src="${logoSrc}" alt="" onerror="this.src='${defaultLogo}'">
                     <span class="ch-title">${item.name}</span>
-                    <span class="status-badge status-checking" id="status-${index}"></span>
+                    <span class="status-badge status-ready" id="status-${index}"></span>
                 `;
 
                 row.addEventListener('click', () => {
-                    document.querySelectorAll('.ch-item').forEach(el => el.classList.remove('active'));
-                    row.classList.add('active');
-                    mountLivePlayback(item.url, item.name);
+                    mountLivePlayback(item.url, item.name, index);
                 });
                 deckContainer.appendChild(row);
             });
         }
 
-        async function autoCheckLinksHealth() {
-            let initialPlayMounted = false;
-            const checkedIndices = new Set();
-
-            // Run priority sequence for the first 3 elements for instant screen rendering
-            for (let i = 0; i < Math.min(3, coreRegistry.length); i++) {
-                if (initialPlayMounted) break;
-                checkedIndices.add(i);
-                const isOnline = await checkSingleChannel(i);
-                if (isOnline && !initialPlayMounted) {
-                    mountLivePlayback(coreRegistry[i].url, coreRegistry[i].name);
-                    setActiveRow(i);
-                    initialPlayMounted = true;
-                }
-            }
-
-            // Async parsing of health nodes for remaining playlist items
-            for (let i = 0; i < coreRegistry.length; i++) {
-                if (checkedIndices.has(i)) continue;
-                const isOnline = await checkSingleChannel(i);
-                if (!initialPlayMounted && isOnline) {
-                    mountLivePlayback(coreRegistry[i].url, coreRegistry[i].name);
-                    setActiveRow(i);
-                    initialPlayMounted = true;
-                }
-            }
-
-            if (!initialPlayMounted && coreRegistry.length > 0) {
-                mountLivePlayback(coreRegistry[0].url, coreRegistry[0].name);
-                setActiveRow(0);
-            }
-        }
-
-        async function checkSingleChannel(i) {
-            const targetChannel = coreRegistry[i];
-            const badgeElement = document.getElementById(`status-${i}`);
-            if (!badgeElement) return false;
-            const rowElement = badgeElement.closest('.ch-item');
-
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 4000);
-                const response = await fetch(targetChannel.url, { method: 'GET', signal: controller.signal });
-                clearTimeout(timeoutId);
-                
-                if (response.ok) {
-                    badgeElement.className = "status-badge status-online";
-                    return true;
-                } else { throw new Error('Unstreamable'); }
-            } catch (err) {
-                badgeElement.className = "status-badge status-broken";
-                if (rowElement) {
-                    rowElement.classList.add('is-broken');
-                    rowElement.style.display = 'none';
-                }
-                return false;
-            }
-        }
-
-        function setActiveRow(index) {
-            document.querySelectorAll('.ch-item').forEach(el => el.classList.remove('active'));
-            const rows = document.querySelectorAll('.ch-item');
-            if (rows[index]) rows[index].classList.add('active');
-        }
-
-        function mountLivePlayback(url, name) {
+        function mountLivePlayback(url, name, index) {
             streamTitle.textContent = name;
             if (activeHls) activeHls.destroy();
 
-            const currentIndex = coreRegistry.findIndex(item => item.url === url);
+            // Handle active/playing row badge indicators safely without hiding them
+            document.querySelectorAll('.ch-item').forEach((el, idx) => {
+                el.classList.remove('active');
+                const b = document.getElementById(`status-${idx}`);
+                if (b) b.className = "status-badge status-ready";
+            });
 
-            function markCurrentAsBroken() {
-                streamTitle.textContent = `⚠️ Feed Offline: ${name}`;
-                if (currentIndex !== -1) {
-                    const badgeElement = document.getElementById(`status-${currentIndex}`);
-                    if (badgeElement) {
-                        badgeElement.className = "status-badge status-broken";
-                        const rowElement = badgeElement.closest('.ch-item');
-                        if (rowElement) {
-                            rowElement.classList.add('is-broken');
-                            rowElement.style.display = 'none';
-                        }
-                    }
-                }
-            }
+            const rows = document.querySelectorAll('.ch-item');
+            if (rows[index]) rows[index].classList.add('active');
+            const targetBadge = document.getElementById(`status-${index}`);
+            if (targetBadge) targetBadge.className = "status-badge status-playing";
 
             if (Hls.isSupported()) {
                 activeHls = new Hls({
                     maxMaxBufferLength: 10,
-                    liveSyncDurationCount: 3
+                    liveSyncDurationCount: 3,
+                    enableWorker: true
                 });
                 activeHls.loadSource(url);
                 activeHls.attachMedia(tvScreen);
-                activeHls.on(Hls.Events.MANIFEST_PARSED, () => tvScreen.play());
-                activeHls.on(Hls.Events.ERROR, (event, data) => { if (data.fatal) markCurrentAsBroken(); });
+                activeHls.on(Hls.Events.MANIFEST_PARSED, () => tvScreen.play().catch(()=>{}));
             } else if (tvScreen.canPlayType('application/vnd.apple.mpegurl')) {
                 tvScreen.src = url;
-                const nativeErrorHandler = () => { markCurrentAsBroken(); tvScreen.removeEventListener('error', nativeErrorHandler); };
-                tvScreen.addEventListener('error', nativeErrorHandler);
-                tvScreen.addEventListener('loadedmetadata', () => { tvScreen.play(); tvScreen.removeEventListener('error', nativeErrorHandler); });
+                tvScreen.addEventListener('loadedmetadata', () => {
+                    tvScreen.play().catch(()=>{});
+                });
             }
         }
 
         filterInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
             document.querySelectorAll('.ch-item').forEach(row => {
-                if (row.classList.contains('is-broken')) { row.style.display = "none"; return; }
                 const title = row.getAttribute('data-target');
                 row.style.display = title.includes(query) ? "flex" : "none";
             });
