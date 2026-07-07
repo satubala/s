@@ -3,101 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>icf - IPTV Player</title>
-    <!-- Tailwind CSS for Beautiful Minimal Design -->
+    <title>icf - Premium IPTV Player</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- HLS.js for M3U8 Streaming Support -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            background-color: #0b0f19;
+            background-color: #030712;
             color: #f3f4f6;
             font-family: system-ui, -apple-system, sans-serif;
         }
-        /* Custom scrollbar for channel list */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+        
+        /* Ambient Glow behind player */
+        .ambient-glow {
+            position: absolute;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, rgba(0,0,0,0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(40px);
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #111827;
+        /* Live Pulse Animation */
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            animation: pulse 1.5s infinite;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #374151;
-            border-radius: 3px;
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden">
+<body class="h-screen flex flex-col overflow-hidden antialiased">
 
-    <!-- Header / Navbar -->
-    <header class="bg-[#111827] border-b border-gray-800 px-6 py-4 flex justify-between items-center z-10">
-        <div class="flex items-center space-x-3">
-            <span class="text-2xl font-black tracking-wider text-red-500 uppercase">icf</span>
-            <span class="text-xs text-gray-500 border border-gray-700 px-2 py-0.5 rounded-md">satu.pro.bd</span>
-        </div>
+    <header class="bg-gray-950/40 backdrop-blur-xl border-b border-white/5 px-6 py-4 flex justify-between items-center z-30">
         <div class="flex items-center space-x-4">
-            <span id="current-channel-title" class="text-sm font-medium text-gray-300 truncate max-w-[180px] sm:max-w-xs">লোডিং...</span>
-            <!-- Channel List Toggle Button (অনলাইন চ্যানেল হাইড রাখার জন্য) -->
-            <button id="toggle-list-btn" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm transition flex items-center space-x-2">
-                <i class="fa-solid fa-tv"></i>
-                <span>চ্যানেল লিস্ট</span>
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500 uppercase">icf</span>
+                <span class="text-[10px] text-gray-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded-md tracking-wider">satu.pro.bd</span>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+            <div class="hidden sm:flex items-center space-x-2 bg-white/5 border border-white/5 px-3 py-1.5 rounded-full text-xs text-gray-400">
+                <i class="fa-solid fa-circle-info text-red-500/80"></i>
+                <span>শর্টকাট: Space (প্লে/পজ) | Arrows (চ্যানেল পরিবর্তন)</span>
+            </div>
+            
+            <button id="toggle-list-btn" class="bg-white/10 hover:bg-white/15 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 flex items-center space-x-2 border border-white/10 shadow-lg backdrop-blur-md">
+                <i class="fa-solid fa-sliders text-xs text-red-400"></i>
+                <span>চ্যানেল প্যানেল</span>
             </button>
         </div>
     </header>
 
-    <!-- Main Content Area -->
     <div class="flex-1 flex relative overflow-hidden">
         
-        <!-- Video Player Section -->
-        <div class="flex-1 bg-black flex flex-col justify-center items-center relative group">
-            <video id="video" class="w-full h-full max-h-screen object-contain" autoplay muted playsinline></video>
-            
-            <!-- Autoplay Overlay (If browser blocks muted autoplay audio) -->
-            <div id="volume-notice" class="absolute top-4 left-4 bg-black/70 backdrop-blur-md text-xs text-yellow-400 px-3 py-1.5 rounded-md pointer-events-none hidden">
-                <i class="fa-solid fa-volume-xmark mr-1"></i> ব্রাউজার সুরক্ষার কারণে সাউন্ড মিউট করা, আনমিউট করুন।
-            </div>
+        <div class="ambient-glow" id="ambient-layer"></div>
+        
+        <div class="flex-1 flex flex-col justify-center items-center p-4 sm:p-8 z-10 relative group">
+            <div class="w-full h-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/5 relative flex justify-center items-center group/player">
+                
+                <video id="video" class="w-full h-full object-contain" autoplay muted playsinline></video>
+                
+                <div id="video-error-box" class="absolute inset-0 bg-gray-950/95 z-30 flex flex-col items-center justify-center p-6 text-center hidden backdrop-blur-sm">
+                    <div class="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-4">
+                        <i class="fa-solid fa-triangle-exclamation text-red-500 text-2xl animate-bounce"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-200 mb-2" id="error-title">লিংক লোড করা যাচ্ছে না</h3>
+                    <p id="error-message-text" class="text-sm text-gray-400 max-w-md mb-6 leading-relaxed">CORS ব্লকিং পলিসি অথবা লিংকটি সাময়িকভাবে ডাউন থাকার কারণে ব্রাউজার এটি প্লে করতে পারছে না।</p>
+                    <div class="flex space-x-3">
+                        <button onclick="retryCurrentChannel()" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition shadow-lg shadow-red-500/20">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> আবার চেষ্টা করুন
+                        </button>
+                        <button onclick="nextBtn.click()" class="bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-semibold px-5 py-2.5 rounded-xl transition border border-white/10">
+                            পরের চ্যানেল <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
 
-            <!-- Custom Minimal Controls Overlay -->
-            <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-between items-center">
-                <div class="flex items-center space-x-4">
-                    <!-- Prev Button -->
-                    <button id="prev-btn" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition" title="আগের চ্যানেল">
-                        <i class="fa-solid fa-backward"></i>
-                    </button>
-                    <!-- Play/Pause Button -->
-                    <button id="play-btn" class="w-12 h-12 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition" title="প্লে/পজ">
-                        <i class="fa-solid fa-pause text-lg"></i>
-                    </button>
-                    <!-- Next Button -->
-                    <button id="next-btn" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition" title="পরের চ্যানেল">
-                        <i class="fa-solid fa-forward"></i>
-                    </button>
+                <div id="volume-notice" class="absolute top-4 left-4 bg-gray-900/80 backdrop-blur-xl border border-white/10 text-xs text-amber-400 px-4 py-2 rounded-xl pointer-events-none hidden z-20 shadow-xl flex items-center space-x-2">
+                    <i class="fa-solid fa-volume-xmark text-sm animate-pulse"></i>
+                    <span>সাউন্ড মিউট করা, আনমিউট করতে প্লেয়ারে ক্লিক করুন।</span>
                 </div>
                 
-                <div class="flex items-center space-x-4">
-                    <!-- Fullscreen Button -->
-                    <button id="fullscreen-btn" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition">
-                        <i class="fa-solid fa-expand"></i>
-                    </button>
+                <div class="absolute top-4 right-4 bg-black/50 backdrop-blur-md border border-white/5 text-xs text-gray-300 px-3 py-1.5 rounded-lg z-20 pointer-events-none opacity-0 group-hover/player:opacity-100 transition-opacity duration-300">
+                    <span id="player-channel-name">লোডিং...</span>
                 </div>
+
+                <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/95 via-black/50 to-transparent opacity-0 group-hover/player:opacity-100 transition-opacity duration-300 flex justify-between items-center z-20">
+                    <div class="flex items-center space-x-3">
+                        <button id="prev-btn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-white flex items-center justify-center transition-all" title="আগের চ্যানেল (Left Arrow)">
+                            <i class="fa-solid fa-backward text-sm"></i>
+                        </button>
+                        <button id="play-btn" class="w-12 h-12 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 hover:scale-105 text-white flex items-center justify-center transition-all shadow-lg shadow-red-500/30" title="প্লে/পজ (Space)">
+                            <i class="fa-solid fa-pause text-base"></i>
+                        </button>
+                        <button id="next-btn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-white flex items-center justify-center transition-all" title="পরের চ্যানেল (Right Arrow)">
+                            <i class="fa-solid fa-forward text-sm"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <button id="pip-btn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-white flex items-center justify-center transition-all" title="পিকচার-ইন-পিকচার মোড">
+                            <i class="fa-solid fa-images text-sm"></i>
+                        </button>
+                        <button id="fullscreen-btn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-white flex items-center justify-center transition-all" title="ফুলস্ক্রিন">
+                            <i class="fa-solid fa-expand text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        <!-- Sidebar Channel List (অনলাইন চ্যানেল হাইড থাকবে, বাটনে চাপ দিলে আসবে) -->
-        <div id="channel-sidebar" class="absolute right-0 top-0 bottom-0 w-80 bg-[#111827] border-l border-gray-800 transform translate-x-full transition-transform duration-300 ease-in-out z-20 flex flex-col">
-            <div class="p-4 border-b border-gray-800 flex justify-between items-center">
-                <h2 class="font-semibold text-gray-200"><i class="fa-solid fa-list text-red-500 mr-2"></i>চ্যানেল সমূহ</h2>
-                <button id="close-sidebar" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <div id="channel-sidebar" class="absolute right-0 top-0 bottom-0 w-80 sm:w-85 bg-gray-950/60 backdrop-blur-2xl border-l border-white/5 transform translate-x-full transition-all duration-300 ease-in-out z-40 flex flex-col shadow-2xl">
+            
+            <div class="p-4 border-b border-white/5 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-play text-xs text-red-500"></i>
+                    <h2 class="font-bold text-gray-200 tracking-wide text-sm">চ্যানেল স্টেশন</h2>
+                </div>
+                <button id="close-sidebar" class="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition"><i class="fa-solid fa-xmark text-sm"></i></button>
             </div>
-            <!-- Search bar for channels -->
-            <div class="p-3 border-b border-gray-800/50">
-                <input type="text" id="search-input" placeholder="চ্যানেল খুঁজুন..." class="w-full bg-[#1f2937] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-red-500">
+            
+            <div class="p-4 border-b border-white/5 space-y-3 bg-black/20">
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-500 text-xs"></i>
+                    <input type="text" id="search-input" placeholder="চ্যানেলের নাম খুঁজুন..." class="w-full bg-white/5 border border-white/5 rounded-xl pl-9 pr-4 py-2 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-red-500/50 focus:bg-white/10 transition-all">
+                </div>
+                
+                <div class="flex space-x-1 overflow-x-auto custom-scrollbar pb-1 text-[11px] font-medium">
+                    <button onclick="filterCategory('all')" id="tab-all" class="px-3 py-1.5 rounded-lg transition shrink-0 bg-red-500/20 text-red-400 border border-red-500/30">সব</button>
+                    <button onclick="filterCategory('sports')" id="tab-sports" class="px-3 py-1.5 rounded-lg transition shrink-0 bg-white/5 text-gray-400 hover:text-gray-200">খেলাধুলা</button>
+                    <button onclick="filterCategory('news')" id="tab-news" class="px-3 py-1.5 rounded-lg transition shrink-0 bg-white/5 text-gray-400 hover:text-gray-200">খবর</button>
+                    <button onclick="filterCategory('ent')" id="tab-ent" class="px-3 py-1.5 rounded-lg transition shrink-0 bg-white/5 text-gray-400 hover:text-gray-200">বিনোদন</button>
+                </div>
             </div>
-            <!-- Dynamic Channel Container -->
-            <div id="channel-list-container" class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
-                <div class="text-center py-8 text-gray-500 text-sm">চ্যানেল লোড হচ্ছে...</div>
+
+            <div id="channel-list-container" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-1 bg-black/10">
+                <div class="text-center py-12 text-gray-500 text-xs flex flex-col items-center justify-center space-y-3">
+                    <i class="fa-solid fa-circle-notch class text-red-500 text-xl animate-spin"></i>
+                    <span>চ্যানেল টিউন করা হচ্ছে...</span>
+                </div>
+            </div>
+            
+            <div class="p-3 bg-black/40 border-t border-white/5 text-[11px] text-gray-500 flex justify-between items-center">
+                <span>মোট চ্যানেল: <span id="total-channels-count" class="text-gray-300 font-bold">০</span></span>
+                <span id="current-category-label" class="uppercase tracking-wider text-red-400 text-[9px] bg-red-500/10 px-2 py-0.5 rounded">ক্যাটাগরি: সব</span>
             </div>
         </div>
 
@@ -111,49 +178,60 @@
         const sidebar = document.getElementById('channel-sidebar');
         const toggleListBtn = document.getElementById('toggle-list-btn');
         const closeSidebar = document.getElementById('close-sidebar');
-        const currentChannelTitle = document.getElementById('current-channel-title');
+        const playerChannelName = document.getElementById('player-channel-name');
         const searchInput = document.getElementById('search-input');
         const volumeNotice = document.getElementById('volume-notice');
+        const errorBox = document.getElementById('video-error-box');
+        const errorText = document.getElementById('error-message-text');
+        const totalCountSpan = document.getElementById('total-channels-count');
+        const categoryLabel = document.getElementById('current-category-label');
 
-        // Controls
         const playBtn = document.getElementById('play-btn');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
+        const pipBtn = document.getElementById('pip-btn');
         const fullscreenBtn = document.getElementById('fullscreen-btn');
 
         let channels = [];
+        let currentFilteredChannels = [];
         let currentIndex = 0;
         let hls = null;
+        let currentCategory = 'all';
 
-        // Initialize App
+        // Auto-categorization lists
+        const keywordsSports = ['cricket', 't sports', 'tsports', 'gtv', 'gazi', 'sports', 'ক্রিকেট', 'খেলা', 'star sports', 'sony', 'ten', 'ptv sports'];
+        const keywordsNews = ['news', 'খবর', 'সময়', 'somoy', 'independent', 'jamuna', 'ekattor', 'atn news', 'al jazeera', 'bbc', 'cnn'];
+        const keywordsEnt = ['zee', 'star plus', 'sony tv', 'colors', 'bangla', 'cinema', 'movie', 'entertainment', 'jalsha', '戲劇'];
+
         async function init() {
             setupEventListeners();
             await fetchAndParsePlaylist();
+            // Hide sidebar by default for minimal online channel view
+            setTimeout(() => toggleSidebar(false), 300); 
         }
 
-        // Fetch and Parse M3U8
         async function fetchAndParsePlaylist() {
             try {
                 const response = await fetch(PLAYLIST_URL);
-                if (!response.ok) throw new Error('Network response error');
+                if (!response.ok) throw new Error('প্লেলিস্ট ফাইল ডাউনলোড ব্যর্থ হয়েছে।');
                 const text = await response.text();
                 
                 channels = parseM3U(text);
-                channels = prioritizeCricket(channels); // ক্রিকেট চ্যানেল আগে নিয়ে আসা
+                channels = prioritizeCricket(channels);
+                currentFilteredChannels = [...channels];
+                totalCountSpan.textContent = channels.length;
 
                 if (channels.length > 0) {
-                    renderChannels(channels);
+                    renderChannels(currentFilteredChannels);
                     playChannel(0);
                 } else {
-                    channelListContainer.innerHTML = `<div class="text-center py-8 text-red-400 text-sm">কোনো চ্যানেল পাওয়া যায়নি।</div>`;
+                    channelListContainer.innerHTML = `<div class="text-center py-12 text-red-400 text-xs">কোনো চ্যানেল পাওয়া যায়নি।</div>`;
                 }
             } catch (error) {
-                console.error(error);
-                channelListContainer.innerHTML = `<div class="text-center py-8 text-red-400 text-sm">প্লেলিস্ট লোড করতে ব্যর্থ হয়েছে।</div>`;
+                channelListContainer.innerHTML = `<div class="text-center py-12 text-red-400 text-xs">প্লেলিস্ট রিড করতে সমস্যা হয়েছে।</div>`;
             }
         }
 
-        // Basic M3U Parser
         function parseM3U(data) {
             const lines = data.split('\n');
             const result = [];
@@ -162,15 +240,18 @@
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
                 if (line.startsWith('#EXTINF:')) {
-                    // Extract channel name
                     const nameParts = line.split(',');
                     const name = nameParts[nameParts.length - 1].trim();
-                    
-                    // Extract logo if exists
                     const logoMatch = line.match(/tvg-logo="([^"]+)"/);
                     const logo = logoMatch ? logoMatch[1] : '';
+                    currentItem = { name, logo, url: '', category: 'other' };
+                    
+                    // Assign auto category
+                    const lowerName = name.toLowerCase();
+                    if (keywordsSports.some(k => lowerName.includes(k))) currentItem.category = 'sports';
+                    else if (keywordsNews.some(k => lowerName.includes(k))) currentItem.category = 'news';
+                    else if (keywordsEnt.some(k => lowerName.includes(k))) currentItem.category = 'ent';
 
-                    currentItem = { name, logo, url: '' };
                 } else if (line && !line.startsWith('#')) {
                     if (currentItem) {
                         currentItem.url = line;
@@ -182,189 +263,34 @@
             return result;
         }
 
-        // Prioritize Cricket/Sports Channels
-        function prioritizeCricket(channelList) {
-            const cricketKeywords = ['cricket', 't sports', 'tsports', 'gtv', 'gazi', 'sports', 'ক্রিকেট', 'খেলা', 'star sports', 'sony'];
-            const cricketChannels = [];
-            const otherChannels = [];
-
-            channelList.forEach(channel => {
-                const nameLower = channel.name.toLowerCase();
-                const isCricket = cricketKeywords.some(keyword => nameLower.includes(keyword));
-                if (isCricket) {
-                    cricketChannels.push(channel);
-                } else {
-                    otherChannels.push(channel);
-                }
-            });
-
-            return [...cricketChannels, ...otherChannels];
+        function prioritizeCricket(list) {
+            const sports = list.filter(c => c.category === 'sports');
+            const others = list.filter(c => c.category !== 'sports');
+            return [...sports, ...others];
         }
 
-        // Render Channel List in Sidebar
         function renderChannels(listToRender) {
             channelListContainer.innerHTML = '';
+            if(listToRender.length === 0) {
+                channelListContainer.innerHTML = `<div class="text-center py-12 text-gray-500 text-xs">কোনো চ্যানেল মেলেনি</div>`;
+                return;
+            }
+
             listToRender.forEach((channel) => {
-                // Find actual index from master list
-                const actualIndex = channels.findIndex(c => c.url === channel.url);
-                
+                const masterIndex = channels.findIndex(c => c.url === channel.url);
+                const isSelected = masterIndex === currentIndex;
+
                 const item = document.createElement('button');
-                item.className = `w-full text-left p-3 rounded-lg flex items-center space-x-3 transition group ${actualIndex === currentIndex ? 'bg-red-500/20 border border-red-500/40 text-white' : 'hover:bg-gray-800 text-gray-400 hover:text-gray-200'}`;
+                item.className = `w-full text-left p-2.5 rounded-xl flex items-center space-x-3 transition-all duration-200 border group ${isSelected ? 'bg-gradient-to-r from-red-500/10 to-orange-500/5 border-red-500/30 text-white shadow-md' : 'bg-transparent border-transparent text-gray-400 hover:bg-white/5 hover:text-gray-200'}`;
+                
                 item.onclick = () => {
-                    playChannel(actualIndex);
-                    // Mobile optimization: close sidebar on click
+                    playChannel(masterIndex);
                     if (window.innerWidth < 768) toggleSidebar(false);
                 };
 
-                const iconWrapper = document.createElement('div');
-                iconWrapper.className = `w-9 h-9 rounded-md bg-gray-800 flex items-center justify-center overflow-hidden shrink-0 group-hover:bg-gray-700 ${actualIndex === currentIndex ? 'bg-red-500/30' : ''}`;
+                // Channel Logo / Icon
+                const logoBox = document.createElement('div');
+                logoBox.className = `w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden shrink-0 border border-white/5 group-hover:border-white/10 ${isSelected ? 'border-red-500/20 bg-red-500/10' : ''}`;
                 
                 if (channel.logo) {
-                    iconWrapper.innerHTML = `<img src="${channel.logo}" class="w-full h-full object-cover" onerror="this.innerHTML='<i class=\'fa-solid font-bold text-xs text-red-500\'>TV</i>'">`;
-                } else {
-                    iconWrapper.innerHTML = `<i class="fa-solid fa-circle-play ${actualIndex === currentIndex ? 'text-red-500' : 'text-gray-500'} text-sm"></i>`;
-                }
-
-                const nameSpan = document.createElement('span');
-                nameSpan.className = 'text-sm font-medium truncate flex-1';
-                nameSpan.textContent = channel.name;
-
-                item.appendChild(iconWrapper);
-                item.appendChild(nameSpan);
-                channelListContainer.appendChild(item);
-            });
-        }
-
-        // Play Channel Stream
-        function playChannel(index) {
-            if (index < 0 || index >= channels.length) return;
-            currentIndex = index;
-            const channel = channels[currentIndex];
-
-            currentChannelTitle.textContent = channel.name;
-            updateActiveChannelUI();
-
-            // Handle HLS Stream
-            if (Hls.isSupported()) {
-                if (hls) hls.destroy();
-                hls = new Hls({
-                    maxSubtitleBufferSize: 0
-                });
-                hls.loadSource(channel.url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play().catch(() => {
-                        // Show notice if browser blocks auto-play audio
-                        volumeNotice.classList.remove('hidden');
-                    });
-                });
-                hls.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                        switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                hls.startLoad();
-                                break;
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                hls.recoverMediaError();
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // For Safari
-                video.src = channel.url;
-                video.addEventListener('loadedmetadata', () => {
-                    video.play().catch(() => {
-                        volumeNotice.classList.remove('hidden');
-                    });
-                });
-            }
-        }
-
-        // Update active class in list UI
-        function updateActiveChannelUI() {
-            const items = channelListContainer.querySelectorAll('button');
-            // Re-render only if search is not active to avoid layout break
-            if (!searchInput.value) {
-                renderChannels(channels);
-            }
-        }
-
-        // Toggle Sidebar Navigation
-        function toggleSidebar(show) {
-            if (show) {
-                sidebar.classList.remove('translate-x-full');
-            } else {
-                sidebar.classList.add('translate-x-full');
-            }
-        }
-
-        // Event Listeners setup
-        function setupEventListeners() {
-            toggleListBtn.onclick = () => {
-                const isHidden = sidebar.classList.contains('translate-x-full');
-                toggleSidebar(isHidden);
-            };
-            closeSidebar.onclick = () => toggleSidebar(false);
-
-            // Controls Events
-            playBtn.onclick = () => {
-                if (video.paused) {
-                    video.play();
-                    playBtn.innerHTML = '<i class="fa-solid fa-pause text-lg"></i>';
-                } else {
-                    video.pause();
-                    playBtn.innerHTML = '<i class="fa-solid fa-play text-lg pl-0.5"></i>';
-                }
-            };
-
-            video.onplay = () => playBtn.innerHTML = '<i class="fa-solid fa-pause text-lg"></i>';
-            video.onpause = () => playBtn.innerHTML = '<i class="fa-solid fa-play text-lg pl-0.5"></i>';
-
-            // Next / Prev Actions
-            nextBtn.onclick = () => {
-                let nextIdx = currentIndex + 1;
-                if (nextIdx >= channels.length) nextIdx = 0;
-                playChannel(nextIdx);
-            };
-
-            prevBtn.onclick = () => {
-                let prevIdx = currentIndex - 1;
-                if (prevIdx < 0) prevIdx = channels.length - 1;
-                playChannel(prevIdx);
-            };
-
-            // Fullscreen Toggle
-            fullscreenBtn.onclick = () => {
-                if (!document.fullscreenElement) {
-                    video.parentElement.requestFullscreen().catch(err => console.error(err));
-                    fullscreenBtn.innerHTML = '<i class="fa-solid fa-compress"></i>';
-                } else {
-                    document.exitFullscreen();
-                    fullscreenBtn.innerHTML = '<i class="fa-solid fa-expand"></i>';
-                }
-            };
-
-            // Search logic
-            searchInput.oninput = (e) => {
-                const query = e.target.value.toLowerCase();
-                const filtered = channels.filter(c => c.name.toLowerCase().includes(query));
-                renderChannels(filtered);
-            };
-
-            // Clear volume notice on user interaction with video
-            video.onclick = () => {
-                if (video.muted) {
-                    video.muted = false;
-                    volumeNotice.classList.add('hidden');
-                }
-            };
-        }
-
-        // Start App on page load
-        window.onload = init;
-    </script>
-</body>
-</html>
+                    logoBox.innerHTML = `<img src="${channel.logo}" class="w-full h-full object-cover" onerror="this.innerHTML='<i class=\'fa-solid fa
