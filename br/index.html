@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student & Parent NID Scanner</title>
+
+  <!-- Tesseract.js for OCR -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <!-- jsPDF & AutoTable for PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #0f172a; color: #f8fafc; padding: 20px 12px; display: flex; justify-content: center; min-height: 100vh; }
+    .main-container { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 20px; }
+    header { text-align: center; }
+    h1 { font-size: 22px; color: #34d399; margin-bottom: 4px; }
+    p.subtitle { font-size: 13px; color: #94a3b8; }
+
+    .grid-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    @media (min-width: 768px) { .grid-layout { grid-template-columns: 1fr 1fr; } }
+
+    .card { background-color: #1e293b; padding: 16px; border-radius: 12px; border: 1px solid #334155; }
+    .card-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+
+    /* Mode Buttons */
+    .scan-selector { display: flex; gap: 8px; margin-bottom: 12px; }
+    .scan-selector button { flex: 1; padding: 8px; font-size: 11px; background: #0f172a; border: 1px solid #334155; color: #94a3b8; border-radius: 6px; cursor: pointer; }
+    .scan-selector button.active { background: #064e3b; border-color: #34d399; color: #34d399; font-weight: bold; }
+
+    /* Camera Viewport */
+    .viewport { position: relative; width: 100%; height: 200px; background-color: #000; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    video, img { width: 100%; height: 100%; object-fit: cover; }
+    .overlay-frame { position: absolute; inset: 12px; border: 2px dashed #34d399; border-radius: 6px; pointer-events: none; }
+
+    /* Loader */
+    .loading-box { display: none; position: absolute; inset: 0; background: rgba(15, 23, 42, 0.92); flex-direction: column; align-items: center; justify-content: center; }
+    .loader { border: 4px solid #334155; border-top: 4px solid #34d399; border-radius: 50%; width: 32px; height: 32px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .btn-group { margin-top: 12px; display: flex; gap: 10px; }
+    button { flex: 1; padding: 10px; font-size: 13px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; }
+    .btn-primary { background-color: #10b981; color: #0f172a; }
+    .btn-secondary { background-color: #334155; color: #f8fafc; }
+    .btn-pdf { background-color: #e11d48; color: #fff; padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+
+    /* Form Fields */
+    .form-section { margin-top: 15px; border-top: 1px solid #334155; padding-top: 10px; }
+    .form-group { margin-bottom: 8px; }
+    .form-group label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 2px; }
+    .form-group input { width: 100%; padding: 6px 10px; font-size: 12px; background-color: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #f1f5f9; }
+
+    /* Table */
+    .badge { background-color: #064e3b; color: #34d399; font-size: 12px; padding: 2px 8px; border-radius: 12px; }
+    .table-container { overflow-x: auto; max-height: 400px; }
+    table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
+    th { background-color: #0f172a; color: #94a3b8; padding: 8px; position: sticky; top: 0; border-bottom: 1px solid #334155; }
+    td { padding: 8px; border-bottom: 1px solid #334155; color: #e2e8f0; }
+    .delete-btn { color: #ef4444; background: none; border: none; cursor: pointer; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+  <div class="main-container">
+    <header>
+      <h1>Student & Parent Registration Scanner</h1>
+      <p class="subtitle">Scan Birth Certificates & NID Cards, build student entries, and export formatted PDF sheets</p>
+    </header>
+
+    <div class="grid-layout">
+      <!-- Capture & Staging Form -->
+      <div class="card">
+        <div class="card-title">1. Capture Document</div>
+
+        <!-- Document Target Selector -->
+        <div class="scan-selector">
+          <button id="mode-bc" class="active">Birth Certificate</button>
+          <button id="mode-fnid">Father's NID</button>
+          <button id="mode-mnid">Mother's NID</button>
+        </div>
+
+        <div class="viewport">
+          <video id="webcam" autoplay playsinline></video>
+          <img id="snapshot" style="display: none;" />
+          <div class="overlay-frame"></div>
+
+          <div id="loading" class="loading-box">
+            <div class="loader"></div>
+            <p id="loading-text" style="font-size: 12px; color: #34d399; margin-top: 8px;">Scanning document...</p>
+          </div>
+        </div>
+
+        <canvas id="hidden-canvas" style="display: none;"></canvas>
+
+        <div class="btn-group">
+          <button id="capture-btn" class="btn-primary">Capture & OCR</button>
+          <button id="retake-btn" class="btn-secondary" style="display: none;">Retake</button>
+        </div>
+
+        <!-- Form Entry Data -->
+        <div class="form-section">
+          <p style="font-size: 11px; color: #34d399; font-weight: bold; margin-bottom: 4px;">Student Info:</p>
+          <div class="form-group"><label>Student Name:</label><input type="text" id="input-naam" /></div>
+          <div class="form-group"><label>Birth Reg Number (17 digits):</label><input type="text" id="input-reg" /></div>
+          <div class="form-group"><label>Date of Birth:</label><input type="text" id="input-dob" /></div>
+
+          <p style="font-size: 11px; color: #38bdf8; font-weight: bold; margin-top: 10px; margin-bottom: 4px;">Father's Info:</p>
+          <div class="form-group"><label>Father's Name:</label><input type="text" id="input-father" /></div>
+          <div class="form-group"><label>Father's NID No (10/13/17 digits):</label><input type="text" id="input-fnid" /></div>
+
+          <p style="font-size: 11px; color: #f472b6; font-weight: bold; margin-top: 10px; margin-bottom: 4px;">Mother's Info:</p>
+          <div class="form-group"><label>Mother's Name:</label><input type="text" id="input-mother" /></div>
+          <div class="form-group"><label>Mother's NID No (10/13/17 digits):</label><input type="text" id="input-mnid" /></div>
+
+          <button id="add-student-btn" class="btn-primary" style="width: 100%; margin-top: 12px;">+ Save Student to List</button>
+        </div>
+      </div>
+
+      <!-- Scanned List & PDF Export -->
+      <div class="card">
+        <div class="card-title">
+          <span>Registered Students <span id="scan-count" class="badge">0</span></span>
+          <button id="export-pdf-btn" class="btn-pdf">Export PDF Sheet</button>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Student</th>
+                <th>Reg No.</th>
+                <th>Parents NID</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+          <div id="empty-state" style="text-align: center; padding: 25px; color: #64748b; font-size: 12px;">
+            No student entries added yet.<br>Scan documents to populate form fields and click Save.
+          </div>
+        </div>
+
+        <button id="clear-all-btn" class="btn-secondary" style="width: 100%; margin-top: 15px; font-size: 12px;">Clear All Data</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
