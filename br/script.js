@@ -1,13 +1,17 @@
 // DOM Elements
 const video = document.getElementById('webcam');
 const canvas = document.getElementById('hidden-canvas');
-const snapshot = document.getElementById('snapshot');
-const captureBtn = document.getElementById('capture-btn');
-const retakeBtn = document.getElementById('retake-btn');
+const openCamBtn = document.getElementById('open-cam-btn');
+const closeCamBtn = document.getElementById('close-cam-btn');
+const camModal = document.getElementById('cam-modal');
+const snapBtn = document.getElementById('snap-btn');
 const loading = document.getElementById('loading');
 const loadingText = document.getElementById('loading-text');
+const scanModeLabel = document.getElementById('scan-mode-label');
 
-// Form Input Fields
+// Input Form Fields
+const inputClass = document.getElementById('input-class');
+const inputRoll = document.getElementById('input-roll');
 const inputNaam = document.getElementById('input-naam');
 const inputReg = document.getElementById('input-reg');
 const inputDob = document.getElementById('input-dob');
@@ -29,32 +33,72 @@ const modeFnid = document.getElementById('mode-fnid');
 const modeMnid = document.getElementById('mode-mnid');
 
 let currentMode = 'BC'; // 'BC', 'FNID', 'MNID'
+let stream = null;
 let students = JSON.parse(localStorage.getItem('registered_students')) || [];
 
-// Switch Scan Modes
+// Switch Document Scan Modes
 [modeBc, modeFnid, modeMnid].forEach(btn => {
   btn.addEventListener('click', (e) => {
     [modeBc, modeFnid, modeMnid].forEach(b => b.classList.remove('active'));
     e.target.classList.add('active');
-    if (e.target.id === 'mode-bc') currentMode = 'BC';
-    if (e.target.id === 'mode-fnid') currentMode = 'FNID';
-    if (e.target.id === 'mode-mnid') currentMode = 'MNID';
+    if (e.target.id === 'mode-bc') {
+      currentMode = 'BC';
+      scanModeLabel.innerText = "Scanning: Birth Certificate";
+    } else if (e.target.id === 'mode-fnid') {
+      currentMode = 'FNID';
+      scanModeLabel.innerText = "Scanning: Father's NID";
+    } else if (e.target.id === 'mode-mnid') {
+      currentMode = 'MNID';
+      scanModeLabel.innerText = "Scanning: Mother's NID";
+    }
   });
 });
 
-// Initialize Camera Stream
-async function initCamera() {
+// Camera Lifecycle Management
+openCamBtn.addEventListener('click', async () => {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
     });
     video.srcObject = stream;
+    camModal.classList.add('active');
   } catch (err) {
-    alert("Camera access error: " + err.message);
+    alert("Camera permission error: " + err.message);
   }
+});
+
+function stopCamera() {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+  camModal.classList.remove('active');
 }
 
-// Regex Extraction Logic based on document mode
+closeCamBtn.addEventListener('click', stopCamera);
+
+/**
+ * Image Preprocessing Pipeline to enhance OCR accuracy.
+ * Converts video frame to high-contrast B&W image before feeding to Tesseract.
+ */
+function preprocessImage(ctx, width, height) {
+  const imgData = ctx.getImageData(0, 0, width, height);
+  const data = imgData.data;
+
+  // Grayscale & Contrast boost thresholding
+  for (let i = 0; i < data.length; i += 4) {
+    const avg = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114);
+    // Thresholding for clean black-on-white text separation
+    const v = avg > 110 ? 255 : 0;
+    data[i] = v;     // R
+    data[i + 1] = v; // G
+    data[i + 2] = v; // B
+  }
+
+  ctx.putImageData(imgData, 0, 0);
+}
+
+// Regex Extractor Logic
 function extractDocumentData(text, mode) {
   const clean = text.replace(/\r/g, '');
 
@@ -63,11 +107,11 @@ function extractDocumentData(text, mode) {
     const regMatch = clean.match(/\b\d{17}\b/);
     if (regMatch) inputReg.value = regMatch[0];
 
-    // Date of Birth
+    // Date of Birth Match (DD/MM/YYYY or YYYY/MM/DD)
     const dobMatch = clean.match(/\b(\d{2}[\/\.-]\d{2}[\/\.-]\d{4}|\d{4}[\/\.-]\d{2}[\/\.-]\d{2})\b/);
     if (dobMatch) inputDob.value = dobMatch[0];
 
-    // Name Parsing
+    // Name Extraction
     const lines = clean.split('\n').map(l => l.trim()).filter(l => l.length > 2);
     lines.forEach((line) => {
       if (/Name|Person/i.test(line) && !inputNaam.value) {
@@ -83,12 +127,10 @@ function extractDocumentData(text, mode) {
         if (val.length > 2) inputMother.value = val;
       }
     });
-  } 
-  else if (mode === 'FNID' || mode === 'MNID') {
-    // NID Number Match (Smart NID: 10 digits, or 13 / 17 digits)
+  } else if (mode === 'FNID' || mode === 'MNID') {
+    // Smart NID Match: 10 digits (Smart NID), 13 or 17 digits (Old NID)
     const nidMatch = clean.match(/\b(\d{10}|\d{13}|\d{17})\b/);
     
-    // Extract Name line on NID card
     const lines = clean.split('\n').map(l => l.trim()).filter(l => l.length > 2);
     let extractedName = "";
     lines.forEach(line => {
@@ -108,7 +150,7 @@ function extractDocumentData(text, mode) {
   }
 }
 
-// Perform OCR processing
+// Perform OCR processing using Tesseract.js
 async function performOCR(imageSource) {
   loading.style.display = 'flex';
   loadingText.innerText = `Scanning (${currentMode})...`;
@@ -119,36 +161,28 @@ async function performOCR(imageSource) {
     await worker.terminate();
 
     extractDocumentData(text, currentMode);
+    stopCamera();
   } catch (err) {
-    alert("OCR Processing failed. Ensure bright lighting and proper focus.");
+    alert("OCR extraction error. Ensure bright, steady lighting and align text within frame.");
   } finally {
     loading.style.display = 'none';
   }
 }
 
-// Capture Snapshot
-captureBtn.addEventListener('click', () => {
+// Capture Snapshot from Camera Viewport
+snapBtn.addEventListener('click', () => {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0);
+  
+  // Render video frame to canvas
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+  // Run image contrast enhancement
+  preprocessImage(ctx, canvas.width, canvas.height);
 
   const dataUrl = canvas.toDataURL('image/png');
-  snapshot.src = dataUrl;
-  snapshot.style.display = 'block';
-  video.style.display = 'none';
-  captureBtn.style.display = 'none';
-  retakeBtn.style.display = 'block';
-
   performOCR(dataUrl);
-});
-
-// Retake Snapshot
-retakeBtn.addEventListener('click', () => {
-  snapshot.style.display = 'none';
-  video.style.display = 'block';
-  captureBtn.style.display = 'block';
-  retakeBtn.style.display = 'none';
 });
 
 // Save Student Record
@@ -160,6 +194,8 @@ addStudentBtn.addEventListener('click', () => {
 
   const record = {
     id: Date.now(),
+    studentClass: inputClass.value.trim() || 'N/A',
+    rollNo: inputRoll.value.trim() || 'N/A',
     name: inputNaam.value.trim(),
     regNo: inputReg.value.trim(),
     dob: inputDob.value.trim(),
@@ -172,16 +208,16 @@ addStudentBtn.addEventListener('click', () => {
   students.push(record);
   localStorage.setItem('registered_students', JSON.stringify(students));
   
-  // Reset Form Input Fields
+  // Clear Input Form Fields
+  inputClass.value = ''; inputRoll.value = '';
   inputNaam.value = ''; inputReg.value = ''; inputDob.value = '';
   inputFather.value = ''; inputFnid.value = '';
   inputMother.value = ''; inputMnid.value = '';
 
-  retakeBtn.click();
   renderTable();
 });
 
-// Render Records Table
+// Render Table
 function renderTable() {
   tableBody.innerHTML = '';
   scanCount.innerText = students.length;
@@ -192,10 +228,10 @@ function renderTable() {
   }
   emptyState.style.display = 'none';
 
-  students.forEach((s, idx) => {
+  students.forEach((s) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${idx + 1}</td>
+      <td><strong>Cl: ${s.studentClass}</strong><br><small style="color:#94a3b8">Roll: ${s.rollNo}</small></td>
       <td><strong>${s.name}</strong><br><small style="color:#94a3b8">DOB: ${s.dob || 'N/A'}</small></td>
       <td>${s.regNo}</td>
       <td>
@@ -214,27 +250,27 @@ function deleteRecord(id) {
   renderTable();
 }
 
-// Generate PDF Directory Sheet Export
+// Export PDF Document
 exportPdfBtn.addEventListener('click', () => {
   if (students.length === 0) {
-    alert("No student entries available to export!");
+    alert("No student records available to export!");
     return;
   }
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
 
-  // Title Header
   doc.setFontSize(16);
   doc.setTextColor(16, 185, 129);
   doc.text("Student Registration & Parent NID Directory Sheet", 14, 15);
   doc.setFontSize(10);
   doc.setTextColor(100);
-  doc.text(`Generated Date: ${new Date().toLocaleDateString()} | Total Students: ${students.length}`, 14, 21);
+  doc.text(`Generated Date: ${new Date().toLocaleDateString()} | Total Records: ${students.length}`, 14, 21);
 
-  // Table Columns Setup
   const tableColumn = [
     "SL", 
+    "Class",
+    "Roll",
     "Student Name", 
     "Birth Reg. No", 
     "DOB", 
@@ -244,9 +280,10 @@ exportPdfBtn.addEventListener('click', () => {
     "Mother's NID"
   ];
 
-  // Table Rows Formatting
   const tableRows = students.map((s, index) => [
     index + 1,
+    s.studentClass,
+    s.rollNo,
     s.name,
     s.regNo,
     s.dob || '-',
@@ -256,7 +293,6 @@ exportPdfBtn.addEventListener('click', () => {
     s.motherNid || '-'
   ]);
 
-  // Render Table via jsPDF AutoTable
   doc.autoTable({
     head: [tableColumn],
     body: tableRows,
@@ -268,8 +304,7 @@ exportPdfBtn.addEventListener('click', () => {
     margin: { top: 25 }
   });
 
-  // Save PDF Document
-  doc.save(`Student_Registration_Sheet_${new Date().toISOString().slice(0,10)}.pdf`);
+  doc.save(`Student_Registration_Directory_${new Date().toISOString().slice(0,10)}.pdf`);
 });
 
 clearAllBtn.addEventListener('click', () => {
@@ -280,6 +315,5 @@ clearAllBtn.addEventListener('click', () => {
   }
 });
 
-// Initialize on Load
-initCamera();
+// Initialize Table on Page Load
 renderTable();
