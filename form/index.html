@@ -120,10 +120,10 @@
             background-color: #1f618d;
         }
 
-        /* --- A4 Page Print Settings with Proper Margin --- */
+        /* --- Perfect Professional A4 Print Styling --- */
         @page {
             size: A4 portrait;
-            margin: 15mm 15mm 15mm 15mm; /* 15mm margin around page */
+            margin: 12mm 15mm;
         }
 
         @media print {
@@ -132,38 +132,71 @@
                 padding: 0;
                 margin: 0;
             }
+
             .form-container {
                 box-shadow: none;
                 padding: 0;
                 width: 100%;
                 max-width: 100%;
             }
+
             h2 {
                 font-size: 18px;
-                margin-bottom: 18px;
+                margin-bottom: 20px;
                 color: #000;
+                text-align: center;
+                border-bottom: 2px solid #000;
+                padding-bottom: 5px;
             }
+
             .form-grid {
-                gap: 12px 18px;
+                gap: 14px 18px;
             }
+
             label {
                 font-size: 11px;
                 margin-bottom: 2px;
+                color: #000;
             }
+
+            /* Remove webkit arrows and icons for print */
+            input[type="date"]::-webkit-calendar-picker-indicator,
+            input[type="date"]::-webkit-inner-spin-button {
+                display: none !important;
+                -webkit-appearance: none;
+            }
+
+            select {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+            }
+
+            /* Clean border for input fields */
             input[type="text"],
             input[type="number"],
             input[type="date"],
             select {
-                padding: 4px 6px;
-                font-size: 11px;
-                height: 28px;
-                border: 1px solid #888;
+                padding: 4px 8px;
+                font-size: 12px;
+                height: 30px;
+                border: 1px solid #777;
+                border-radius: 2px;
                 background-color: #fff;
+                color: #000;
             }
-            .na-checkbox-label {
-                display: none !important;
+
+            /* Hide placeholders in print */
+            ::placeholder {
+                color: transparent !important;
             }
-            .btn-group {
+
+            /* Hide empty date input format placeholder */
+            input[type="date"]:invalid {
+                color: transparent !important;
+            }
+
+            .na-checkbox-label, .btn-group {
                 display: none !important;
             }
         }
@@ -352,7 +385,6 @@
 </div>
 
 <script>
-    // বাংলাদেশ ৬৪টি জেলা ও উপজেলার ডাটা
     const districtUpazilaData = {
         "ঢাকা": ["ধামরাই", "দোহার", "কেরানীগঞ্জ", "নবাবগঞ্জ", "সাভার", "মিরপুর", "ধানমন্ডি", "উত্তরা", "গুলশান"],
         "গোপালগঞ্জ": ["গোপালগঞ্জ সদর", "কাশিয়ানী", "কোটালীপাড়া", "মুকসুদপুর", "টুঙ্গিপাড়া"],
@@ -416,7 +448,6 @@
         "খাগড়াছড়ি": ["খাগড়াছড়ি সদর", "দীঘিনালা", "পানছড়ি", "মহালছড়ি", "মাটিরাঙ্গা", "মানিকছড়ি", "রামগড়", "লক্ষ্মীছড়ি"]
     };
 
-    // লোড হওয়ার সময় জেলা পপুলেট করা
     window.onload = function() {
         const districtSelect = document.getElementById("app_district");
         for (let district in districtUpazilaData) {
@@ -427,7 +458,6 @@
         }
     };
 
-    // জেলা সিলেক্ট অনুযায়ী উপজেলা পরিবর্তন
     function updateUpazila() {
         const districtSelect = document.getElementById("app_district");
         const upazilaSelect = document.getElementById("app_upazila");
