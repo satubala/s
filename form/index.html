@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>নতুন শিক্ষক সংযোজন ফরম</title>
     <style>
-        /* Kalpurush Font Import via CDN */
         @import url('https://fonts.maateen.me/kalpurush/font.css');
 
         * {
@@ -67,25 +66,61 @@
             font-size: 16px;
         }
 
-        input:focus, select:focus {
-            outline: none;
-            border-color: #3498db;
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
         }
 
-        .submit-btn {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #27ae60;
-            color: white;
+        .submit-btn, .print-btn {
+            flex: 1;
+            padding: 12px 20px;
             border: none;
             border-radius: 4px;
             font-size: 18px;
             cursor: pointer;
-            width: 100%;
+            text-align: center;
+        }
+
+        .submit-btn {
+            background-color: #27ae60;
+            color: white;
         }
 
         .submit-btn:hover {
             background-color: #219150;
+        }
+
+        .print-btn {
+            background-color: #2980b9;
+            color: white;
+        }
+
+        .print-btn:hover {
+            background-color: #1f618d;
+        }
+
+        /* প্রিন্ট করার সময় বাটন লুকিয়ে ফেলার নিয়ম */
+        @media print {
+            body {
+                background-color: #fff;
+                padding: 0;
+            }
+            .form-container {
+                box-shadow: none;
+                padding: 0;
+                width: 100%;
+                max-width: 100%;
+            }
+            .btn-group {
+                display: none !important;
+            }
+            input, select {
+                border: none;
+                border-bottom: 1px solid #000;
+                border-radius: 0;
+                background: transparent;
+            }
         }
 
         @media (max-width: 600px) {
@@ -94,6 +129,9 @@
             }
             .form-group.full-width {
                 grid-column: span 1;
+            }
+            .btn-group {
+                flex-direction: column;
             }
         }
     </style>
@@ -107,7 +145,7 @@
             
             <div class="form-group">
                 <label for="pin">শিক্ষক পিন</label>
-                <input type="text" id="pin" name="pin" placeholder="শিক্ষক পিন লিখুন">
+                <input type="text" id="pin" name="pin">
             </div>
 
             <div class="form-group">
@@ -123,7 +161,7 @@
             <div class="form-group">
                 <label for="designation">পদবি</label>
                 <select id="designation" name="designation">
-                    <option value="সহকারী শিক্ষক" selected>সহকারী শিক্ষক</option>
+                    <option value="সহকারী শিক্ষক" selected>সহকারী শিক্ষক[cite: 1]</option>
                     <option value="প্রধান শিক্ষক">প্রধান শিক্ষক</option>
                 </select>
             </div>
@@ -131,7 +169,7 @@
             <div class="form-group">
                 <label for="recruitment_type">নিয়োগের ধরন</label>
                 <select id="recruitment_type" name="recruitment_type">
-                    <option value="রাজস্ব" selected>রাজস্ব</option>
+                    <option value="রাজস্ব" selected>রাজস্ব[cite: 1]</option>
                     <option value="অন্যান্য">অন্যান্য</option>
                 </select>
             </div>
@@ -144,7 +182,7 @@
             <div class="form-group">
                 <label for="list_type">মূল/অপেক্ষমাণ তালিকা</label>
                 <select id="list_type" name="list_type">
-                    <option value="প্রযোজ্য নয়" selected>প্রযোজ্য নয়</option>
+                    <option value="প্রযোজ্য নয়" selected>প্রযোজ্য নয়[cite: 1]</option>
                     <option value="মূল তালিকা">মূল তালিকা</option>
                     <option value="অপেক্ষমাণ তালিকা">অপেক্ষমাণ তালিকা</option>
                 </select>
@@ -202,7 +240,7 @@
 
             <div class="form-group">
                 <label for="professional_passing_year">সিইনএড/ডিপিএড/বিএড পাশের সাল</label>
-                <input type="number" id="professional_passing_year" name="professional_passing_year" value="2022">
+                <input type="number" id="professional_passing_year" name="professional_passing_year" value="2022">[cite: 1]
             </div>
 
             <div class="form-group">
@@ -238,7 +276,10 @@
 
         </div>
 
-        <button type="submit" class="submit-btn">সংরক্ষণ করুন</button>
+        <div class="btn-group">
+            <button type="submit" class="submit-btn">সংরক্ষণ করুন</button>
+            <button type="button" class="print-btn" onclick="window.print()">প্রিন্ট করুন</button>
+        </div>
     </form>
 </div>
 
