@@ -133,14 +133,14 @@
             background-color: #1f618d;
         }
 
-        /* Print Styles matching EXACT visual alignment */
+        /* Fixed Print Settings to keep margin and exact preview */
         @page {
             size: A4 portrait;
-            margin: 12mm 15mm;
+            margin: 20mm 15mm 20mm 15mm; /* সঠিক মার্জিন প্রদান করা হয়েছে */
         }
 
         @media print {
-            body {
+            html, body {
                 background-color: #fff !important;
                 padding: 0 !important;
                 margin: 0 !important;
@@ -157,8 +157,8 @@
             }
 
             .form-header {
-                font-size: 15px !important;
-                margin-bottom: 22px !important;
+                font-size: 16px !important;
+                margin-bottom: 25px !important;
                 color: #555 !important;
             }
 
@@ -182,7 +182,7 @@
                 padding: 6px 12px !important;
                 font-size: 13px !important;
                 height: 40px !important;
-                border: 1px solid #e2e8f0 !important;
+                border: 1px solid #d1d5db !important;
                 background-color: #f7f9fc !important;
                 border-radius: 4px !important;
                 color: #333 !important;
