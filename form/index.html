@@ -19,28 +19,28 @@
         }
 
         .form-container {
-            max-width: 800px;
+            max-width: 950px;
             margin: 0 auto;
             background: #ffffff;
-            padding: 20px 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 25px 30px;
+            border-radius: 6px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
         }
 
         h2 {
-            text-align: center;
-            color: #2c3e50;
+            text-align: left;
+            color: #555;
             margin-top: 0;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 6px;
+            margin-bottom: 25px;
             font-size: 20px;
+            font-weight: normal;
         }
 
+        /* 3-Column Grid Layout like the image */
         .form-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px 25px;
         }
 
         .form-group {
@@ -48,14 +48,10 @@
             flex-direction: column;
         }
 
-        .form-group.full-width {
-            grid-column: span 2;
-        }
-
         label {
             font-weight: bold;
-            margin-bottom: 2px;
-            color: #333;
+            margin-bottom: 6px;
+            color: #222;
             font-size: 13px;
         }
 
@@ -68,16 +64,24 @@
         input[type="date"],
         select {
             width: 100%;
-            padding: 5px 8px;
-            border: 1px solid #ccc;
+            padding: 8px 10px;
+            border: 1px solid #d0d0d0;
+            background-color: #fbfbfb;
             border-radius: 4px;
             font-size: 13px;
-            height: 32px;
+            height: 38px;
+            color: #333;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #a0a0a0;
+            background-color: #fff;
         }
 
         .date-toggle-group {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
         }
 
@@ -89,29 +93,26 @@
         .na-checkbox-label {
             display: flex;
             align-items: center;
-            gap: 3px;
-            font-size: 12px;
+            gap: 2px;
+            font-size: 11px;
             font-weight: normal;
             cursor: pointer;
             white-space: nowrap;
-        }
-
-        .na-checkbox-label input {
-            cursor: pointer;
+            color: #555;
         }
 
         .btn-group {
             display: flex;
             gap: 15px;
-            margin-top: 15px;
+            margin-top: 30px;
         }
 
         .submit-btn, .print-btn {
             flex: 1;
-            padding: 8px 15px;
+            padding: 10px 20px;
             border: none;
             border-radius: 4px;
-            font-size: 15px;
+            font-size: 16px;
             cursor: pointer;
             text-align: center;
         }
@@ -134,10 +135,11 @@
             background-color: #1f618d;
         }
 
-        /* --- A4 1-Page Print Settings --- */
+        /* --- A4 Exact 1-Page Print Settings --- */
         @page {
+            size: A4 landscape; /* Image layout fits best in landscape or adjusted portrait */
             size: A4 portrait;
-            margin: 10mm 12mm;
+            margin: 12mm 10mm;
         }
 
         @media print {
@@ -153,39 +155,37 @@
             }
             h2 {
                 font-size: 18px;
-                margin-bottom: 10px;
-                padding-bottom: 4px;
+                margin-bottom: 18px;
+                color: #000;
             }
             .form-grid {
-                gap: 5px 12px;
+                gap: 12px 18px;
             }
             label {
                 font-size: 11px;
-                margin-bottom: 1px;
+                margin-bottom: 3px;
             }
             input[type="text"],
             input[type="number"],
             input[type="date"],
             select {
-                padding: 2px 5px;
+                padding: 4px 6px;
                 font-size: 11px;
-                height: 24px;
-                border: 1px solid #666;
+                height: 30px;
+                border: 1px solid #999;
+                background-color: #fff;
             }
             .na-checkbox-label {
-                display: none !important; /* Hide checkbox control in print mode */
+                display: none !important;
             }
             .btn-group {
                 display: none !important;
             }
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
-            }
-            .form-group.full-width {
-                grid-column: span 1;
             }
             .btn-group {
                 flex-direction: column;
@@ -200,9 +200,10 @@
     <form action="#" method="POST">
         <div class="form-grid">
             
+            <!-- Row 1 -->
             <div class="form-group">
-                <label for="pin">শিক্ষক পিন (English)</label>
-                <input type="text" id="pin" name="pin" class="english-input" placeholder="e.g. 1002345" pattern="[0-9]*" inputmode="numeric">
+                <label for="pin">শিক্ষক পিন</label>
+                <input type="text" id="pin" name="pin" class="english-input" placeholder="English text/number" pattern="[0-9]*" inputmode="numeric">
             </div>
 
             <div class="form-group">
@@ -215,6 +216,7 @@
                 <input type="text" id="name_bn" name="name_bn">
             </div>
 
+            <!-- Row 2 -->
             <div class="form-group">
                 <label for="designation">পদবি</label>
                 <select id="designation" name="designation">
@@ -236,6 +238,7 @@
                 <input type="date" id="circular_date" name="circular_date">
             </div>
 
+            <!-- Row 3 -->
             <div class="form-group">
                 <label for="list_type">মূল/অপেক্ষমাণ তালিকা</label>
                 <select id="list_type" name="list_type">
@@ -250,24 +253,23 @@
                 <input type="date" id="order_date" name="order_date">
             </div>
 
-            <!-- নিয়মিতকরণের তারিখ -->
             <div class="form-group">
                 <label for="regular_date">নিয়মিতকরণের তারিখ</label>
                 <div class="date-toggle-group">
                     <input type="date" id="regular_date" name="regular_date">
                     <label class="na-checkbox-label">
-                        <input type="checkbox" onchange="toggleDateInput('regular_date', this)"> প্রযোজ্য নয়
+                        <input type="checkbox" onchange="toggleDateInput('regular_date', this)"> N/A
                     </label>
                 </div>
             </div>
 
-            <!-- আত্মীকরণের তারিখ/প্যানেল নিয়োগ আদেশের তারিখ -->
+            <!-- Row 4 -->
             <div class="form-group">
                 <label for="panel_date">আত্মীকরণের তারিখ/প্যানেল নিয়োগ আদেশের তারিখ</label>
                 <div class="date-toggle-group">
                     <input type="date" id="panel_date" name="panel_date">
                     <label class="na-checkbox-label">
-                        <input type="checkbox" onchange="toggleDateInput('panel_date', this)"> প্রযোজ্য নয়
+                        <input type="checkbox" onchange="toggleDateInput('panel_date', this)"> N/A
                     </label>
                 </div>
             </div>
@@ -282,6 +284,7 @@
                 <input type="date" id="permanent_date" name="permanent_date">
             </div>
 
+            <!-- Row 5 -->
             <div class="form-group">
                 <label for="merit_position">মেধাক্রম (প্রযোজ্য ক্ষেত্রে)</label>
                 <input type="text" id="merit_position" name="merit_position">
@@ -293,28 +296,37 @@
             </div>
 
             <div class="form-group">
-                <label for="eft_mobile">EFT তে প্রদত্ত মোবাইল নম্বর (English)</label>
-                <input type="text" id="eft_mobile" name="eft_mobile" class="english-input" placeholder="017XXXXXXXX" pattern="[0-9]*" inputmode="numeric">
+                <label for="eft_mobile">EFT তে প্রদত্ত মোবাইল নম্বর</label>
+                <input type="text" id="eft_mobile" name="eft_mobile" class="english-input" placeholder="English number" pattern="[0-9]*" inputmode="numeric">
             </div>
 
+            <!-- Row 6 -->
             <div class="form-group">
                 <label for="edu_qualification">সর্বোচ্চ শিক্ষাগত যোগ্যতা</label>
-                <input type="text" id="edu_qualification" name="edu_qualification">
+                <select id="edu_qualification" name="edu_qualification">
+                    <option value="" disabled selected>বাছাই করুন</option>
+                    <option value="এসএসসি">এসএসসি</option>
+                    <option value="এইচএসসি">এইচএসসি</option>
+                    <option value="স্নাতক">স্নাতক</option>
+                    <option value="স্নাতকোত্তর">স্নাতকোত্তর</option>
+                </select>
             </div>
 
             <div class="form-group">
-                <label for="edu_date">সর্বোচ্চ শিক্ষাগত যোগ্যতা অর্জনের তারিখ</label>
+                <label for="edu_date">সর্বোচ্চ শিক্ষাগত যোগ্যতা অর্জনের তারিখ ?</label>
                 <input type="date" id="edu_date" name="edu_date">
             </div>
 
             <div class="form-group">
-                <label for="professional_passing_year">সিইনএড/ডিপিএড/বিএড পাশের সাল</label>
-                <input type="number" id="professional_passing_year" name="professional_passing_year" class="english-input" value="2022">
+                <label for="professional_passing_year">সিইনএড/ডিপিএড/বিএড পাশের সাল ?</label>
+                <input type="number" id="professional_passing_year" name="professional_passing_year" class="english-input" placeholder="2022">
             </div>
 
+            <!-- Row 7 -->
             <div class="form-group">
-                <label for="other_upazila">অন্য উপজেলা/থানা হতে আগত শিক্ষক কি না?</label>
+                <label for="other_upazila">অন্য উপজেলা/থানা হতে আগত শিক্ষক কি না? ?</label>
                 <select id="other_upazila" name="other_upazila">
+                    <option value="" disabled selected>বাছাই করুন</option>
                     <option value="না">না</option>
                     <option value="হ্যাঁ">হ্যাঁ</option>
                 </select>
@@ -322,22 +334,28 @@
 
             <div class="form-group">
                 <label for="app_district">নিয়োগ আবেদনের জেলা</label>
-                <input type="text" id="app_district" name="app_district">
+                <select id="app_district" name="app_district">
+                    <option value="" disabled selected>* জেলা বাছাই করুন</option>
+                </select>
             </div>
 
             <div class="form-group">
                 <label for="app_upazila">নিয়োগ আবেদনের উপজেলা/থানা</label>
-                <input type="text" id="app_upazila" name="app_upazila">
+                <select id="app_upazila" name="app_upazila">
+                    <option value="" disabled selected>* উপজেলা/থানা বাছাই করুন</option>
+                </select>
             </div>
 
+            <!-- Row 8 -->
             <div class="form-group">
                 <label for="upazila_join_date">অত্র উপজেলা/থানায় যোগদানের তারিখ</label>
                 <input type="date" id="upazila_join_date" name="upazila_join_date">
             </div>
 
-            <div class="form-group full-width">
+            <div class="form-group">
                 <label for="acting_headmaster">প্রধান শিক্ষক (চলতি দায়িত্ব) প্রাপ্ত কি না?</label>
                 <select id="acting_headmaster" name="acting_headmaster">
+                    <option value="" disabled selected>বাছাই করুন</option>
                     <option value="না">না</option>
                     <option value="হ্যাঁ">হ্যাঁ</option>
                 </select>
