@@ -19,27 +19,24 @@
         }
 
         .form-container {
-            max-width: 950px;
+            max-width: 1000px;
             margin: 0 auto;
             background: #ffffff;
-            padding: 25px 30px;
+            padding: 30px 40px;
             border-radius: 6px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
         }
 
-        h2 {
-            text-align: left;
-            color: #333;
-            margin-top: 0;
+        .form-header {
+            font-size: 16px;
+            color: #555;
             margin-bottom: 25px;
-            font-size: 20px;
-            font-weight: normal;
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px 20px;
+            gap: 18px 25px;
         }
 
         .form-group {
@@ -49,9 +46,26 @@
 
         label {
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #222;
-            font-size: 13px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tooltip-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 16px;
+            height: 16px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: bold;
+            font-family: Arial, sans-serif !important;
         }
 
         .english-input {
@@ -63,12 +77,12 @@
         input[type="date"],
         select {
             width: 100%;
-            padding: 6px 10px;
+            padding: 8px 12px;
             border: 1px solid #dcdcdc;
             background-color: #f8f9fa;
             border-radius: 4px;
-            font-size: 13px;
-            height: 38px;
+            font-size: 14px;
+            height: 42px;
             color: #333;
         }
 
@@ -84,8 +98,7 @@
             align-items: center;
         }
 
-        .date-toggle-group input[type="date"],
-        .date-toggle-group input[type="text"] {
+        .date-toggle-group input {
             flex: 1;
         }
 
@@ -103,7 +116,7 @@
         .btn-group {
             display: flex;
             justify-content: flex-end;
-            margin-top: 25px;
+            margin-top: 30px;
         }
 
         .print-btn {
@@ -120,10 +133,10 @@
             background-color: #1f618d;
         }
 
-        /* --- Exact Print Output Matching Provided Image --- */
+        /* Print Styles matching EXACT visual alignment */
         @page {
             size: A4 portrait;
-            margin: 15mm 15mm;
+            margin: 12mm 15mm;
         }
 
         @media print {
@@ -143,22 +156,20 @@
                 background: transparent !important;
             }
 
-            h2 {
-                font-size: 18px !important;
-                margin-top: 0 !important;
+            .form-header {
+                font-size: 15px !important;
                 margin-bottom: 22px !important;
-                color: #222 !important;
-                font-weight: bold !important;
+                color: #555 !important;
             }
 
             .form-grid {
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
-                gap: 16px 22px !important;
+                gap: 16px 20px !important;
             }
 
             label {
-                font-size: 12px !important;
+                font-size: 13px !important;
                 font-weight: bold !important;
                 margin-bottom: 6px !important;
                 color: #111 !important;
@@ -170,9 +181,9 @@
             select {
                 padding: 6px 12px !important;
                 font-size: 13px !important;
-                height: 38px !important;
+                height: 40px !important;
                 border: 1px solid #e2e8f0 !important;
-                background-color: #f7f9fc !important; /* Soft light grey input box */
+                background-color: #f7f9fc !important;
                 border-radius: 4px !important;
                 color: #333 !important;
                 -webkit-appearance: none !important;
@@ -180,7 +191,6 @@
                 appearance: none !important;
             }
 
-            /* Show date placeholders in print as shown in image */
             input[type="date"]::-webkit-calendar-picker-indicator {
                 display: none !important;
             }
@@ -200,24 +210,25 @@
 <body>
 
 <div class="form-container">
-    <h2>নতুন শিক্ষক সংযোজন ফরম</h2>
+    <div class="form-header">নতুন শিক্ষক সংযোজন ফরম</div>
+    
     <form id="teacherForm">
         <div class="form-grid">
             
             <!-- Row 1 -->
             <div class="form-group">
                 <label for="pin">শিক্ষক পিন</label>
-                <input type="text" id="pin" name="pin" class="english-input" placeholder="English number" pattern="[0-9]*" inputmode="numeric">
+                <input type="text" id="pin" name="pin" class="english-input" value="9131703010296">
             </div>
 
             <div class="form-group">
-                <label for="school_name">বিদ্যালয়ের নাম</label>
-                <input type="text" id="school_name" name="school_name">
+                <label for="school_name">বিদ্যালয়ের নাম</label>
+                <input type="text" id="school_name" name="school_name" value="বাজুনিয়া সরকারি প্রাথমিক বিদ্যালয় 91317031404">
             </div>
 
             <div class="form-group">
-                <label for="name_bn">নাম (বাংলায়)</label>
-                <input type="text" id="name_bn" name="name_bn">
+                <label for="name_bn">নাম (বাংলায়)</label>
+                <input type="text" id="name_bn" name="name_bn" value="শেখ নাজমুল">
             </div>
 
             <!-- Row 2 -->
@@ -230,7 +241,7 @@
             </div>
 
             <div class="form-group">
-                <label for="recruitment_type">নিয়োগের ধরন</label>
+                <label for="recruitment_type">নিয়োগের ধরন</label>
                 <select id="recruitment_type" name="recruitment_type">
                     <option value="রাজস্ব" selected>রাজস্ব</option>
                     <option value="অন্যান্য">অন্যান্য</option>
@@ -246,14 +257,14 @@
             <div class="form-group">
                 <label for="list_type">মূল/অপেক্ষমাণ তালিকা</label>
                 <select id="list_type" name="list_type">
-                    <option value="প্রযোজ্য নয়" selected>প্রযোজ্য নয়</option>
+                    <option value="প্রযোজ্য নয়" selected>প্রযোজ্য নয়</option>
                     <option value="মূল তালিকা">মূল তালিকা</option>
                     <option value="অপেক্ষমাণ তালিকা">অপেক্ষমাণ তালিকা</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="order_date">নিয়োগ আদেশের তারিখ</label>
+                <label for="order_date">নিয়োগ আদেশের তারিখ</label>
                 <input type="date" id="order_date" name="order_date">
             </div>
 
@@ -269,7 +280,7 @@
 
             <!-- Row 4 -->
             <div class="form-group">
-                <label for="panel_date">আত্মীকরণের তারিখ/প্যানেল নিয়োগ আদেশের তারিখ</label>
+                <label for="panel_date">আত্মীকরণের তারিখ/প্যানেল নিয়োগ আদেশের তারিখ</label>
                 <div class="date-toggle-group">
                     <input type="date" id="panel_date" name="panel_date">
                     <label class="na-checkbox-label">
@@ -284,7 +295,7 @@
             </div>
 
             <div class="form-group">
-                <label for="permanent_date">চাকরি স্থায়ীকরণের তারিখ</label>
+                <label for="permanent_date">চাকরি স্থায়ীকরণের তারিখ</label>
                 <input type="date" id="permanent_date" name="permanent_date">
             </div>
 
@@ -301,7 +312,7 @@
 
             <div class="form-group">
                 <label for="eft_mobile">EFT তে প্রদত্ত মোবাইল নম্বর</label>
-                <input type="text" id="eft_mobile" name="eft_mobile" class="english-input" placeholder="English number" pattern="[0-9]*" inputmode="numeric">
+                <input type="text" id="eft_mobile" name="eft_mobile" class="english-input">
             </div>
 
             <!-- Row 6 -->
@@ -317,18 +328,27 @@
             </div>
 
             <div class="form-group">
-                <label for="edu_date">সর্বোচ্চ শিক্ষাগত যোগ্যতা অর্জনের তারিখ</label>
+                <label for="edu_date">
+                    সর্বোচ্চ শিক্ষাগত যোগ্যতা অর্জনের তারিখ
+                    <span class="tooltip-icon">?</span>
+                </label>
                 <input type="date" id="edu_date" name="edu_date">
             </div>
 
             <div class="form-group">
-                <label for="professional_passing_year">সিইনএড/ডিপিএড/বিএড পাশের সাল</label>
-                <input type="number" id="professional_passing_year" name="professional_passing_year" class="english-input" placeholder="2022">
+                <label for="professional_passing_year">
+                    সিইনএড/ডিপিএড/বিএড পাশের সাল
+                    <span class="tooltip-icon">?</span>
+                </label>
+                <input type="number" id="professional_passing_year" name="professional_passing_year" class="english-input">
             </div>
 
             <!-- Row 7 -->
             <div class="form-group">
-                <label for="other_upazila">অন্য উপজেলা/থানা হতে আগত শিক্ষক কি না?</label>
+                <label for="other_upazila">
+                    অন্য উপজেলা/থানা হতে আগত শিক্ষক কি না?
+                    <span class="tooltip-icon">?</span>
+                </label>
                 <select id="other_upazila" name="other_upazila">
                     <option value="" disabled selected>বাছাই করুন</option>
                     <option value="না">না</option>
@@ -337,14 +357,14 @@
             </div>
 
             <div class="form-group">
-                <label for="app_district">নিয়োগ আবেদনের জেলা</label>
+                <label for="app_district">নিয়োগ আবেদনের জেলা</label>
                 <select id="app_district" name="app_district" onchange="updateUpazila()">
                     <option value="" disabled selected>* জেলা বাছাই করুন</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="app_upazila">নিয়োগ আবেদনের উপজেলা/থানা</label>
+                <label for="app_upazila">নিয়োগ আবেদনের উপজেলা/থানা</label>
                 <select id="app_upazila" name="app_upazila">
                     <option value="" disabled selected>* উপজেলা/থানা বাছাই করুন</option>
                 </select>
@@ -352,7 +372,7 @@
 
             <!-- Row 8 -->
             <div class="form-group">
-                <label for="upazila_join_date">অত্র উপজেলা/থানায় যোগদানের তারিখ</label>
+                <label for="upazila_join_date">অত্র উপজেলা/থানায় যোগদানের তারিখ</label>
                 <input type="date" id="upazila_join_date" name="upazila_join_date">
             </div>
 
@@ -375,66 +395,7 @@
 
 <script>
     const districtUpazilaData = {
-        "ঢাকা": ["ধামরাই", "দোহার", "কেরানীগঞ্জ", "নবাবগঞ্জ", "সাভার", "মিরপুর", "ধানমন্ডি", "উত্তরা", "গুলশান"],
-        "গোপালগঞ্জ": ["গোপালগঞ্জ সদর", "কাশিয়ানী", "কোটালীপাড়া", "মুকসুদপুর", "টুঙ্গিপাড়া"],
-        "ফরিদপুর": ["ফরিদপুর সদর", "আলফাডাঙ্গা", "ভাঙ্গা", "বোয়ালমারী", "চরভদ্রাসন", "মধুখালী", "নগরকান্দা", "সদরপুর", "সালথা"],
-        "গাজীপুর": ["গাজীপুর সদর", "কালিয়াকৈর", "কালীগঞ্জ", "কাপাসিয়া", "শ্রীপুর"],
-        "নারায়ণগঞ্জ": ["নারায়ণগঞ্জ সদর", "আড়াইহাজার", "বন্দর", "রূপগঞ্জ", "সোনারগাঁও"],
-        "মুন্সীগঞ্জ": ["মুন্সীগঞ্জ সদর", "গজারিয়া", "লোহজং", "সিরাজদিখান", "শ্রীনগর", "টঙ্গীবাড়ী"],
-        "রাজবাড়ী": ["রাজবাড়ী সদর", "বালিয়াকান্দি", "গোয়ালন্দ", "পাংশা", "কালুখালী"],
-        "মাদারীপুর": ["মাদারীপুর সদর", "কালকিনি", "রাজৈর", "শিবচর", "ডাসার"],
-        "শরীয়তপুর": ["শরীয়তপুর সদর", "নড়িয়া", "জাজিরা", "গোসাইরহাট", "ভেদেরগঞ্জ", "ডামুড্যা"],
-        "মানিকগঞ্জ": ["মানিকগঞ্জ সদর", "সিঙ্গাইর", "শিবালয়", "সাটুরিয়া", "হরিরামপুর", "ঘিওর", "দৌলতপুর"],
-        "টাঙ্গাইল": ["টাঙ্গাইল সদর", "গোপালপুর", "বাসাইল", "ভূঞাপুর", "দেলদুয়ার", "ঘাটাইল", "কালিহাতী", "মধুপুর", "মির্জাপুর", "নাগরপুর", "সখিপুর", "ধনবাড়ী"],
-        "ময়মনসিংহ": ["ময়মনসিংহ সদর", "ভালুকা", "ত্রিশাল", "হালুয়াঘাট", "মুক্তাগাছা", "ধোবাউড়া", "ফুলবাড়ীয়া", "গফরগাঁও", "গৌরীপুর", "ঈশ্বরগঞ্জ", "নান্দাইল", "ফুলপুর", "তারাকান্দা"],
-        "চট্টগ্রাম": ["পটিয়া", "হাটহাজারী", "রাউজান", "রাঙ্গুনিয়া", "বাঁশখালী", "বোয়ালখালী", "চন্দনাইশ", "ফটিকছড়ি", "লোহাগাড়া", "মিরসরাই", "সীতাকুণ্ড", "সাতকানিয়া", "সন্দ্বীপ", "আনোয়ারা"],
-        "কুমিল্লা": ["কুমিল্লা সদর", "দেবিদ্বার", "দাউদকান্দি", "চৌদ্দগ্রাম", "লাকসাম", "বরুড়া", "বুড়িচং", "ব্রাহ্মণপাড়া", "চান্দিনা", "হোমনা", "মেঘনা", "মনোহরগঞ্জ", "মুরাদনগর", "নাঙ্গলকোট", "তিথাস"],
-        "সিলেট": ["সিলেট সদর", "বিয়ানীবাজার", "গোলাপগঞ্জ", "ফেঞ্চুগঞ্জ", "জৈন্তাপুর", "কানাইঘাট", "কোম্পানীগঞ্জ", "জকিগঞ্জ", "বালাগঞ্জ", "বিশ্বনাথ"],
-        "রাজশাহী": ["বোয়ালিয়া", "পবা", "গোদাগাড়ী", "তানোর", "মোহনপুর", "বাগমারা", "পুটিনয়া", "বাঘা", "চারঘাট"],
-        "বগুড়া": ["বগুড়া সদর", "শেরপুর", "শিবগঞ্জ", "ধুনট", "নন্দীগ্রাম", "কাহালু", "আদমদীঘি", "দুপুরচাঁচিয়া", "গাবতলী", "সারিয়াকান্দি", "সোনাতলা"],
-        "খুলনা": ["খুলনা সদর", "বটিয়াঘাটা", "দাকোপ", "ডুমুরিয়া", "দিঘলিয়া", "কয়রা", "পাইকগাছা", "ফুলতলা", "রূপসা"],
-        "যশোর": ["যশোর সদর", "অভয়নগর", "বাঘারপাড়া", "চৌগাছা", "ঝিকরগাছা", "কেশবপুর", "মনিরামপুর", "শার্শা"],
-        "বরিশাল": ["বরিশাল সদর", "বাকেরগঞ্জ", "বাবুগঞ্জ", "উজিরপুর", "বানারীপাড়া", "গৌরনদী", "আগৈলঝাড়া", "মেহেন্দিগঞ্জ", "মুলাদী", "হিজলা"],
-        "রংপুর": ["রংপুর সদর", "বদরগঞ্জ", "গঙ্গাচড়া", "কাউনিয়া", "মিঠাপুকুর", "পীরগাছা", "পীরগঞ্জ", "তারাগঞ্জ"],
-        "দিনাজপুর": ["দিনাজপুর সদর", "বিরামপুর", "বীরগঞ্জ", "বোচাগঞ্জ", "ফুলবাড়ী", "ঘোড়াঘাট", "হাকিমপুর", "কাহারোল", "খানসামা", "নবাবগঞ্জ", "পার্বতীপুর"],
-        "কক্সবাজার": ["কক্সবাজার সদর", "চকরিয়া", "টেকনাফ", "উখিয়া", "মহেশখালী", "কুতুবদিয়া", "পেকুয়া", "রামু"],
-        "ব্রাহ্মণবাড়িয়া": ["ব্রাহ্মণবাড়িয়া সদর", "আশুগঞ্জ", "বাঞ্ছারামপুর", "কসবা", "নবীনগর", "নাসিরনগর", "সরাইল", "আখাউড়া"],
-        "চাঁদপুর": ["চাঁদপুর সদর", "ফরিদগঞ্জ", "হাইমচর", "হাজীগঞ্জ", "কচুয়া", "মতলব উত্তর", "মতলব দক্ষিণ", "শাহরাস্তি"],
-        "নোয়াখালী": ["নোয়াখালী সদর", "বেগমগঞ্জ", "চাটখিল", "কোম্পানীগঞ্জ", "হাতিয়া", "সেনবাগ", "সুবর্ণচর", "কবিরহাট", "সোনাইমুড়ী"],
-        "ফেনী": ["ফেনী সদর", "দাগনভূঞা", "ছাগলনাইয়া", "পরশুরাম", "ফুলগাজী", "সোনাগাজী"],
-        "লক্ষ্মীপুর": ["লক্ষ্মীপুর সদর", "রায়পুর", "রামগঞ্জ", "রামগতি", "কমলনগর"],
-        "হবিগঞ্জ": ["হবিগঞ্জ সদর", "আজমিরীগঞ্জ", "বাহুবল", "বানিয়াচং", "চুনারুঘাট", "নবীগঞ্জ", "মাধবপুর", "লাখাই"],
-        "মৌলভীবাজার": ["মৌলভীবাজার সদর", "বড়লেখা", "কুলাউড়া", "রাজনগর", "শ্রীমঙ্গল", "কমলগঞ্জ", "জুড়ী"],
-        "সুনামগঞ্জ": ["সুনামগঞ্জ সদর", "ছাতক", "জগন্নাথপুর", "দিরার", "দোয়ারাবাজার", "ধর্মপাশা", "শাল্লা", "তাহিরপুর"],
-        "পাবনা": ["পাবনা সদর", "আটঘরিয়া", "বেড়া", "ভাঙুড়া", "চাটমোহর", "ফরিদপুর", "ঈশ্বরদী", "সাঁথিয়া", "সুজানগর"],
-        "সিরাজগঞ্জ": ["সিরাজগঞ্জ সদর", "বেলকুচি", "চৌহালী", "কামারখন্দ", "কাজীপুর", "রায়গঞ্জ", "শাহজাদপুর", "তারাস", "উল্লাপাড়া"],
-        "নওগাঁ": ["নওগাঁ সদর", "আত্রাই", "বদলগাছী", "ধামইরহাট", "মান্দা", "মহাদেবপুর", "নিয়ামতপুর", "পতিসর", "পোরশা", "রাণীনগর", "সাপাহার"],
-        "নাটোর": ["নাটোর সদর", "বাগাতিপাড়া", "বড়াইগ্রাম", "গুরুদাসপুর", "লালপুর", "সিংড়া", "নলডাঙ্গা"],
-        "চাঁপাইনবাবগঞ্জ": ["চাঁপাইনবাবগঞ্জ সদর", "গোমস্তাপুর", "হাতিবান্ধা", "নাচোল", "শিবগঞ্জ"],
-        "কুষ্টিয়া": ["কুষ্টিয়া সদর", "কুমারখালী", "খোকসা", "মিরপুর", "দৌলতপুর", "ভেড়ামারা"],
-        "মেহেরপুর": ["মেহেরপুর সদর", "গাংনী", "মুজিবনগর"],
-        "চুয়াডাঙ্গা": ["চুয়াডাঙ্গা সদর", "আলমডাঙ্গা", "দামুড়হুদা", "জীবননগর"],
-        "ঝিনাইদহ": ["ঝিনাইদহ সদর", "কালীগঞ্জ", "কোটচাঁদপুর", "মহেশপুর", "শৈলকুপা", "হরিণাকুণ্ডু"],
-        "মাগুরা": ["মাগুরা সদর", "মহম্মদপুর", "শালিখা", "শ্রীপুর"],
-        "সাতক্ষীরা": ["সাতক্ষীরা সদর", "আশাশুনি", "দেবহাটা", "ক্যালারোয়া", "কালীগঞ্জ", "শ্যামনগর", "তালা"],
-        "বাগেরহাট": ["বাগেরহাট সদর", "চিতলমারী", "ফকিরহাট", "কচুয়া", "মোল্লাহাট", "মোংলা", "মোড়েলগঞ্জ", "রামপাল", "শরণখোলা"],
-        "নড়াইল": ["নড়াইল সদর", "কালিয়া", "লোহাগড়া"],
-        "পটুয়াখালী": ["পটুয়াখালী সদর", "বাউফল", "দশমিনা", "গলাচিপা", "কলাপাড়া", "মির্জাগঞ্জ", "দুমকি", "রাঙ্গাবালী"],
-        "ভোলা": ["ভোলা সদর", "বোরহানউদ্দিন", "চরফ্যাশন", "দৌলতখান", "লালমোহন", "মনপুরা", "তজুমদ্দিন"],
-        "বরগুনা": ["বরগুনা সদর", "আমতলী", "বামনা", "বেতাগী", "পাথরঘাটা", "তালতলী"],
-        "ঝালকাঠি": ["ঝালকাঠি সদর", "কাঠালিয়া", "নলছিটি", "রাজাপুর"],
-        "পিরোজপুর": ["পিরোজপুর সদর", "ভান্ডারিয়া", "কাউখালী", "মঠবাড়িয়া", "নেছারাবাদ", "নাজিরপুর", "জিয়ানগর"],
-        "কুড়িগ্রাম": ["কুড়িগ্রাম সদর", "ভুরুঙ্গামারী", "চর রাজিবপুর", "চিলমারী", "ফুলবাড়ী", "নাগেশ্বরী", "রাজারহাট", "রৌমারী", "উলিপুর"],
-        "গাইবান্ধা": ["গাইবান্ধা সদর", "ফুলছড়ি", "গোবিন্দগঞ্জ", "পলাশবাড়ী", "সাদুল্লাপুর", "সাঘাটা", "সুন্দরগঞ্জ"],
-        "নীলফামারী": ["নীলফামারী সদর", "ডিমলা", "ডুমুরিয়া", "জলঢাকা", "কিশোরগঞ্জ", "সৈয়দপুর"],
-        "পঞ্চগড়": ["পঞ্চগড় সদর", "আটোয়ারী", "বোদা", "দেবীগঞ্জ", "তেঁতুলিয়া"],
-        "ঠাকুরগাঁও": ["ঠাকুরগাঁও সদর", "বালিয়াডাঙ্গী", "হরিপুর", "পীরগঞ্জ", "রাণীশংকৈল"],
-        "শেরপুর": ["শেরপুর সদর", "ঝিনাইগাতী", "নকলা", "নালিতাবাড়ী", "শ্রীবরদী"],
-        "জামালপুর": ["জামালপুর সদর", "বক্সীগঞ্জ", "দেওয়ানগঞ্জ", "ইসলামপুর", "মাদারগঞ্জ", "মেলান্দহ", "সরিষাবাড়ী"],
-        "নেত্রকোণা": ["নেত্রকোণা সদর", "আটপাড়া", "বারহাট্টা", "দুর্গাপুর", "খালিয়াজুরী", "কলমাকান্দা", "কেন্দুয়া", "মদন", "মোহনগঞ্জ", "পূর্বধলা"],
-        "বান্দরবান": ["বান্দরবান সদর", "থানচি", "রুমা", "রোয়াংছড়ি", "লামা", "আলিকদম", "নাইক্ষ্যংছড়ি"],
-        "রাঙ্গামাটি": ["রাঙ্গামাটি সদর", "কাপ্তাই", "কাউখালী", "বাঘাইছড়ি", "বরকল", "লংগদু", "নানিয়ারচর", "রাজস্থলী", "জুরাছড়ি", "বিলাইছড়ি"],
-        "খাগড়াছড়ি": ["খাগড়াছড়ি সদর", "দীঘিনালা", "পানছড়ি", "মহালছড়ি", "মাটিরাঙ্গা", "মানিকছড়ি", "রামগড়", "লক্ষ্মীছড়ি"]
+        "গোপালগঞ্জ": ["গোপালগঞ্জ সদর", "কাশিয়ানী", "কোটালীপাড়া", "মুকসুদপুর", "টুঙ্গিপাড়া"]
     };
 
     window.onload = function() {
@@ -468,7 +429,7 @@
         const inputField = document.getElementById(fieldId);
         if (checkbox.checked) {
             inputField.type = "text";
-            inputField.value = "প্রযোজ্য নয়";
+            inputField.value = "প্রযোজ্য নয়";
             inputField.readOnly = true;
         } else {
             inputField.type = "date";
