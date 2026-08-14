@@ -257,11 +257,6 @@
             line-height: 1.4;
         }
 
-        .footer-legal a {
-            color: var(--accent-cyan);
-            text-decoration: none;
-        }
-
         .menu-link {
             display: flex;
             align-items: center;
@@ -325,7 +320,6 @@
     </main>
 
     <footer>
-        <!-- Legally Protecting Disclaimer -->
         <div class="footer-legal">
             Content aggregated from third-party RSS feeds remains property of respective publishers.<br>
             Platform architecture & code design &copy; <b>satu.pro.bd</b>
@@ -344,8 +338,16 @@
          * =========================================================================
          */
 
-        // Hidden Watermark Stamp (Base64 Encoded to prevent easy modification)
-        // Decodes to: "Copyright (c) 2026 SATU (satu.pro.bd). All Rights Reserved."
+        // Domain Lock Security Protection
+        if (window.location.hostname !== 'satu.pro.bd' && 
+            window.location.hostname !== 'www.satu.pro.bd' && 
+            window.location.hostname !== 'localhost' && 
+            window.location.hostname !== '127.0.0.1') {
+            document.body.innerHTML = '<div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#0a0f1d; color:#fff; font-family:sans-serif; text-align:center; padding:20px;"><div><h1>403 Forbidden</h1><p>Unauthorized mirror or cloned deployment detected.</p></div></div>';
+            window.location.href = 'https://satu.pro.bd';
+        }
+
+        // Hidden Watermark Stamp (Base64 Encoded)
         const __sys_signature = atob("Q29weXJpZ2h0IChjKSBmMDI2IFNBVFUgKHNhdHUucHJvLmJkKS4gQWxsIFJpZ2h0cyBSZXNlcnZlZC4=");
 
         const feeds = [
