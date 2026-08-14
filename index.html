@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Smart Hidden Metadata for Scrapers & Search Crawlers -->
+    <meta name="author" content="SATU (satu.pro.bd)">
+    <meta name="copyright" content="Copyright © 2026 SATU. All Rights Reserved. Unlawful copying, scraping, or redistribution is strictly prohibited.">
+    <meta name="designer" content="SATU Engineering Team">
+
     <title>satu.pro.bd | News Feed</title>
     <link rel="icon" type="image/svg+xml" href="/icon.svg"> 
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -244,6 +250,18 @@
 
         footer { background: var(--header-bg); padding: 30px 20px; border-top: 1px solid var(--glass-border); text-align: center; }
 
+        .footer-legal {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .footer-legal a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
         .menu-link {
             display: flex;
             align-items: center;
@@ -308,9 +326,29 @@
 
     <footer>
         <div>&copy; 2026 <b>SATU</b> | All Rights Reserved.</div>
+        <!-- Legally Protecting Disclaimer -->
+        <div class="footer-legal">
+            Content aggregated from third-party RSS feeds remains property of respective publishers.<br>
+            Platform architecture & code design &copy; <b>satu.pro.bd</b>
+        </div>
     </footer>
 
     <script>
+        /*
+         * =========================================================================
+         * COPYRIGHT & INTELLECTUAL PROPERTY NOTICE
+         * =========================================================================
+         * Property of SATU (https://satu.pro.bd).
+         * Unauthorized copying, modification, or reverse engineering of this 
+         * script or UI layout is strictly prohibited under international 
+         * copyright laws.
+         * =========================================================================
+         */
+
+        // Hidden Watermark Stamp (Base64 Encoded to prevent easy modification)
+        // Decodes to: "Copyright (c) 2026 SATU (satu.pro.bd). All Rights Reserved."
+        const __sys_signature = atob("Q29weXJpZ2h0IChjKSBmMDI2IFNBVFUgKHNhdHUucHJvLmJkKS4gQWxsIFJpZ2h0cyBSZXNlcnZlZC4=");
+
         const feeds = [
             { name: "প্রথম আলো", url: "https://www.prothomalo.com/feed" },
             { name: "বিবিসি বাংলা", url: "https://www.bbc.com/bengali/index.xml" },
