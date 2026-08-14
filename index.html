@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Smart Hidden Metadata for Scrapers & Search Crawlers -->
+    <meta name="author" content="SATU (satu.pro.bd)">
+    <meta name="copyright" content="Copyright © 2026 SATU. All Rights Reserved. Unlawful copying, scraping, or redistribution is strictly prohibited.">
+    <meta name="designer" content="SATU Engineering Team">
+
+    <title>satu.pro.bd | News Feed</title>
+    <link rel="icon" type="image/svg+xml" href="/icon.svg"> 
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* --- Light Mode (Default) --- */
+            --bg-main: #f1f5f9;
+            --bg-gradient: radial-gradient(circle at top right, #e2e8f0, #f1f5f9);
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-hover: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --accent-cyan: #0891b2;
+            --accent-gold: #b45309;
+            --accent-red: #e11d48;
+            --text-main: #0f172a;
+            --text-dim: #475569;
+            --header-bg: rgba(255, 255, 255, 0.85);
+            --ticker-bg: rgba(226, 232, 240, 0.9);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* --- Dark Mode --- */
+                --bg-main: #0a0f1d;
+                --bg-gradient: radial-gradient(circle at top right, #1e293b, #0a0f1d);
+                --glass: rgba(30, 41, 59, 0.7);
+                --glass-hover: rgba(51, 65, 85, 0.9);
+                --glass-border: rgba(255, 255, 255, 0.1);
+                --accent-cyan: #22d3ee;
+                --accent-gold: #fbbf24;
+                --accent-red: #f43f5e;
+                --text-main: #f1f5f9;
+                --text-dim: #94a3b8;
+                --header-bg: rgba(10, 15, 29, 0.85);
+                --ticker-bg: rgba(15, 23, 42, 0.9);
+            }
+        }
+
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+
+        body {
+            color: var(--text-main);
+            font-family: 'SolaimanLipi', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: var(--header-bg);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            text-align: center;
+        }
+
+        .header-img {
+            height: 35px;
+            width: auto;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.4));
+        }
+
+        .date-display {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .date-display span { color: var(--accent-cyan); font-weight: 500; }
+
+        /* --- Ticker Bar --- */
+        .ticker-container {
+            display: flex;
+            background: var(--ticker-bg);
+            border-bottom: 2px solid var(--accent-cyan);
+            overflow: hidden;
+            height: 48px;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .ticker-label {
+            background: var(--accent-red);
+            color: white;
+            padding: 0 15px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse-animation 1.5s infinite;
+        }
+
+        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
+        .ticker-move { display: inline-block; padding-left: 100%; animation: ticker-crawl 180s linear infinite; will-change: transform; }
+
+        .ticker-item {
+            display: inline-block;
+            margin-right: 80px;
+            font-size: 1.05rem;
+        }
+
+        .ticker-item b {
+            color: var(--accent-gold);
+            background: rgba(251, 191, 36, 0.1);
+            padding: 0px 6px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        /* --- News Grid --- */
+        main { flex: 1; margin-top: 20px; }
+        #newsGrid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            padding: 0 15px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            #newsGrid { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card:hover { border-color: var(--accent-cyan); background: var(--glass-hover); transform: translateY(-4px); }
+
+        /* --- Side Menu & UI --- */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 300px;
+            height: 100%;
+            background: var(--bg-main);
+            box-shadow: 20px 0 50px rgba(0,0,0,0.3);
+            z-index: 2000;
+            padding: 20px;
+            transition: 0.4s ease;
+        }
+
+        .side-menu.active { left: 0; }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .side-menu h3 { color: var(--accent-cyan); margin: 0; border-left: 4px solid var(--accent-gold); padding-left: 10px; }
+
+        .icon-btn {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .close-btn { color: var(--accent-red); border: none; background: none; cursor: pointer; }
+
+        .menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; z-index: 1500; backdrop-filter: blur(4px); }
+        .menu-overlay.active { display: block; }
+
+        .search-container {
+            display: none;
+            padding: 15px;
+            background: var(--header-bg);
+            border-bottom: 2px solid var(--accent-cyan);
+        }
+
+        .search-container.active { display: block; }
+
+        #newsSearch {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+            color: var(--text-main);
+            font-family: inherit;
+        }
+
+        footer { background: var(--header-bg); padding: 30px 20px; border-top: 1px solid var(--glass-border); text-align: center; }
+
+        .footer-legal {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 15px;
+            background: var(--glass);
+            border-radius: 10px;
+        }
+
+        @keyframes ticker-crawl { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        @keyframes pulse-animation { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    </style>
+</head>
+<body>
+
+    <div class="menu-overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <h3>Quick Access</h3>
+            <button class="close-btn" onclick="toggleMenu()"><i data-lucide="x-circle" size="28"></i></button>
+        </div>
+        <nav style="display:flex; flex-direction:column; gap:12px;">
+            <a href="https://dpe.gopalganj.gov.bd/pages/notices" class="menu-link" target="_blank"><i data-lucide="map-pin"></i> DPE Gopalganj</a>
+            <a href="https://dpe.gov.bd/pages/notices" class="menu-link" target="_blank"><i data-lucide="bell"></i> DPE Notice</a>
+            <a href="/salary" class="menu-link"><i data-lucide="wallet"></i> Salary Calculator</a>
+            <a href="/age" class="menu-link"><i data-lucide="calendar"></i> Age Calculator</a>
+            <a href="/photo" class="menu-link"><i data-lucide="image"></i> Photo Tools</a>
+            <a href="/data" class="menu-link"><i data-lucide="school"></i> Student Management</a>
+          </nav>
+    </div>
+
+    <header>
+        <button class="icon-btn" onclick="toggleMenu()"><i data-lucide="menu" size="20"></i></button>
+        <div class="header-center">
+            <a href="/" style="text-decoration:none;">
+                <img src="/logo.png" alt="satu.pro.bd" class="header-img">
+                <div id="currentDate" class="date-display">লোড হচ্ছে...</div>
+            </a>
+        </div>
+        <button class="icon-btn" onclick="toggleSearch()"><i data-lucide="search" size="20"></i></button>
+    </header>
+
+    <div class="search-container" id="searchContainer">
+        <input type="text" id="newsSearch" placeholder="খবর খুঁজুন...">
+    </div>
+
+    <div class="ticker-container">
+        <div class="ticker-label"><div class="pulse"></div> সর্বশেষ</div>
+        <div class="ticker-wrap">
+            <div class="ticker-move" id="newsTicker">খবর লোড হচ্ছে...</div>
+        </div>
+    </div>
+
+    <main>
+        <div id="newsGrid">
+            <div style="text-align:center; color:var(--text-dim); padding:40px;">সর্বশেষ সংবাদ লোড হচ্ছে...</div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-legal">
+            Content aggregated from third-party RSS feeds remains property of respective publishers.<br>
+            Platform architecture & code design &copy; <b>satu.pro.bd</b>
+        </div>
+    </footer>
+
+    <script>
+        /*
+         * =========================================================================
+         * COPYRIGHT & INTELLECTUAL PROPERTY NOTICE
+         * =========================================================================
+         * Property of SATU (https://satu.pro.bd).
+         * Unauthorized copying, modification, or reverse engineering of this 
+         * script or UI layout is strictly prohibited under international 
+         * copyright laws.
+         * =========================================================================
+         */
+
+        // Domain Lock Security Protection
+        if (window.location.hostname !== 'satu.pro.bd' && 
+            window.location.hostname !== 'www.satu.pro.bd' && 
+            window.location.hostname !== 'localhost' && 
+            window.location.hostname !== '127.0.0.1') {
+            document.body.innerHTML = '<div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#0a0f1d; color:#fff; font-family:sans-serif; text-align:center; padding:20px;"><div><h1>403 Forbidden</h1><p>Unauthorized mirror or cloned deployment detected.</p></div></div>';
+            window.location.href = 'https://satu.pro.bd';
+        }
+
+        // Hidden Watermark Stamp (Base64 Encoded)
+        const __sys_signature = atob("Q29weXJpZ2h0IChjKSBmMDI2IFNBVFUgKHNhdHUucHJvLmJkKS4gQWxsIFJpZ2h0cyBSZXNlcnZlZC4=");
+
+        const feeds = [
+            { name: "প্রথম আলো", url: "https://www.prothomalo.com/feed" },
+            { name: "বিবিসি বাংলা", url: "https://www.bbc.com/bengali/index.xml" },
+            { name: "সময় নিউজ", url: "https://www.somoynews.tv/rss.xml" },
+            { name: "যুগান্তর", url: "https://www.jugantor.com/feed/rss.xml" },
+            { name: "বাংলা ট্রিবিউন", url: "https://www.banglatribune.com/feed" },
+            { name: "বিডিনিউজ২৪", url: "https://bdnews24.com/?widgetName=rssfeed&widgetId=1150&getXmlFeed=true" },
+            { name: "জাগো নিউজ", url: "https://www.jagonews24.com/rss.xml" },
+            { name: "কালের কণ্ঠ", url: "https://www.kalerkantho.com/rss.xml" },
+            { name: "চ্যানেল ২৪", url: "https://www.channel24bd.tv/rss/rss.xml" },
+            { name: "বাংলানিউজ২৪", url: "https://www.banglanews24.com/rss/rss.xml" },
+            { name: "দৈনিক ইনকিলাব", url: "https://www.dailyinqilab.com/rss.xml" },
+            { name: "নয়াদিগন্ত", url: "https://www.dailynayadiganta.com/rss.xml" }
+        ];
+
+        function toggleMenu() {
+            document.getElementById('sideMenu').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function toggleSearch() {
+            const sc = document.getElementById('searchContainer');
+            sc.classList.toggle('active');
+            if(sc.classList.contains('active')) document.getElementById('newsSearch').focus();
+        }
+
+        function updateBengaliClock() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            const bDate = new Intl.DateTimeFormat('bn-BD', dateOptions).format(now);
+            const bTime = new Intl.DateTimeFormat('bn-BD', timeOptions).format(now);
+            document.getElementById('currentDate').innerHTML = `${bDate} | <span>${bTime}</span>`;
+        }
+
+        async function fetchNews() {
+            const grid = document.getElementById('newsGrid');
+            const ticker = document.getElementById('newsTicker');
+            let combinedItems = [];
+
+            const promises = feeds.map(async (feed) => {
+                try {
+                    const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&t=${Date.now()}`);
+                    const data = await res.json();
+                    if (data.status === 'ok') {
+                        return data.items.map(item => ({ ...item, source: feed.name, ts: new Date(item.pubDate).getTime() }));
+                    }
+                } catch (e) { console.error(feed.name + " failed"); }
+                return [];
+            });
+
+            const results = await Promise.all(promises);
+            combinedItems = results.flat().sort((a, b) => b.ts - a.ts);
+
+            if (combinedItems.length > 0) {
+                grid.innerHTML = '';
+                let tickerHTML = "";
+                combinedItems.forEach((item, idx) => {
+                    if(idx < 25) tickerHTML += `<span class="ticker-item"><b>${item.source}</b> ${item.title}</span>`;
+                    const card = document.createElement('a');
+                    card.href = item.link; card.target = "_blank"; card.className = "card";
+                    card.setAttribute('data-title', item.title.toLowerCase());
+                    card.innerHTML = `<span style="font-size:0.85rem; color:var(--accent-cyan); font-weight:700;">${item.source}</span><div class="card-title">${item.title}</div>`;
+                    grid.appendChild(card);
+                });
+                ticker.innerHTML = tickerHTML;
+                ticker.style.animationDuration = (ticker.scrollWidth / 55) + "s";
+            }
+        }
+
+        document.getElementById('newsSearch').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            document.querySelectorAll('.card').forEach(c => c.style.display = c.getAttribute('data-title').includes(term) ? "flex" : "none");
+        });
+
+        setInterval(updateBengaliClock, 1000);
+        updateBengaliClock();
+        lucide.createIcons();
+        fetchNews();
+    </script>
+</body>
+</html>
