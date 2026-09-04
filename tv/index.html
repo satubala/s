@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Live TV</title>
-     <link rel="icon" type="image/svg+xml" href="https://satu.pro.bd/icon.svg"> 
+    <link rel="icon" type="image/svg+xml" href="https://satu.pro.bd/icon.svg"> 
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> 
@@ -98,7 +98,6 @@
             }
         }
 
-    
         .stage-area {
             padding: 10px; 
             display: flex;
@@ -133,9 +132,16 @@
         .meta-container {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 12px;
             margin-top: 12px;
             padding: 4px 6px;
+        }
+
+        .meta-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .live-tag {
@@ -156,7 +162,33 @@
             letter-spacing: -0.02em;
         }
 
-   
+        /* Quality Switcher Styling */
+        .quality-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .quality-select {
+            background: transparent;
+            color: var(--text-main);
+            border: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            padding-right: 4px;
+        }
+
+        .quality-select option {
+            background: var(--bg-main);
+            color: var(--text-main);
+        }
+
         .deck-panel {
             display: flex;
             flex-direction: column;
@@ -223,7 +255,6 @@
             background: var(--glass-hover);
         }
 
-    
         .list-container {
             display: flex;
             flex-direction: column;
@@ -392,14 +423,23 @@
     <main>
         <div class="theatre-dashboard">
             
-            
             <div class="stage-area">
                 <div class="video-container">
                     <video id="tv-screen" controls autoplay playsinline></video>
                 </div>
                 <div class="meta-container">
-                    <span class="live-tag">LIVE</span>
-                    <h1 id="stream-title">Verifying channel...</h1>
+                    <div class="meta-left">
+                        <span class="live-tag">LIVE</span>
+                        <h1 id="stream-title">Verifying channel...</h1>
+                    </div>
+                    
+                    <!-- Quality Controller UI -->
+                    <div class="quality-wrapper">
+                        <i data-lucide="settings" style="width:14px; height:14px; color:var(--text-dim);"></i>
+                        <select id="qualitySelect" class="quality-select" disabled>
+                            <option value="-1">Auto</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -433,7 +473,9 @@
                 <i data-lucide="chevron-down" class="chevron-icon" style="width:14px; height:14px;"></i>
             </button>
             <div class="accordion-content">
+                <p>
                     <b>Disclaimer:</b> This website acts solely as a digital index and stream aggregator. All live TV links and M3U playlists displayed here are collected from various public repositories across the internet and GitHub. We do not host, stream, store, or modify any content ourselves. The management of this website shall not be held liable under any circumstances for the legality, copyright conformity, or any other issues pertaining to the linked content. If there are any copyright complaints or statutory conflicts, you are requested to directly contact the original content hosting providers or the respective GitHub repository owners.
+                </p>
             </div>
         </div>
     </footer>
@@ -443,6 +485,7 @@
         const deckContainer = document.getElementById('deckContainer');
         const streamTitle = document.getElementById('stream-title');
         const filterInput = document.getElementById('filterInput');
+        const qualitySelect = document.getElementById('qualitySelect');
 
         let coreRegistry = [];
         let activeHls = null;
@@ -611,8 +654,15 @@
             if (rows[index]) rows[index].classList.add('active');
         }
 
+        function resetQualitySelector() {
+            qualitySelect.innerHTML = '<option value="-1">Auto</option>';
+            qualitySelect.disabled = true;
+        }
+
         function mountLivePlayback(url, name) {
             streamTitle.textContent = name;
+            resetQualitySelector();
+
             if (activeHls) activeHls.destroy();
 
             const currentIndex = coreRegistry.findIndex(item => item.url === url);
@@ -636,8 +686,34 @@
                 activeHls = new Hls();
                 activeHls.loadSource(url);
                 activeHls.attachMedia(tvScreen);
-                activeHls.on(Hls.Events.MANIFEST_PARSED, () => tvScreen.play());
-                activeHls.on(Hls.Events.ERROR, (event, data) => { if (data.fatal) markCurrentAsBroken(); });
+
+                activeHls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+                    tvScreen.play();
+
+                    // Populating Quality Dropdown Options
+                    if (data.levels.length > 1) {
+                        qualitySelect.disabled = false;
+                        qualitySelect.innerHTML = '<option value="-1">Auto</option>';
+                        
+                        data.levels.forEach((level, index) => {
+                            const resHeight = level.height || 'SD';
+                            const bitRateKbps = level.bitrate ? Math.round(level.bitrate / 1000) : null;
+                            const label = resHeight !== 'SD' 
+                                ? `${resHeight}p ${bitRateKbps ? `(${bitRateKbps}k)` : ''}`
+                                : `Level ${index + 1}`;
+
+                            const option = document.createElement('option');
+                            option.value = index;
+                            option.text = label;
+                            qualitySelect.appendChild(option);
+                        });
+                    }
+                });
+
+                activeHls.on(Hls.Events.ERROR, (event, data) => { 
+                    if (data.fatal) markCurrentAsBroken(); 
+                });
+
             } else if (tvScreen.canPlayType('application/vnd.apple.mpegurl')) {
                 tvScreen.src = url;
                 const nativeErrorHandler = () => { markCurrentAsBroken(); tvScreen.removeEventListener('error', nativeErrorHandler); };
@@ -645,6 +721,14 @@
                 tvScreen.addEventListener('loadedmetadata', () => { tvScreen.play(); tvScreen.removeEventListener('error', nativeErrorHandler); });
             }
         }
+
+        // Quality selection logic
+        qualitySelect.addEventListener('change', (e) => {
+            if (activeHls) {
+                const selectedLevel = parseInt(e.target.value, 10);
+                activeHls.currentLevel = selectedLevel; // -1 represents Adaptive (Auto) quality
+            }
+        });
 
         filterInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
