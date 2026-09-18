@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>satu.pro.bd | Pro Image Studio</title>
-    <link rel="icon" type="image/svg+xml" href="/icon.svg">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230891b2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='10'/><path d='m10 15 5-3-5-3v6z'/></svg>">
     
     <!-- Scripts & Fonts -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -15,288 +14,675 @@
         :root {
             --bg-main: #f1f5f9;
             --bg-gradient: radial-gradient(circle at top right, #e2e8f0, #f1f5f9);
-            --glass: rgba(255, 255, 255, 0.7);
-            --glass-hover: rgba(255, 255, 255, 0.9);
-            --glass-border: rgba(0, 0, 0, 0.1);
+            --glass: rgba(255, 255, 255, 0.75);
+            --glass-card: rgba(255, 255, 255, 0.85);
+            --glass-hover: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(0, 0, 0, 0.08);
             --accent-cyan: #0891b2;
-            --accent-gold: #b45309;
+            --accent-cyan-hover: #0e7490;
+            --accent-gold: #d97706;
+            --accent-green: #059669;
             --accent-red: #e11d48;
             --text-main: #0f172a;
             --text-dim: #475569;
             --header-bg: rgba(255, 255, 255, 0.85);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.08);
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg-main: #0a0f1d;
                 --bg-gradient: radial-gradient(circle at top right, #1e293b, #0a0f1d);
-                --glass: rgba(30, 41, 59, 0.7);
-                --glass-hover: rgba(51, 65, 85, 0.9);
+                --glass: rgba(30, 41, 59, 0.75);
+                --glass-card: rgba(30, 41, 59, 0.85);
+                --glass-hover: rgba(51, 65, 85, 0.95);
                 --glass-border: rgba(255, 255, 255, 0.1);
                 --accent-cyan: #22d3ee;
+                --accent-cyan-hover: #06b6d4;
                 --accent-gold: #fbbf24;
+                --accent-green: #10b981;
                 --accent-red: #f43f5e;
                 --text-main: #f1f5f9;
                 --text-dim: #94a3b8;
                 --header-bg: rgba(10, 15, 29, 0.85);
+                --shadow-lg: 0 20px 40px rgba(0,0,0,0.4);
             }
         }
+
+        * { box-sizing: border-box; }
 
         html, body {
             margin: 0; padding: 0;
             background: var(--bg-gradient);
             background-attachment: fixed;
-            font-family: 'SolaimanLipi', sans-serif;
+            font-family: 'SolaimanLipi', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text-main);
             min-height: 100vh;
         }
 
         header {
-            display: flex; justify-content: center; align-items: center;
-            padding: 12px 15px; background: var(--header-bg);
-            backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-border);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 24px; background: var(--header-bg);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
             position: sticky; top: 0; z-index: 1000;
         }
 
-        .header-img { height: 35px; filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.4)); }
+        .logo-container {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; color: var(--text-main); font-weight: 700; font-size: 1.2rem;
+        }
+        .logo-icon { color: var(--accent-cyan); }
 
-        main { max-width: 600px; margin: 30px auto; padding: 0 15px 50px; }
+        main { max-width: 800px; margin: 25px auto; padding: 0 15px 50px; }
 
         .tool-card {
-            background: var(--glass);
-            backdrop-filter: blur(12px);
+            background: var(--glass-card);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            padding: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            padding: 28px;
+            box-shadow: var(--shadow-lg);
         }
 
-        /* Drag & Drop */
         .drop-zone {
             border: 2px dashed var(--accent-cyan);
             border-radius: 18px;
-            padding: 35px 15px;
+            padding: 35px 20px;
             text-align: center;
             cursor: pointer;
-            transition: 0.3s ease;
+            transition: all 0.25s ease;
             margin-bottom: 25px;
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+            background: rgba(34, 211, 238, 0.03);
         }
-        .drop-zone:hover { background: rgba(34, 211, 238, 0.08); border-color: var(--accent-gold); }
+        .drop-zone:hover, .drop-zone.drag-over {
+            background: rgba(34, 211, 238, 0.12);
+            border-color: var(--accent-gold);
+            transform: translateY(-2px);
+        }
 
         .section-label { 
             font-size: 0.95rem; color: var(--accent-cyan); 
-            font-weight: 700; margin-bottom: 12px; display: block;
+            font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
         }
 
-        /* Grid Controls */
+        /* Controls Grid */
         .settings-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 22px;
         }
 
         .field { display: flex; flex-direction: column; gap: 6px; }
-        label { font-size: 0.85rem; opacity: 0.8; }
-        
-        input, select {
-            padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border);
-            background: var(--glass); color: var(--text-main); font-size: 16px;
-            font-family: inherit;
+        .field-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        label { font-size: 0.85rem; font-weight: 600; opacity: 0.9; }
+
+        input[type="number"], select, input[type="text"] {
+            padding: 10px 14px; border-radius: 10px; border: 1px solid var(--glass-border);
+            background: var(--glass); color: var(--text-main); font-size: 15px;
+            font-family: inherit; width: 100%; outline: none; transition: 0.2s;
+        }
+        input:focus, select:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.2);
         }
 
-        input[type="range"] { padding: 0; cursor: pointer; accent-color: var(--accent-cyan); }
+        input[type="range"] {
+            width: 100%; height: 6px; border-radius: 5px;
+            background: var(--glass-border); outline: none; cursor: pointer;
+            accent-color: var(--accent-cyan);
+        }
 
-        /* Presets */
-        .preset-row { display: flex; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
+        /* Checkbox & Switch */
+        .switch-label {
+            display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem;
+        }
+        .switch-label input { accent-color: var(--accent-cyan); width: 16px; height: 16px; }
+
+        .preset-row { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
         .preset-btn {
-            flex: 1; min-width: 80px; padding: 10px; font-size: 0.8rem; border-radius: 10px;
+            flex: 1; min-width: 90px; padding: 8px 12px; font-size: 0.8rem; font-weight: 600; border-radius: 10px;
             background: var(--glass); border: 1px solid var(--glass-border);
             color: var(--text-main); cursor: pointer; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
         }
-        .preset-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+        .preset-btn span { font-size: 0.7rem; opacity: 0.7; }
+        .preset-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); background: var(--glass-hover); }
 
-        .btn-process {
-            width: 100%; padding: 18px; border-radius: 15px;
-            background: var(--accent-cyan); color: #fff; border: none;
-            font-weight: 700; font-size: 1.1rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 8px 20px rgba(34, 211, 238, 0.3);
-            margin-top: 10px;
+        .action-row {
+            display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
         }
-        .btn-process:disabled { background: var(--text-dim); opacity: 0.5; box-shadow: none; cursor: not-allowed; }
+        .icon-btn {
+            padding: 10px 14px; border-radius: 10px; border: 1px solid var(--glass-border);
+            background: var(--glass); color: var(--text-main); font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;
+        }
+        .icon-btn:hover { background: var(--glass-hover); border-color: var(--accent-cyan); }
+        .icon-btn.danger { color: var(--accent-red); }
+        .icon-btn.danger:hover { border-color: var(--accent-red); background: rgba(225, 29, 72, 0.1); }
+
+        .stats-badge {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;
+            background: rgba(0,0,0,0.04); border-radius: 14px; padding: 12px; margin-bottom: 20px;
+            border: 1px solid var(--glass-border);
+        }
+        @media (prefers-color-scheme: dark) {
+            .stats-badge { background: rgba(0,0,0,0.25); }
+        }
+        .stat-item { text-align: center; }
+        .stat-title { font-size: 0.75rem; opacity: 0.7; }
+        .stat-val { font-size: 0.95rem; font-weight: 700; color: var(--accent-cyan); }
 
         #preview-wrap {
-            margin-top: 30px; border-radius: 18px; overflow: hidden;
+            margin-top: 20px; border-radius: 16px; overflow: hidden;
             border: 1px solid var(--glass-border); display: none;
-            background: #000;
+            background: repeating-conic-gradient(#80808020 0% 25%, transparent 0% 50%) 50% / 16px 16px;
+            text-align: center; padding: 10px; max-height: 450px; justify-content: center; align-items: center;
         }
-        img { width: 100%; display: block; }
+        #previewCanvas {
+            max-width: 100%; max-height: 420px; object-fit: contain; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.2s;
+        }
 
-        footer { text-align: center; padding: 30px; opacity: 0.6; font-size: 0.85rem; }
+        .btn-process {
+            width: 100%; padding: 16px; border-radius: 14px;
+            background: var(--accent-cyan); color: #fff; border: none;
+            font-weight: 700; font-size: 1.05rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 8px 20px rgba(34, 211, 238, 0.3);
+            margin-top: 15px; transition: 0.2s;
+        }
+        .btn-process:hover:not(:disabled) { background: var(--accent-cyan-hover); transform: translateY(-1px); }
+        .btn-process:disabled { background: var(--text-dim); opacity: 0.5; box-shadow: none; cursor: not-allowed; }
+
+        /* Batch Upload Container */
+        .batch-list {
+            display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; margin-bottom: 15px;
+        }
+        .batch-thumb {
+            width: 60px; height: 60px; border-radius: 10px; object-fit: cover;
+            border: 2px solid transparent; cursor: pointer; flex-shrink: 0; opacity: 0.6; transition: 0.2s;
+        }
+        .batch-thumb.active { border-color: var(--accent-cyan); opacity: 1; transform: scale(1.05); }
+
+        footer { text-align: center; padding: 25px; opacity: 0.7; font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
 <header>
-    <a href="/"><img src="/logo.svg" alt="satu.pro.bd" class="header-img"></a>
+    <a href="#" class="logo-container">
+        <i data-lucide="sparkles" class="logo-icon"></i>
+        <span>satu.pro.bd</span>
+    </a>
+    <span style="font-size: 0.85rem; font-weight: 600; opacity: 0.8;">প্রো ইমেজ স্টুডিও</span>
 </header>
 
 <main>
     <div class="tool-card">
-        <h2 style="text-align:center; margin-top:0; color:var(--accent-gold);">প্রো ইমেজ স্টুডিও</h2>
-
-        <!-- Upload Section -->
+        <!-- Upload Area -->
         <div class="drop-zone" id="dropZone">
-            <i data-lucide="upload-cloud" size="42" style="color:var(--accent-cyan)"></i>
-            <span id="dropText">ছবি ড্রাগ করুন অথবা এখানে ক্লিক করুন</span>
-            <input type="file" id="fileInput" accept="image/*" style="display:none">
+            <i data-lucide="upload-cloud" size="44" style="color:var(--accent-cyan)"></i>
+            <div>
+                <strong id="dropText" style="font-size: 1.05rem; display:block;">ছবি ড্রাগ করুন অথবা ফাইল সিলেক্ট করুন</strong>
+                <span style="font-size: 0.8rem; opacity: 0.7;">(একাদিক ছবি একসাথে নির্বাচন করা সম্ভব)</span>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" multiple style="display:none">
         </div>
 
-        <!-- Preset Section -->
-        <span class="section-label">প্রিসেট সাইজ (Quick Presets)</span>
+        <!-- Multi-image thumbnails container -->
+        <div id="batchContainer" style="display:none;">
+            <span class="section-label"><i data-lucide="layers" size="16"></i> একাধিক ইমেজ তালিকা</span>
+            <div class="batch-list" id="batchList"></div>
+        </div>
+
+        <!-- Quick Presets -->
+        <span class="section-label"><i data-lucide="layout-grid" size="16"></i> প্রিসেট সাইজ (Quick Presets)</span>
         <div class="preset-row">
-            <button onclick="setPreset(300, 300)" class="preset-btn">ID (1:1)</button>
-            <button onclick="setPreset(1280, 720)" class="preset-btn">News (16:9)</button>
-            <button onclick="setPreset(1080, 1920)" class="preset-btn">Story (9:16)</button>
-            <button onclick="setPreset(1200, 630)" class="preset-btn">FB Post</button>
+            <button onclick="applyPreset(300, 300)" class="preset-btn">ID / Passport <span>1:1 (300x300)</span></button>
+            <button onclick="applyPreset(1280, 720)" class="preset-btn">YouTube / Banner <span>16:9 (1280x720)</span></button>
+            <button onclick="applyPreset(1080, 1920)" class="preset-btn">Story / Reel <span>9:16 (1080x1920)</span></button>
+            <button onclick="applyPreset(1200, 630)" class="preset-btn">FB Post <span>1200x630</span></button>
+            <button onclick="applyPreset(600, 600)" class="preset-btn">Square <span>1:1 (600x600)</span></button>
         </div>
 
-        <!-- Resizing Section -->
-        <span class="section-label">রিসাইজ অপশন</span>
+        <div class="field-row" style="margin-bottom: 10px;">
+            <span class="section-label" style="margin:0;"><i data-lucide="scaling" size="16"></i> রিসাইজ অপশন</span>
+            <label class="switch-label">
+                <input type="checkbox" id="aspectRatioLock" checked> অনুপাত লক (Lock Aspect Ratio)
+            </label>
+        </div>
         <div class="settings-grid">
             <div class="field">
                 <label>প্রস্থ (Width px)</label>
-                <input type="number" id="wInput" placeholder="0">
+                <input type="number" id="wInput" placeholder="Width">
             </div>
             <div class="field">
                 <label>উচ্চতা (Height px)</label>
-                <input type="number" id="hInput" placeholder="0">
+                <input type="number" id="hInput" placeholder="Height">
             </div>
             <div class="field">
-                <label>ফরম্যাট</label>
-                <select id="format">
-                    <option value="image/webp">WebP (Modern)</option>
-                    <option value="image/jpeg">JPEG (Small)</option>
-                    <option value="image/png">PNG (Clear)</option>
+                <label>ফিট মোড (Resize Fitting)</label>
+                <select id="fitMode">
+                    <option value="contain">Strech / Fit Canvas</option>
+                    <option value="cover" selected>Smart Crop (Cover Area)</option>
                 </select>
             </div>
             <div class="field">
-                <label>কোয়ালিটি (<span id="qVal">90</span>%)</label>
-                <input type="range" id="quality" min="1" max="100" value="90">
+                <label>ফরম্যাট (Format)</label>
+                <select id="format">
+                    <option value="image/webp">WebP (Modern & Small)</option>
+                    <option value="image/jpeg">JPEG (Standard)</option>
+                    <option value="image/png">PNG (Lossless Clear)</option>
+                </select>
             </div>
         </div>
 
-        <!-- Filter Section -->
-        <span class="section-label">এডিটিং ফিল্টার</span>
+        <span class="section-label"><i data-lucide="sliders" size="16"></i> কোয়ালিটি এবং ফাইল সাইজ টিউনিং</span>
         <div class="settings-grid">
             <div class="field">
-                <label>উজ্জ্বলতা (Brightness: <span id="brVal">100</span>%)</label>
-                <input type="range" id="brightness" min="50" max="150" value="100">
+                <div class="field-row">
+                    <label>কোয়ালিটি</label>
+                    <span id="qVal" style="font-weight:700; font-size:0.85rem;">90%</span>
+                </div>
+                <input type="range" id="quality" min="5" max="100" value="90">
             </div>
             <div class="field">
-                <label>কন্ট্রাস্ট (Contrast: <span id="ctVal">100</span>%)</label>
-                <input type="range" id="contrast" min="50" max="150" value="100">
+                <div class="field-row">
+                    <label>টার্গেট সর্বোচ্চ সাইজ (Max KB)</label>
+                    <label class="switch-label"><input type="checkbox" id="enableTargetKb"> সক্রিয়</label>
+                </div>
+                <input type="number" id="targetKb" placeholder="e.g. 100" value="100" disabled>
             </div>
+        </div>
+
+        <!-- Image Filters & Manipulation -->
+        <span class="section-label"><i data-lucide="wand2" size="16"></i> ছবি এডিটিং এবং ফিল্টার</span>
+        <div class="settings-grid">
+            <div class="field">
+                <div class="field-row"><label>উজ্জ্বলতা (Brightness)</label><span id="brVal">100%</span></div>
+                <input type="range" id="brightness" min="20" max="180" value="100">
+            </div>
+            <div class="field">
+                <div class="field-row"><label>কন্ট্রাস্ট (Contrast)</label><span id="ctVal">100%</span></div>
+                <input type="range" id="contrast" min="20" max="180" value="100">
+            </div>
+            <div class="field">
+                <div class="field-row"><label>স্যাচুরেশন (Saturate)</label><span id="stVal">100%</span></div>
+                <input type="range" id="saturate" min="0" max="200" value="100">
+            </div>
+            <div class="field">
+                <div class="field-row"><label>ব্লার (Blur)</label><span id="blVal">0px</span></div>
+                <input type="range" id="blur" min="0" max="10" value="0">
+            </div>
+        </div>
+
+        <!-- Action Toolbar -->
+        <div class="action-row">
+            <button class="icon-btn" onclick="rotateImage(-90)"><i data-lucide="rotate-ccw" size="16"></i> বামে ঘোরান</button>
+            <button class="icon-btn" onclick="rotateImage(90)"><i data-lucide="rotate-cw" size="16"></i> ডানে ঘোরান</button>
+            <button class="icon-btn" onclick="toggleFlip('h')"><i data-lucide="flip-horizontal" size="16"></i> ফ্লিপ (H)</button>
+            <button class="icon-btn" onclick="toggleFlip('v')"><i data-lucide="flip-vertical" size="16"></i> ফ্লিপ (V)</button>
+            <button class="icon-btn danger" onclick="resetFilters()"><i data-lucide="refresh-cw" size="16"></i> রিসেট ফিল্টার</button>
+        </div>
+
+        <div class="stats-badge" id="statsWrap" style="display:none;">
+            <div class="stat-item">
+                <div class="stat-title">মূল রেজোলিউশন</div>
+                <div class="stat-val" id="origDim">-</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-title">নতুন রেজোলিউশন</div>
+                <div class="stat-val" id="newDim">-</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-title">মূল সাইজ</div>
+                <div class="stat-val" id="origSize">-</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-title">আনুমানিক নতুন সাইজ</div>
+                <div class="stat-val" id="estSize" style="color:var(--accent-green)">-</div>
+            </div>
+        </div>
+
+        <!-- Live Preview Wrap -->
+        <div id="preview-wrap">
+            <canvas id="previewCanvas"></canvas>
         </div>
 
         <button class="btn-process" id="saveBtn" disabled>
-            <i data-lucide="download"></i> ডাউনলোড করুন
+            <i data-lucide="download"></i> ডাউনলোড করুন (Download Processed Image)
         </button>
-
-        <div id="preview-wrap">
-            <img id="previewImg">
-        </div>
     </div>
 </main>
 
 <footer>
-    &copy; 2026 <b>satu.pro.bd</b> | All Rights Reserved.
+    &copy; 2026 <b>satu.pro.bd</b> | Pro Image Studio | All Rights Reserved.
 </footer>
 
-<canvas id="canvas" style="display:none"></canvas>
+<canvas id="hiddenCanvas" style="display:none;"></canvas>
 
 <script>
     const $ = id => document.getElementById(id);
-    let originalImg = new Image();
-    let ratio = 1;
 
-    // Lucide Icons
+    // Application State Variables
+    let loadedImages = [];
+    let currentIndex = 0;
+    let rotationAngle = 0;
+    let flipH = false;
+    let flipV = false;
+    let originalAspectRatio = 1;
+
+    // Initialize Lucide Icons
     lucide.createIcons();
 
-    // File Upload Logic
-    const handleFile = file => {
-        if (!file || !file.type.startsWith('image/')) return;
-        const reader = new FileReader();
-        reader.onload = e => originalImg.src = e.target.result;
-        reader.readAsDataURL(file);
-        $('dropText').innerText = file.name;
-    };
+    // Setup Event Listeners
+    const dropZone = $('dropZone');
+    const fileInput = $('fileInput');
 
-    $('dropZone').onclick = () => $('fileInput').click();
-    $('fileInput').onchange = e => handleFile(e.target.files[0]);
+    dropZone.onclick = () => fileInput.click();
+    fileInput.onchange = e => handleFiles(e.target.files);
 
-    // Drag and Drop Effects
-    $('dropZone').ondragover = e => { e.preventDefault(); $('dropZone').style.borderColor = 'var(--accent-gold)'; };
-    $('dropZone').ondragleave = () => $('dropZone').style.borderColor = 'var(--accent-cyan)';
-    $('dropZone').ondrop = e => {
+    // Drag and drop visual state handlers
+    dropZone.ondragover = e => { e.preventDefault(); dropZone.classList.add('drag-over'); };
+    dropZone.ondragleave = () => dropZone.classList.remove('drag-over');
+    dropZone.ondrop = e => {
         e.preventDefault();
-        handleFile(e.dataTransfer.files[0]);
+        dropZone.classList.remove('drag-over');
+        handleFiles(e.dataTransfer.files);
     };
 
-    originalImg.onload = () => {
-        ratio = originalImg.width / originalImg.height;
-        $('wInput').value = originalImg.width;
-        $('hInput').value = originalImg.height;
-        $('previewImg').src = originalImg.src;
-        $('preview-wrap').style.display = 'block';
-        $('saveBtn').disabled = false;
-    };
+    function handleFiles(files) {
+        if (!files || files.length === 0) return;
 
-    // Resizing & Filter Inputs
-    $('wInput').oninput = () => $('hInput').value = Math.round($('wInput').value / ratio);
-    $('hInput').oninput = () => $('wInput').value = Math.round($('hInput').value * ratio);
-    
-    window.setPreset = (w, h) => {
-        if(!originalImg.src) return;
-        $('wInput').value = w;
-        $('hInput').value = h;
-        ratio = w / h;
-    };
+        loadedImages = [];
+        let loadedCount = 0;
 
-    $('quality').oninput = e => $('qVal').innerText = e.target.value;
-    $('brightness').oninput = e => $('brVal').innerText = e.target.value;
-    $('contrast').oninput = e => $('ctVal').innerText = e.target.value;
+        Array.from(files).forEach((file, index) => {
+            if (!file.type.startsWith('image/')) return;
 
-    // Final Canvas Processing
-    $('saveBtn').onclick = () => {
-        const canvas = $('canvas');
-        const ctx = canvas.getContext('2d');
-        const w = parseInt($('wInput').value);
-        const h = parseInt($('hInput').value);
-        
-        canvas.width = w;
-        canvas.height = h;
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = new Image();
+                img.onload = () => {
+                    loadedImages.push({
+                        img: img,
+                        name: file.name,
+                        size: file.size,
+                        type: file.type
+                    });
 
-        // Apply Native Canvas Filters
-        ctx.filter = `brightness(${$('brightness').value}%) contrast(${$('contrast').value}%)`;
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-        
-        ctx.drawImage(originalImg, 0, 0, w, h);
-
-        const format = $('format').value;
-        const link = document.createElement('a');
-        link.download = `satu-pro-${Date.now()}.${format.split('/')[1]}`;
-        link.href = canvas.toDataURL(format, $('quality').value / 100);
-        link.click();
-    };
-
-    // PWA Offline Support (Service Worker Registration)
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js').catch(() => {});
+                    loadedCount++;
+                    if (loadedCount === files.length) {
+                        initBatchUI();
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         });
     }
-</script>
 
+    function initBatchUI() {
+        if (loadedImages.length === 0) return;
+
+        const batchList = $('batchList');
+        batchList.innerHTML = '';
+
+        if (loadedImages.length > 1) {
+            $('batchContainer').style.display = 'block';
+            loadedImages.forEach((item, idx) => {
+                const thumb = document.createElement('img');
+                thumb.src = item.img.src;
+                thumb.className = `batch-thumb ${idx === 0 ? 'active' : ''}`;
+                thumb.onclick = () => switchImage(idx);
+                batchList.appendChild(thumb);
+            });
+        } else {
+            $('batchContainer').style.display = 'none';
+        }
+
+        switchImage(0);
+    }
+
+    function switchImage(index) {
+        currentIndex = index;
+        const current = loadedImages[currentIndex];
+
+        // Update active thumb
+        const thumbs = document.querySelectorAll('.batch-thumb');
+        thumbs.forEach((t, i) => t.classList.toggle('active', i === index));
+
+        // Update UI inputs
+        rotationAngle = 0;
+        flipH = false;
+        flipV = false;
+        originalAspectRatio = current.img.width / current.img.height;
+
+        $('wInput').value = current.img.width;
+        $('hInput').value = current.img.height;
+        $('dropText').innerText = current.name + ` (${loadedImages.length} image selected)`;
+
+        $('preview-wrap').style.display = 'flex';
+        $('statsWrap').style.display = 'grid';
+        $('saveBtn').disabled = false;
+
+        renderPreview();
+    }
+
+    // Aspect Ratio Control Logic
+    $('wInput').oninput = () => {
+        if ($('aspectRatioLock').checked && originalAspectRatio) {
+            const isRotated90 = (rotationAngle / 90) % 2 !== 0;
+            const ratio = isRotated90 ? (1 / originalAspectRatio) : originalAspectRatio;
+            $('hInput').value = Math.round($('wInput').value / ratio);
+        }
+        renderPreview();
+    };
+
+    $('hInput').oninput = () => {
+        if ($('aspectRatioLock').checked && originalAspectRatio) {
+            const isRotated90 = (rotationAngle / 90) % 2 !== 0;
+            const ratio = isRotated90 ? (1 / originalAspectRatio) : originalAspectRatio;
+            $('wInput').value = Math.round($('hInput').value * ratio);
+        }
+        renderPreview();
+    };
+
+    function applyPreset(w, h) {
+        if (loadedImages.length === 0) return;
+        $('aspectRatioLock').checked = false;
+        $('wInput').value = w;
+        $('hInput').value = h;
+        renderPreview();
+    }
+
+    // Filter Sliders & Inputs Registration
+    const filterInputs = ['quality', 'brightness', 'contrast', 'saturate', 'blur', 'fitMode', 'format'];
+    filterInputs.forEach(id => {
+        $(id).oninput = () => {
+            updateLabels();
+            renderPreview();
+        };
+    });
+
+    $('enableTargetKb').onchange = e => {
+        $('targetKb').disabled = !e.target.checked;
+        renderPreview();
+    };
+    $('targetKb').oninput = renderPreview;
+
+    function updateLabels() {
+        $('qVal').innerText = $('quality').value + '%';
+        $('brVal').innerText = $('brightness').value + '%';
+        $('ctVal').innerText = $('contrast').value + '%';
+        $('stVal').innerText = $('saturate').value + '%';
+        $('blVal').innerText = $('blur').value + 'px';
+    }
+
+    // Rotation and Flipping Helpers
+    function rotateImage(deg) {
+        rotationAngle = (rotationAngle + deg) % 360;
+        if (rotationAngle < 0) rotationAngle += 360;
+        
+        // Swap width and height inputs on 90 deg rotations
+        const temp = $('wInput').value;
+        $('wInput').value = $('hInput').value;
+        $('hInput').value = temp;
+
+        renderPreview();
+    }
+
+    function toggleFlip(dir) {
+        if (dir === 'h') flipH = !flipH;
+        if (dir === 'v') flipV = !flipV;
+        renderPreview();
+    }
+
+    function resetFilters() {
+        $('brightness').value = 100;
+        $('contrast').value = 100;
+        $('saturate').value = 100;
+        $('blur').value = 0;
+        $('quality').value = 90;
+        rotationAngle = 0;
+        flipH = false;
+        flipV = false;
+        updateLabels();
+        renderPreview();
+    }
+
+    function renderPreview() {
+        if (loadedImages.length === 0) return;
+
+        const current = loadedImages[currentIndex];
+        const canvas = $('previewCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const targetW = parseInt($('wInput').value) || current.img.width;
+        const targetH = parseInt($('hInput').value) || current.img.height;
+
+        canvas.width = targetW;
+        canvas.height = targetH;
+
+        ctx.clearRect(0, 0, targetW, targetH);
+
+        // Advanced JPEG Guard: Fill White Background to prevent black artifacts
+        if ($('format').value === 'image/jpeg') {
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, targetW, targetH);
+        }
+
+        ctx.save();
+
+        // Canvas Transformation for Center Rotation & Flip
+        ctx.translate(targetW / 2, targetH / 2);
+        ctx.rotate((rotationAngle * Math.PI) / 180);
+        ctx.scale(flipH ? -1 : 1, flipV ? -1 : 1);
+
+        // Dynamic Filtering
+        const br = $('brightness').value;
+        const ct = $('contrast').value;
+        const st = $('saturate').value;
+        const bl = $('blur').value;
+        ctx.filter = `brightness(${br}%) contrast(${ct}%) saturate(${st}%) blur(${bl}px)`;
+
+        // Dimension calculations accounting for orientation rotation
+        const isRotated90 = (rotationAngle / 90) % 2 !== 0;
+        const drawW = isRotated90 ? targetH : targetW;
+        const drawH = isRotated90 ? targetW : targetH;
+
+        // Image Fit Logic (Contain vs Cover Crop)
+        const fitMode = $('fitMode').value;
+        if (fitMode === 'cover') {
+            const imgRatio = current.img.width / current.img.height;
+            const targetRatio = drawW / drawH;
+            let sx, sy, sWidth, sHeight;
+
+            if (imgRatio > targetRatio) {
+                sHeight = current.img.height;
+                sWidth = sHeight * targetRatio;
+                sx = (current.img.width - sWidth) / 2;
+                sy = 0;
+            } else {
+                sWidth = current.img.width;
+                sHeight = sWidth / targetRatio;
+                sx = 0;
+                sy = (current.img.height - sHeight) / 2;
+            }
+            ctx.drawImage(current.img, sx, sy, sWidth, sHeight, -drawW / 2, -drawH / 2, drawW, drawH);
+        } else {
+            ctx.drawImage(current.img, -drawW / 2, -drawH / 2, drawW, drawH);
+        }
+
+        ctx.restore();
+
+        // Update Statistics Information
+        updateStats(targetW, targetH, canvas);
+    }
+
+    function updateStats(targetW, targetH, canvas) {
+        const current = loadedImages[currentIndex];
+        $('origDim').innerText = `${current.img.width} × ${current.img.height} px`;
+        $('newDim').innerText = `${targetW} × ${targetH} px`;
+        $('origSize').innerText = formatBytes(current.size);
+
+        // Quality Optimization Algorithm if Max KB Guard is Enabled
+        let format = $('format').value;
+        let qualityVal = parseFloat($('quality').value) / 100;
+
+        if ($('enableTargetKb').checked) {
+            const targetBytes = (parseInt($('targetKb').value) || 100) * 1024;
+            let low = 0.05, high = 1.0;
+            let bestDataUrl = canvas.toDataURL(format, qualityVal);
+
+            // Binary search to find optimal compression quality matching target KB limit
+            for (let i = 0; i < 6; i++) {
+                let mid = (low + high) / 2;
+                let testUrl = canvas.toDataURL(format, mid);
+                let testSize = Math.round((testUrl.length - 22) * 3 / 4);
+
+                if (testSize <= targetBytes) {
+                    bestDataUrl = testUrl;
+                    qualityVal = mid;
+                    low = mid;
+                } else {
+                    high = mid;
+                }
+            }
+            $('quality').value = Math.round(qualityVal * 100);
+            $('qVal').innerText = Math.round(qualityVal * 100) + '%';
+        }
+
+        const dataUrl = canvas.toDataURL(format, qualityVal);
+        const estBytes = Math.round((dataUrl.length - 22) * 3 / 4);
+        $('estSize').innerText = formatBytes(estBytes);
+    }
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // Download Button Action Trigger
+    $('saveBtn').onclick = () => {
+        if (loadedImages.length === 0) return;
+
+        const canvas = $('previewCanvas');
+        const format = $('format').value;
+        const ext = format.split('/')[1];
+        const qualityVal = parseFloat($('quality').value) / 100;
+
+        const dataUrl = canvas.toDataURL(format, qualityVal);
+        const link = document.createElement('a');
+        const origName = loadedImages[currentIndex].name.replace(/\.[^/.]+$/, "");
+        
+        link.download = `${origName}-satu.pro.${ext}`;
+        link.href = dataUrl;
+        link.click();
+    };
+</script>
 </body>
 </html>
