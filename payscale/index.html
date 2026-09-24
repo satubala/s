@@ -377,15 +377,8 @@
         <div class="section-title">৩. মাসিক কর্তনসমূহ (Deductions)</div>
         <div class="form-grid">
             <div class="form-group">
-                <label for="gpfPercent">জিপিএফ (GPF) কর্তন (%):</label>
-                <select id="gpfPercent">
-                    <option value="7.5">৭.৫% (সর্বনিম্ন)</option>
-                    <option value="10" selected>১০%</option>
-                    <option value="12.5">১২.৫%</option>
-                    <option value="15">১৫%</option>
-                    <option value="20">২০%</option>
-                    <option value="25">২৫% (সর্বোচ্চ)</option>
-                </select>
+                <label for="gpfAmount">জিপিএফ (GPF) কর্তন (ম্যানুয়ালি ইনপুট দিন):</label>
+                <input type="number" id="gpfAmount" placeholder="টাকা" value="0" min="0" required>
             </div>
 
             <div class="form-group">
@@ -434,7 +427,7 @@
                         <th>১ জুলাই ২০২৬ হতে<br>(৪০%/৫০% বৃদ্ধি)</th>
                         <th>১ জানুয়ারি ২০২৭ হতে<br>(৭০%/৭৫% বৃদ্ধি)</th>
                         <th>১ জুলাই ২০২৭ হতে<br>(১০০% নতুন স্কেল)</th>
-                        <th>১ জানুয়ারি ২০২৮ হতে<br>(নতুন বাসা ভাড়া ও চিকিৎসা)</th>
+                        <th>১ জানুয়ারি ২০২৮ হতে<br>(নতুন বাসা ভাড়া, চিকিৎসা, টিফিন ও মোবাইল)</th>
                     </tr>
                 </thead>
                 <tbody id="salaryTableBody">
@@ -455,7 +448,7 @@
         6: { steps15: [35500, 37280, 39150, 41110, 43170, 45330, 47600, 49980, 52480, 55110, 57870, 60770, 63810, 67010], steps26: [71000, 74600, 78300, 82200, 86400, 90700, 95200, 100000, 104900, 110200, 115700, 121500, 127600, 134000] },
         7: { steps15: [29000, 30450, 31980, 33580, 35260, 37030, 38890, 40840, 42890, 45040, 47300, 49670, 52160, 54770, 57510, 60390, 63410], steps26: [58000, 60900, 64000, 67200, 70500, 74100, 77800, 81700, 85700, 90000, 94500, 99200, 104200, 109400, 114900, 120600, 126800] },
         8: { steps15: [23000, 24150, 25360, 26630, 27970, 29370, 30840, 32390, 34010, 35720, 37510, 39390, 41360, 43430, 45610, 47900, 50300, 52820, 55470], steps26: [46000, 48300, 50800, 53300, 56000, 58800, 61700, 64800, 68000, 71400, 75000, 78700, 82700, 86800, 91100, 95700, 100500, 105500, 110800] },
-        9: { steps15: [22000, 23100, 24260, 25480, 26760, 28100, 29510, 30990, 32540, 34170, 35880, 37680, 39570, 41550, 43630, 45820, 48120, 50530, 53060], steps26: [44000, 46200, 48600, 51000, 53500, 56200, 59000, 62000, 65100, 68300, 71700, 75300, 79100, 83000, 87200, 91500, 96100, 100900, 105900] },
+        9: { steps15: [22000, 23100, 24260, 25480, 26760, 28100, 29510, 30990, 32540, 34170, 35880, 37680, 39570, 41550, 43630, 45820, 48120, 50530, 53060], steps26: [44000, 46200, 48600, 51000, 53500, 56200, 59000, 62000, 65100, 68300, 71700, 75300, 79100, 87200, 91500, 96100, 100900, 105900] },
         10: { steps15: [16000, 16800, 17640, 18530, 19460, 20440, 21470, 22550, 23680, 24870, 26120, 27430, 28810, 30260, 31780, 33370, 35040, 36800, 38640], steps26: [32000, 33600, 35300, 37100, 38900, 40900, 42900, 45100, 47300, 49700, 52200, 54800, 57500, 60400, 63400, 66600, 69900, 73400, 77300] },
         11: { steps15: [12500, 13130, 13790, 14480, 15210, 15980, 16780, 17620, 18510, 19440, 20420, 21450, 22530, 23660, 24850, 26100, 27410, 28790, 30230], steps26: [25000, 26300, 27600, 29000, 30400, 32000, 33600, 35200, 37000, 38800, 40800, 42800, 44900, 47200, 49500, 52000, 54600, 57300, 60500] },
         12: { steps15: [11300, 11870, 12470, 13100, 13760, 14450, 15180, 15940, 16740, 17580, 18460, 19390, 20360, 21380, 22450, 23580, 24760, 26000, 27300], steps26: [24300, 25600, 26800, 28200, 29600, 31100, 32600, 34200, 36000, 37700, 39600, 41600, 43700, 45900, 48200, 50600, 53100, 55700, 58700] },
@@ -471,6 +464,7 @@
 
     const gradeSelect = document.getElementById('gradeSelect');
     const basicSelect = document.getElementById('basicSelect');
+    const gpfAmountInput = document.getElementById('gpfAmount');
 
     for (let i = 1; i <= 20; i++) {
         let opt = document.createElement('option');
@@ -492,6 +486,14 @@
             });
         } else {
             basicSelect.disabled = true;
+        }
+    });
+
+    // Auto-suggest GPF amount (10%) when basic is selected, user can still edit manually
+    basicSelect.addEventListener('change', function() {
+        const basicVal = parseInt(this.value);
+        if (basicVal) {
+            gpfAmountInput.value = Math.round(basicVal * 0.10);
         }
     });
 
@@ -524,7 +526,7 @@
         const isDeputation = document.getElementById('deputationAllow').checked;
 
         // Deductions
-        const gpfPct = parseFloat(document.getElementById('gpfPercent').value);
+        const gpfDeduction = parseInt(gpfAmountInput.value) || 0;
         const welfare = parseInt(document.getElementById('welfareFund').value) || 0;
         const tax = parseInt(document.getElementById('taxDeduction').value) || 0;
         const otherDed = parseInt(document.getElementById('otherDeductions').value) || 0;
@@ -548,11 +550,16 @@
         const p3Medical = 1500;
         const p4Medical = (age === 'over50') ? 4000 : 3000;
 
-        const tiffin = (grade >= 11 && grade <= 20) ? 500 : 0;
+        // Tiffin and Mobile Allowances apply ONLY from Jan 1, 2028 (Phase 4)
+        const tiffinVal = (grade >= 11 && grade <= 20) ? 500 : 0;
+        const mobVal = (grade <= 5) ? 500 : 150;
+
+        const p1Tiffin = 0, p2Tiffin = 0, p3Tiffin = 0, p4Tiffin = tiffinVal;
+        const p1Mob = 0, p2Mob = 0, p3Mob = 0, p4Mob = mobVal;
+
         const conv = (grade >= 11 && grade <= 20 && location !== 'other') ? 600 : 0;
         const edu = child * 500;
         const disChild = disabledChild * 3000;
-        const mob = (grade <= 5) ? 500 : 150;
 
         const wash = isWash ? 300 : 0;
         const charge = isCharge ? 1500 : 0;
@@ -576,32 +583,23 @@
         else hr28Pct = (location === 'dhaka') ? 0.40 : (location === 'city' ? 0.30 : 0.25);
         const hr28Amt = Math.round(p4Basic * hr28Pct);
 
-        const otherAllowances = tiffin + conv + edu + disChild + mob + wash + charge + deputation + hillVal + haorVal;
+        const commonAllowances = conv + edu + disChild + wash + charge + deputation + hillVal + haorVal;
 
         // Gross
-        const p1Gross = p1Basic + hr15Amt + p1Medical + otherAllowances;
-        const p2Gross = p2Basic + hr15Amt + p2Medical + otherAllowances;
-        const p3Gross = p3Basic + hr15Amt + p3Medical + otherAllowances;
-        const p4Gross = p4Basic + hr28Amt + p4Medical + otherAllowances;
+        const p1Gross = p1Basic + hr15Amt + p1Medical + p1Tiffin + p1Mob + commonAllowances;
+        const p2Gross = p2Basic + hr15Amt + p2Medical + p2Tiffin + p2Mob + commonAllowances;
+        const p3Gross = p3Basic + hr15Amt + p3Medical + p3Tiffin + p3Mob + commonAllowances;
+        const p4Gross = p4Basic + hr28Amt + p4Medical + p4Tiffin + p4Mob + commonAllowances;
 
         // GPF Deductions
-        const p1Gpf = Math.round(p1Basic * (gpfPct / 100));
-        const p2Gpf = Math.round(p2Basic * (gpfPct / 100));
-        const p3Gpf = Math.round(p3Basic * (gpfPct / 100));
-        const p4Gpf = Math.round(p4Basic * (gpfPct / 100));
-
         const otherDeductionsTotal = welfare + tax + otherDed;
-
-        const p1TotalDed = p1Gpf + otherDeductionsTotal;
-        const p2TotalDed = p2Gpf + otherDeductionsTotal;
-        const p3TotalDed = p3Gpf + otherDeductionsTotal;
-        const p4TotalDed = p4Gpf + otherDeductionsTotal;
+        const totalDeductions = gpfDeduction + otherDeductionsTotal;
 
         // Net Payable
-        const p1Net = p1Gross - p1TotalDed;
-        const p2Net = p2Gross - p2TotalDed;
-        const p3Net = p3Gross - p3TotalDed;
-        const p4Net = p4Gross - p4TotalDed;
+        const p1Net = p1Gross - totalDeductions;
+        const p2Net = p2Gross - totalDeductions;
+        const p3Net = p3Gross - totalDeductions;
+        const p4Net = p4Gross - totalDeductions;
 
         // Update UI Summary
         document.getElementById('sumFixedBasic').textContent = toBanglaNum(fixed2026Basic) + ' ৳';
@@ -632,11 +630,11 @@
                 <td>${toBanglaNum(p3Medical)}</td>
                 <td>${toBanglaNum(p4Medical)}</td>
             </tr>
-            ${tiffin ? `<tr><td>টিফিন ভাতা</td><td>${toBanglaNum(tiffin)}</td><td>${toBanglaNum(tiffin)}</td><td>${toBanglaNum(tiffin)}</td><td>${toBanglaNum(tiffin)}</td></tr>` : ''}
+            ${tiffinVal ? `<tr><td>টিফিন ভাতা</td><td>০</td><td>০</td><td>০</td><td>${toBanglaNum(p4Tiffin)}</td></tr>` : ''}
+            ${mobVal ? `<tr><td>মোবাইল ভাতা</td><td>০</td><td>০</td><td>০</td><td>${toBanglaNum(p4Mob)}</td></tr>` : ''}
             ${conv ? `<tr><td>যাতায়াত ভাতা</td><td>${toBanglaNum(conv)}</td><td>${toBanglaNum(conv)}</td><td>${toBanglaNum(conv)}</td><td>${toBanglaNum(conv)}</td></tr>` : ''}
             ${edu ? `<tr><td>শিক্ষা সহায়ক ভাতা</td><td>${toBanglaNum(edu)}</td><td>${toBanglaNum(edu)}</td><td>${toBanglaNum(edu)}</td><td>${toBanglaNum(edu)}</td></tr>` : ''}
             ${disChild ? `<tr><td>প্রতিবন্ধী সন্তান ভাতা</td><td>${toBanglaNum(disChild)}</td><td>${toBanglaNum(disChild)}</td><td>${toBanglaNum(disChild)}</td><td>${toBanglaNum(disChild)}</td></tr>` : ''}
-            ${mob ? `<tr><td>মোবাইল ভাতা</td><td>${toBanglaNum(mob)}</td><td>${toBanglaNum(mob)}</td><td>${toBanglaNum(mob)}</td><td>${toBanglaNum(mob)}</td></tr>` : ''}
             ${wash ? `<tr><td>ধোলাই ভাতা</td><td>${toBanglaNum(wash)}</td><td>${toBanglaNum(wash)}</td><td>${toBanglaNum(wash)}</td><td>${toBanglaNum(wash)}</td></tr>` : ''}
             ${charge ? `<tr><td>কার্যভার ভাতা</td><td>${toBanglaNum(charge)}</td><td>${toBanglaNum(charge)}</td><td>${toBanglaNum(charge)}</td><td>${toBanglaNum(charge)}</td></tr>` : ''}
             ${deputation ? `<tr><td>প্রেষণ ভাতা</td><td>${toBanglaNum(deputation)}</td><td>${toBanglaNum(deputation)}</td><td>${toBanglaNum(deputation)}</td><td>${toBanglaNum(deputation)}</td></tr>` : ''}
@@ -653,11 +651,11 @@
 
             <!-- Deductions -->
             <tr class="text-danger">
-                <td>জিপিএফ (GPF ${toBanglaNum(gpfPct)}%) কর্তন</td>
-                <td>-${toBanglaNum(p1Gpf)}</td>
-                <td>-${toBanglaNum(p2Gpf)}</td>
-                <td>-${toBanglaNum(p3Gpf)}</td>
-                <td>-${toBanglaNum(p4Gpf)}</td>
+                <td>জিপিএফ (GPF) কর্তন</td>
+                <td>-${toBanglaNum(gpfDeduction)}</td>
+                <td>-${toBanglaNum(gpfDeduction)}</td>
+                <td>-${toBanglaNum(gpfDeduction)}</td>
+                <td>-${toBanglaNum(gpfDeduction)}</td>
             </tr>
             <tr class="text-danger">
                 <td>অন্যান্য কর্তন (বীমা/আয়কর/ঋণ)</td>
