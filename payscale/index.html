@@ -489,7 +489,6 @@
         }
     });
 
-    // Auto-suggest GPF amount (10%) when basic is selected, user can still edit manually
     basicSelect.addEventListener('change', function() {
         const basicVal = parseInt(this.value);
         if (basicVal) {
@@ -550,11 +549,14 @@
         const p3Medical = 1500;
         const p4Medical = (age === 'over50') ? 4000 : 3000;
 
-        // Tiffin and Mobile Allowances apply ONLY from Jan 1, 2028 (Phase 4)
-        const tiffinVal = (grade >= 11 && grade <= 20) ? 500 : 0;
-        const mobVal = (grade <= 5) ? 500 : 150;
+        // Tiffin Allowance: Grade 11-20 currently gets 200 Tk (Phases 1-3), upgraded to 500 Tk from Jan 1, 2028 (Phase 4)
+        const p1Tiffin = (grade >= 11 && grade <= 20) ? 200 : 0;
+        const p2Tiffin = (grade >= 11 && grade <= 20) ? 200 : 0;
+        const p3Tiffin = (grade >= 11 && grade <= 20) ? 200 : 0;
+        const p4Tiffin = (grade >= 11 && grade <= 20) ? 500 : 0;
 
-        const p1Tiffin = 0, p2Tiffin = 0, p3Tiffin = 0, p4Tiffin = tiffinVal;
+        // Mobile Allowance: Phase 4 gets new scale (500/150)
+        const mobVal = (grade <= 5) ? 500 : 150;
         const p1Mob = 0, p2Mob = 0, p3Mob = 0, p4Mob = mobVal;
 
         const conv = (grade >= 11 && grade <= 20 && location !== 'other') ? 600 : 0;
@@ -630,7 +632,7 @@
                 <td>${toBanglaNum(p3Medical)}</td>
                 <td>${toBanglaNum(p4Medical)}</td>
             </tr>
-            ${tiffinVal ? `<tr><td>টিফিন ভাতা</td><td>০</td><td>০</td><td>০</td><td>${toBanglaNum(p4Tiffin)}</td></tr>` : ''}
+            ${(p1Tiffin || p4Tiffin) ? `<tr><td>টিফিন ভাতা</td><td>${toBanglaNum(p1Tiffin)}</td><td>${toBanglaNum(p2Tiffin)}</td><td>${toBanglaNum(p3Tiffin)}</td><td>${toBanglaNum(p4Tiffin)}</td></tr>` : ''}
             ${mobVal ? `<tr><td>মোবাইল ভাতা</td><td>০</td><td>০</td><td>০</td><td>${toBanglaNum(p4Mob)}</td></tr>` : ''}
             ${conv ? `<tr><td>যাতায়াত ভাতা</td><td>${toBanglaNum(conv)}</td><td>${toBanglaNum(conv)}</td><td>${toBanglaNum(conv)}</td><td>${toBanglaNum(conv)}</td></tr>` : ''}
             ${edu ? `<tr><td>শিক্ষা সহায়ক ভাতা</td><td>${toBanglaNum(edu)}</td><td>${toBanglaNum(edu)}</td><td>${toBanglaNum(edu)}</td><td>${toBanglaNum(edu)}</td></tr>` : ''}
