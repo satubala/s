@@ -1,1 +1,1027 @@
-bii
+<!DOCTYPE html>
+<html lang="bn" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>জাতীয় বেতনস্কেল ২০২৬ - নিট বেতন ও পে-ফিক্সেশন ক্যালকুলেটর</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for Bengali Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        @font-face {
+            font-family: 'Kalpurush';
+            src: url('https://cdn.jsdelivr.net/gh/ShahidulIslam/Kalpurush-Font@master/Kalpurush.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        :root {
+            --bg-main: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --border-color: #e5e7eb;
+            --input-bg: #ffffff;
+            --input-border: #d1d5db;
+            --primary-color: #0f3964;
+            --primary-hover: #1e40af;
+            --accent-color: #059669;
+            --highlight-bg: #eff6ff;
+            --highlight-border: #93c5fd;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .dark {
+            --bg-main: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border-color: #334155;
+            --input-bg: #0f172a;
+            --input-border: #475569;
+            --primary-color: #3b82f6;
+            --primary-hover: #60a5fa;
+            --accent-color: #10b981;
+            --highlight-bg: #1e1b4b;
+            --highlight-border: #4338ca;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            font-family: 'Kalpurush', 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .card-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* CRITICAL DROPDOWN STYLING FOR DARK MODE LEGIBILITY */
+        select, input[type="text"], input[type="number"] {
+            background-color: var(--input-bg) !important;
+            color: var(--text-primary) !important;
+            border-color: var(--input-border) !important;
+        }
+
+        select option {
+            background-color: var(--card-bg) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .highlight-box {
+            background-color: var(--highlight-bg);
+            border: 1px solid var(--highlight-border);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-main);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        /* Print Formatting Rules */
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-full {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            .card-container {
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+                background-color: #fff !important;
+                color: #000 !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- Header & Navigation Bar -->
+    <header class="no-print border-b border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-50 shadow-sm transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-10 h-10 rounded-full bg-emerald-600 dark:bg-emerald-500 flex items-center justify-center text-white font-bold text-xl shadow">
+                    🇧🇩
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-tight">
+                        জাতীয় বেতনস্কেল ২০২৬ ক্যালকুলেটর
+                    </h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        অর্থ বিভাগ, অর্থ মন্ত্রণালয় গেজেট (১৭ সেপ্টেম্বর ২০২৬) অনুযায়ী
+                    </p>
+                </div>
+            </div>
+
+            <!-- Dark / Light Theme Toggle Switch -->
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2.5 rounded-xl border border-gray-300 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition flex items-center gap-2 text-xs sm:text-sm font-medium" title="থিম পরিবর্তন করুন">
+                    <span id="themeIcon">🌙</span>
+                    <span id="themeText" class="hidden sm:inline">ডার্ক মোড</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+        
+        <!-- Gazette Notice Header Banner -->
+        <div class="no-print mb-6 p-4 rounded-2xl border border-blue-200 dark:border-blue-900 bg-blue-50/80 dark:bg-slate-800/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
+            <div class="flex items-start gap-3">
+                <span class="text-2xl mt-0.5">📜</span>
+                <div>
+                    <h2 class="text-sm sm:text-base font-semibold text-blue-900 dark:text-blue-200">
+                        চাকরি (বেতন ও ভাতাদি) আদেশ, ২০২৬ স্বয়ংস্ক্রিয় হিসাব
+                    </h2>
+                    <p class="text-xs sm:text-sm text-blue-800/80 dark:text-slate-300 mt-0.5">
+                        ১-২০ তম গ্রেডের কর্মকর্তা ও কর্মচারীদের পে-ফিক্সেশন, বিভিন্ন ধাপে প্রদেয় মূল বেতন এবং সর্বমোট নিট বেতনের নিখুঁত হিসাব করুন।
+                    </p>
+                </div>
+            </div>
+            <button onclick="openIbasModal()" class="w-full md:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-medium transition shadow-sm whitespace-nowrap flex items-center justify-center gap-1.5">
+                <span>💻</span> iBAS++ ফিক্সেশন নির্দেশিকা
+            </button>
+        </div>
+
+        <!-- 2-Column Responsive Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- LEFT COLUMN: INPUT CONTROLS (lg:col-span-6) -->
+            <div class="lg:col-span-6 space-y-6 no-print">
+                
+                <!-- Card 1: Basic Scale & Pay Fixation Setup -->
+                <div class="card-container rounded-2xl p-5 sm:p-6 transition-colors">
+                    <div class="flex items-center gap-2 border-b border-gray-200 dark:border-slate-700 pb-3 mb-4">
+                        <span class="text-xl">📊</span>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                            ১. বেতন গ্রেড ও প্রারম্ভিক তথ্য
+                        </h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Grade Select -->
+                        <div>
+                            <label for="gradeSelect" class="block text-xs sm:text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">
+                                বেতন গ্রেড নির্বাচন করুন <span class="text-red-500">*</span>
+                            </label>
+                            <select id="gradeSelect" onchange="onGradeChange()" class="w-full px-3 py-2.5 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                                <!-- Populated dynamically by JS -->
+                            </select>
+                        </div>
+
+                        <!-- 30 June 2026 Basic Dropdown -->
+                        <div>
+                            <label for="basic2015Select" class="block text-xs sm:text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">
+                                ৩০ জুন ২০২৬ তারিখের মূল বেতন <span class="text-red-500">*</span>
+                            </label>
+                            <select id="basic2015Select" onchange="calculateSalary()" class="w-full px-3 py-2.5 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                                <!-- Populated dynamically by JS -->
+                            </select>
+                        </div>
+
+                        <!-- Implementation Phase -->
+                        <div class="sm:col-span-2">
+                            <label for="phaseSelect" class="block text-xs sm:text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">
+                                বেতন কার্যকরের সময়কাল/পর্যায় (অনুচ্ছেদ ১(৩)) <span class="text-red-500">*</span>
+                            </label>
+                            <select id="phaseSelect" onchange="calculateSalary()" class="w-full px-3 py-2.5 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                                <option value="phase1">১ম পর্যায় (১ জুলাই ২০২৬ – ৩১ ডিসেম্বর ২০২৬) [৪০% / ৫০% বৃদ্ধি]</option>
+                                <option value="phase2">২য় পর্যায় (১ জানুয়ারি ২০২৭ – ৩০ জুন ২০২৭) [৭০% / ৭৫% বৃদ্ধি]</option>
+                                <option value="phase3" selected>৩য় পর্যায় (১ জুলাই ২০২৭ হতে শতভাগ কার্যকর)</option>
+                            </select>
+                        </div>
+
+                        <!-- House Rent Rule Selection -->
+                        <div class="sm:col-span-2">
+                            <label for="hrPolicySelect" class="block text-xs sm:text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">
+                                বাড়ি ভাড়া ভাতার নীতি (অনুচ্ছেদ ১৫)
+                            </label>
+                            <select id="hrPolicySelect" onchange="calculateSalary()" class="w-full px-3 py-2.5 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                                <option value="post2028">১ জানুয়ারি ২০২৮ হতে নতুন স্কেলের নতুন হার (অনুচ্ছেদ ১৫(৬))</option>
+                                <option value="pre2028">৩১ ডিসেম্বর ২০২৭ পর্যন্ত প্রযোজ্য হার (২০১৫ স্কেলের ভিত্তি)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Location & Personal Details for Allowances -->
+                <div class="card-container rounded-2xl p-5 sm:p-6 transition-colors">
+                    <div class="flex items-center gap-2 border-b border-gray-200 dark:border-slate-700 pb-3 mb-4">
+                        <span class="text-xl">📍</span>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                            ২. কর্মস্থল ও ব্যক্তিগত ভাতাদি
+                        </h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Location Selection -->
+                        <div class="sm:col-span-2">
+                            <label for="locationSelect" class="block text-xs sm:text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">
+                                কর্মস্থলের এলাকা (বাড়ি ভাড়া ও যাতায়াত ভাতার জন্য)
+                            </label>
+                            <select id="locationSelect" onchange="calculateSalary()" class="w-full px-3 py-2.5 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                                <option value="dhaka">ঢাকা উত্তর ও দক্ষিণ সিটি কর্পোরেশন এলাকা</option>
+                                <option value="city_corp">অন্যান্য সিটিসিসি, সাভার ও কক্সবাজার পৌর এলাকা</option>
+                                <option value="other" selected>অন্যান্য সকল এলাকা (জেলা/উপজেলা/পৌরসভা)</option>
+                            </select>
+                        </div>
+
+                        <!-- Age Selection -->
+                        <div>
+                            <label for="ageSelect" class="block text-xs sm:text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">
+                                কর্মচারীর বয়স (চিকিৎসা ভাতা)
+                            </label>
+                            <select id="ageSelect" onchange="calculateSalary()" class="w-full px-3 py-2.5 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                                <option value="below50">৫০ বছর পর্যন্ত (৩,০০০ ৳)</option>
+                                <option value="above50">৫০ বছরের উর্ধ্বে (৪,০০০ ৳)</option>
+                            </select>
+                        </div>
+
+                        <!-- Children Count -->
+                        <div>
+                            <label for="childrenSelect" class="block text-xs sm:text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">
+                                সন্তান সংখ্যা (শিক্ষা সহায়ক ভাতা)
+                            </label>
+                            <select id="childrenSelect" onchange="calculateSalary()" class="w-full px-3 py-2.5 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                                <option value="0">কোন সন্তান নেই (০ ৳)</option>
+                                <option value="1">১ জন সন্তান (৫০০ ৳)</option>
+                                <option value="2">২ জন বা ততধিক সন্তান (১,০০০ ৳)</option>
+                            </select>
+                        </div>
+
+                        <!-- Optional Allowances Toggles -->
+                        <div class="sm:col-span-2 pt-2 border-t border-gray-100 dark:border-slate-800 space-y-2">
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="conveyanceCheck" onchange="calculateSalary()" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" checked>
+                                <span class="ms-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                                    যাতায়াত ভাতা প্রাপ্য? (১১-২০ গ্রেড, সিটিসিসি এলাকায় ৬০০ ৳)
+                                </span>
+                            </label>
+                            
+                            <div></div>
+
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="tiffinCheck" onchange="calculateSalary()" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" checked>
+                                <span class="ms-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                                    টিফিন ভাতা প্রাপ্য? (১১-২০ গ্রেড, ৫০০ ৳)
+                                </span>
+                            </label>
+
+                            <div></div>
+
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="washCheck" onchange="calculateSalary()" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <span class="ms-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                                    ধোলাই ভাতা প্রাপ্য? (৩০০ ৳)
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Custom / Other Allowances -->
+                        <div class="sm:col-span-2">
+                            <label for="otherAllowanceInput" class="block text-xs sm:text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">
+                                অন্যান্য বিশেষ/পাহাড়ী/ঝুঁকি ভাতা (যদি থাকে) [টাকা]
+                            </label>
+                            <input type="number" id="otherAllowanceInput" value="0" min="0" oninput="calculateSalary()" placeholder="০" class="w-full px-3 py-2 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Deductions Input -->
+                <div class="card-container rounded-2xl p-5 sm:p-6 transition-colors">
+                    <div class="flex items-center gap-2 border-b border-gray-200 dark:border-slate-700 pb-3 mb-4">
+                        <span class="text-xl">✂️</span>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                            ৩. মাসিক কর্তনসমূহ (Deductions)
+                        </h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- GPF Percentage -->
+                        <div>
+                            <label for="gpfPercentInput" class="block text-xs sm:text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">
+                                জিপিএফ (GPF) কর্তন (%)
+                            </label>
+                            <select id="gpfPercentInput" onchange="calculateSalary()" class="w-full px-3 py-2.5 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                                <option value="0">০% (কোন কর্তন নেই)</option>
+                                <option value="7.5">৭.৫%</option>
+                                <option value="10" selected>১০% (সাধারণ হার)</option>
+                                <option value="12.5">১২.৫%</option>
+                                <option value="15">১৫%</option>
+                                <option value="20">২০%</option>
+                                <option value="25">২৫%</option>
+                            </select>
+                        </div>
+
+                        <!-- Benevolent Fund -->
+                        <div>
+                            <label for="benevolentInput" class="block text-xs sm:text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">
+                                কল্যাণ তহবিল (টাকা)
+                            </label>
+                            <input type="number" id="benevolentInput" value="150" min="0" oninput="calculateSalary()" class="w-full px-3 py-2 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+
+                        <!-- Group Insurance -->
+                        <div>
+                            <label for="insuranceInput" class="block text-xs sm:text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">
+                                গোষ্ঠী বীমা (টাকা)
+                            </label>
+                            <input type="number" id="insuranceInput" value="100" min="0" oninput="calculateSalary()" class="w-full px-3 py-2 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+
+                        <!-- Tax Deduction -->
+                        <div>
+                            <label for="taxInput" class="block text-xs sm:text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">
+                                অগ্রিম আয়কর (টাকা)
+                            </label>
+                            <input type="number" id="taxInput" value="0" min="0" oninput="calculateSalary()" placeholder="০" class="w-full px-3 py-2 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+
+                        <!-- Other Deductions -->
+                        <div class="sm:col-span-2">
+                            <label for="otherDeductionInput" class="block text-xs sm:text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">
+                                কম্পিউটার/গাড়ী ঋণ/অন্যান্য কর্তন (টাকা)
+                            </label>
+                            <input type="number" id="otherDeductionInput" value="0" min="0" oninput="calculateSalary()" placeholder="০" class="w-full px-3 py-2 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: RESULTS & BREAKDOWN DISPLAY (lg:col-span-6) -->
+            <div id="salarySlipContainer" class="lg:col-span-6 space-y-6 print-full">
+                
+                <!-- Summary Card: Pay Fixation Details -->
+                <div class="card-container rounded-2xl p-5 sm:p-6 transition-colors">
+                    <div class="flex items-center justify-between border-b border-gray-200 dark:border-slate-700 pb-3 mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">⚖️</span>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                                বেতন নির্ধারণ (Pay Fixation) সারাংশ
+                            </h3>
+                        </div>
+                        <span id="gradeBadge" class="px-3 py-1 bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-300 rounded-full text-xs font-bold">
+                            গ্রেড - ১০
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-center mb-4">
+                        <div class="p-3 rounded-xl bg-gray-50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700">
+                            <p class="text-xs text-slate-500 dark:text-slate-400">২০১৫ স্কেলে বেতন</p>
+                            <p id="dispBasic2015" class="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-200 mt-1">১৬,০০০০০ ৳</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-gray-50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700">
+                            <p class="text-xs text-slate-500 dark:text-slate-400">২০২৬ স্কেলে নির্ধারিত</p>
+                            <p id="dispFixed2026" class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 mt-1">৩২,০০০০০ ৳</p>
+                        </div>
+                        <div class="col-span-2 sm:col-span-1 p-3 rounded-xl bg-gray-50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700">
+                            <p class="text-xs text-slate-500 dark:text-slate-400">মোট বৃদ্ধি</p>
+                            <p id="dispTotalIncrease" class="text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mt-1">১৬,০০০০০ ৳</p>
+                        </div>
+                    </div>
+
+                    <!-- Selected Phase Active Payable Basic Callout -->
+                    <div class="p-4 rounded-xl highlight-box flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-blue-900 dark:text-blue-300" id="dispPhaseTitle">
+                                ৩য় পর্যায়ে আহরণযোগ্য মূল বেতন:
+                            </p>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5" id="dispPhaseNote">
+                                (২০২৬ নতুন স্কেলের ১০০% কার্যকরের উপর ভিত্তি করে)
+                            </p>
+                        </div>
+                        <div class="text-right">
+                            <span id="dispPayableBasic" class="text-lg sm:text-xl font-extrabold text-blue-900 dark:text-blue-200">
+                                ৩২,০০০ ৳
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Pay Slip Table Container -->
+                <div class="card-container rounded-2xl p-5 sm:p-6 transition-colors">
+                    <div class="flex items-center justify-between border-b border-gray-200 dark:border-slate-700 pb-3 mb-4">
+                        <div>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <span>📋</span> মাসিক বেতন বিবরণী (Pay Slip)
+                            </h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                সর্বমোট প্রাপ্তি ও কর্তনের বিশদ তালিকা
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Allowances Section -->
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+                                প্রাপ্তিসমূহ (Allowances)
+                            </h4>
+                            <div class="space-y-1.5 text-xs sm:text-sm">
+                                <div class="flex justify-between py-1 border-b border-gray-100 dark:border-slate-800">
+                                    <span class="text-slate-700 dark:text-slate-300">প্রদেয় মূল বেতন (Basic Pay)</span>
+                                    <span id="itemBasicPay" class="font-semibold">৩২,০০০ ৳</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-gray-100 dark:border-slate-800">
+                                    <span class="text-slate-700 dark:text-slate-300">বাড়ি ভাড়া ভাতা (House Rent)</span>
+                                    <span id="itemHouseRent" class="font-semibold">১৬,০০০ ৳</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-gray-100 dark:border-slate-800">
+                                    <span class="text-slate-700 dark:text-slate-300">চিকিৎসা ভাতা (Medical Allowance)</span>
+                                    <span id="itemMedical" class="font-semibold">৩,০০০ ৳</span>
+                                </div>
+                                <div id="rowMobile" class="flex justify-between py-1 border-b border-gray-100 dark:border-slate-800">
+                                    <span class="text-slate-700 dark:text-slate-300">মোবাইল ভাতা (Mobile Allowance)</span>
+                                    <span id="itemMobile" class="font-semibold">১৫০ ৳</span>
+                                </div>
+                                <div id="rowEducation" class="flex justify-between py-1 border-b border-gray-100 dark:border-slate-800">
+                                    <span class="text-slate-700 dark:text-slate-300">শিক্ষা সহায়ক ভাতা (Education)</span>
+                                    <span id="itemEducation" class="font-semibold">০ ৳</span>
+                                </div>
+                                <div id="rowTiffin" class="flex justify-between py-1 border-b border-gray-100 dark:border-slate-800">
+                                    <span class="text-slate-700 dark:text-slate-300">টিফিন ভাতা (Tiffin Allowance)</span>
+                                    <span id="itemTiffin" class="font-semibold">০ ৳</span>
+                                </div>
+                                <div id="rowConveyance" class="flex justify-between py-1 border-b border-gray-100 dark:border-slate-800">
+                                    <span class="text-slate-700 dark:text-slate-300">যাতায়াত ভাতা (Conveyance)</span>
+                                    <span id="itemConveyance" class="font-semibold">০ ৳</span>
+                                </div>
+                                <div id="rowWash" class="flex justify-between py-1 border-b border-gray-100 dark:border-slate-800">
+                                    <span class="text-slate-700 dark:text-slate-300">ধোলাই ভাতা (Wash Allowance)</span>
+                                    <span id="itemWash" class="font-semibold">০ ৳</span>
+                                </div>
+                                <div id="rowOtherAllowance" class="flex justify-between py-1 border-b border-gray-100 dark:border-slate-800">
+                                    <span class="text-slate-700 dark:text-slate-300">অন্যান্য বিশেষ ভাতা</span>
+                                    <span id="itemOtherAllowance" class="font-semibold">০ ৳</span>
+                                </div>
+                                <div class="flex justify-between py-2 text-sm sm:text-base font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 px-2 rounded-lg mt-1">
+                                    <span>সর্বমোট প্রাপ্তি (Gross Salary)</span>
+                                    <span id="itemGrossSalary">৫১,১৫০ ৳</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Deductions Section -->
+                        <div class="pt-2">
+                            <h4 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+                                কর্তনসমূহ (Deductions)
+                            </h4>
+                            <div class="space-y-1.5 text-xs sm:text-sm">
+                                <div class="flex justify-between py-1 border-b border-gray-100 dark:border-slate-800">
+                                    <span class="text-slate-700 dark:text-slate-300">জিপিএফ কর্তন (GPF Fund)</span>
+                                    <span id="itemGPF" class="font-semibold text-rose-600 dark:text-rose-400">৩,২০০ ৳</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-gray-100 dark:border-slate-800">
+                                    <span class="text-slate-700 dark:text-slate-300">কল্যাণ তহবিল (Benevolent Fund)</span>
+                                    <span id="itemBenevolent" class="font-semibold text-rose-600 dark:text-rose-400">১৫০ ৳</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-gray-100 dark:border-slate-800">
+                                    <span class="text-slate-700 dark:text-slate-300">গোষ্ঠী বীমা (Group Insurance)</span>
+                                    <span id="itemInsurance" class="font-semibold text-rose-600 dark:text-rose-400">১০০ ৳</span>
+                                </div>
+                                <div id="rowTax" class="flex justify-between py-1 border-b border-gray-100 dark:border-slate-800">
+                                    <span class="text-slate-700 dark:text-slate-300">অগ্রিম আয়কর (Income Tax)</span>
+                                    <span id="itemTax" class="font-semibold text-rose-600 dark:text-rose-400">০ ৳</span>
+                                </div>
+                                <div id="rowOtherDeduction" class="flex justify-between py-1 border-b border-gray-100 dark:border-slate-800">
+                                    <span class="text-slate-700 dark:text-slate-300">অন্যান্য কর্তন</span>
+                                    <span id="itemOtherDeduction" class="font-semibold text-rose-600 dark:text-rose-400">০ ৳</span>
+                                </div>
+                                <div class="flex justify-between py-2 text-sm font-bold text-rose-700 dark:text-rose-400 bg-rose-50/50 dark:bg-rose-950/20 px-2 rounded-lg mt-1">
+                                    <span>সর্বমোট কর্তন (Total Deductions)</span>
+                                    <span id="itemTotalDeduction">৩,৪৫০ ৳</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NET PAYABLE SALARY BANNER -->
+                        <div class="p-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-lg flex items-center justify-between my-4">
+                            <div>
+                                <p class="text-xs uppercase tracking-wider opacity-90">
+                                    সর্বশেষ নিট প্রদেয় বেতন (Net Salary)
+                                </p>
+                                <p class="text-xs opacity-80 mt-0.5">
+                                    ব্যাংক অ্যাকাউন্টে জমাকৃত নিট পরিমাণ
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                <p id="itemNetSalary" class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                                    ৪৭,৭০০০০ ৳
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Annual Benefits & Festival Bonus Summary -->
+                        <div class="pt-2 border-t border-gray-200 dark:border-slate-700">
+                            <h4 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+                                উৎসব ভাতা ও অন্যান্য সুবিধাদি (বাৎসরিক)
+                            </h4>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="p-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+                                    <span class="text-slate-500 dark:text-slate-400 block">ঈদ উৎসব ভাতা (২টি)</span>
+                                    <span id="bonusEid" class="font-bold text-slate-800 dark:text-slate-200 mt-0.5 block">৩২,০০০ ৳ করে (২ বার)</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+                                    <span class="text-slate-500 dark:text-slate-400 block">নববর্ষ ভাতা (১৫%)</span>
+                                    <span id="bonusBoishakh" class="font-bold text-slate-800 dark:text-slate-200 mt-0.5 block">৪,৮০০ ৳</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Action Buttons: Print & Copy Summary -->
+                <div class="no-print flex flex-col sm:flex-row gap-3">
+                    <button onclick="window.print()" class="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white rounded-xl text-xs sm:text-sm font-semibold transition shadow flex items-center justify-center gap-2">
+                        <span>🖨️</span> পে-স্লিপ প্রিন্ট করুন
+                    </button>
+                    <button onclick="copySummaryText()" class="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-semibold transition shadow flex items-center justify-center gap-2">
+                        <span>📋</span> হিসাব কপি করুন
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Modal: iBAS++ Pay Fixation Step-by-Step Guide -->
+    <div id="ibasModal" class="no-print fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="card-container rounded-2xl max-w-xl w-full p-6 max-h-[85vh] overflow-y-auto space-y-4 shadow-2xl relative">
+            <button onclick="closeIbasModal()" class="absolute top-4 right-4 p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-700 text-slate-500 text-lg">
+                ✕
+            </button>
+            <div class="flex items-center gap-2 border-b border-gray-200 dark:border-slate-700 pb-3">
+                <span class="text-2xl">💻</span>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+                        iBAS++ পে-ফিক্সেশন করার নির্দেশিকা
+                    </h3>
+                    <p class="text-xs text-slate-500">
+                        গেজেট অনুযায়ী আইবাস++ সিস্টেমে ফিক্সেশন প্রক্রিয়া
+                    </p>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                <p>
+                    <strong>ধাপ ১: Login & Entry</strong><br>
+                    আপনার NID, মোবাইল নম্বর ও পাসওয়ার্ড দিয়ে <code class="bg-gray-100 dark:bg-slate-800 px-1 py-0.5 rounded">fixation.ibas.gov.bd</code> পোর্টালে লগইন করুন।
+                </p>
+                <p>
+                    <strong>ধাপ ২: Pay Scale Selection</strong><br>
+                    মেনু থেকে <strong>"জাতীয় বেতনস্কেল ২০২৬"</strong> বিকল্পটি বেছে নিন।
+                </p>
+                <p>
+                    <strong>ধাপ ৩: Verification</strong><br>
+                    আপনার বিদ্যমান ৩০ জুন ২০২৬ তারিখের মূল বেতন ও গ্রেড স্বয়ংক্রিয়ভাবে প্রদর্শিত হবে।
+                </p>
+                <p>
+                    <strong>ধাপ ৪: Phase Calculation</strong><br>
+                    সিস্টেম স্বয়ংক্রিয়ভাবে আপনার ২০২৬ এর মূল বেতন এবং পর্যায়ভিত্তিক প্রদেয় মূল বেতন (১ম, ২য় বা ৩য় পর্যায়) গণনা করবে।
+                </p>
+                <p>
+                    <strong>ধাপ ৫: Print Fixation Sheet</strong><br>
+                    ফিক্সেশন তথ্য সঠিকভাবে যাচাই করার পর সাবমিট করুন এবং ফিক্সেশন কপি সংরক্ষণ/প্রিন্ট করুন।
+                </p>
+            </div>
+
+            <div class="pt-3 border-t border-gray-200 dark:border-slate-700 text-right">
+                <button onclick="closeIbasModal()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-semibold transition">
+                    বুঝেছি
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div id="toastNotification" class="no-print fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 text-xs sm:text-sm">
+        <span id="toastIcon">✅</span>
+        <span id="toastMessage">তথ্য সফলভাবে কপি করা হয়েছে!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="no-print border-t border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-4 mt-8 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 dark:text-slate-400">
+            <p>জাতীয় বেতনস্কেল ২০২৬ ক্যালকুলেটর | গেজেট তারিখ: ১৭ সেপ্টেম্বর ২০২৬</p>
+            <p class="mt-1">গণপ্রজাতন্ত্রী বাংলাদেশ সরকারের সকল সরকারি কর্মকর্তা ও কর্মচারীদের জন্য প্রস্তুতকৃত।</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // COMPLETE GRADE & PAY SCALE DATA (GRADES 1 TO 20) FOR BOTH 2015 AND 2026 SCALES
+        const PAY_DATA = {
+            1: {
+                scale2015: [78000],
+                scale2026: [156000]
+            },
+            2: {
+                scale2015: [66000, 68480, 71050, 73720, 76490],
+                scale2026: [132000, 135700, 139400, 143200, 147200, 151200, 153000]
+            },
+            3: {
+                scale2015: [56500, 58760, 61120, 63570, 66120, 68770, 71530, 74400],
+                scale2026: [113000, 117000, 121100, 125300, 129700, 134300, 139000, 143800, 148800]
+            },
+            4: {
+                scale2015: [50000, 52000, 54080, 56250, 58500, 60840, 63280, 65820, 68460, 71200],
+                scale2026: [100000, 103500, 107200, 110900, 114800, 118800, 123000, 127300, 131700, 136300, 142400]
+            },
+            5: {
+                scale2015: [43000, 44940, 46970, 49090, 51300, 53610, 56030, 58560, 61200, 63960, 66840, 69850],
+                scale2026: [86000, 89500, 93100, 96800, 100700, 104700, 108900, 113200, 117700, 122500, 127400, 132400, 139700]
+            },
+            6: {
+                scale2015: [35500, 37280, 39150, 41110, 43170, 45330, 47600, 49980, 52480, 55110, 57870, 60770, 63810, 67010],
+                scale2026: [71000, 74600, 78300, 82200, 86400, 90700, 95200, 100000, 104900, 110200, 115700, 121500, 127600, 134000]
+            },
+            7: {
+                scale2015: [29000, 30450, 31980, 33580, 35260, 37030, 38890, 40840, 42890, 45040, 47300, 49670, 52160, 54770, 57510, 60390, 63410],
+                scale2026: [58000, 60900, 64000, 67200, 70500, 74100, 77800, 81700, 85700, 90000, 94500, 99200, 104200, 109400, 114900, 120600, 126800]
+            },
+            8: {
+                scale2015: [23000, 24150, 25360, 26630, 27970, 29370, 30840, 32390, 34010, 35720, 37510, 39390, 41360, 43430, 45610, 47900, 50300, 52820, 55470],
+                scale2026: [46000, 48300, 50800, 53300, 56000, 58800, 61700, 64800, 68000, 71400, 75000, 78700, 82700, 86800, 91100, 95700, 100500, 105500, 110800]
+            },
+            9: {
+                scale2015: [22000, 23100, 24260, 25480, 26760, 28100, 29510, 30990, 32540, 34170, 35880, 37680, 39570, 41550, 43630, 45820, 48120, 50530, 53060],
+                scale2026: [44000, 46200, 48600, 51000, 53500, 56200, 59000, 62000, 65100, 68300, 71700, 75300, 79100, 83000, 87200, 91500, 96100, 100900, 105900]
+            },
+            10: {
+                scale2015: [16000, 16800, 17640, 18530, 19460, 20440, 21470, 22550, 23680, 24870, 26120, 27430, 28810, 30260, 31780, 33370, 35040, 36800, 38640],
+                scale2026: [32000, 33600, 35300, 37100, 38900, 40900, 42900, 45100, 47300, 49700, 52200, 54800, 57500, 60400, 63400, 66600, 69900, 73400, 77300]
+            },
+            11: {
+                scale2015: [12500, 13130, 13790, 14480, 15210, 15980, 16780, 17620, 18510, 19440, 20420, 21450, 22530, 23660, 24850, 26100, 27410, 28790, 30230],
+                scale2026: [25000, 26300, 27600, 29000, 30400, 32000, 33600, 35200, 37000, 38800, 40800, 42800, 44900, 47200, 49500, 52000, 54600, 57300, 60500]
+            },
+            12: {
+                scale2015: [11300, 11870, 12470, 13100, 13760, 14450, 15180, 15940, 16740, 17580, 18460, 19390, 20360, 21380, 22450, 23580, 24760, 26000, 27300],
+                scale2026: [24300, 25600, 26800, 28200, 29600, 31100, 32600, 34200, 36000, 37700, 39600, 41600, 43700, 45900, 48200, 50600, 53100, 55700, 58700]
+            },
+            13: {
+                scale2015: [11000, 11550, 12130, 12740, 13380, 14050, 14760, 15500, 16280, 17100, 17960, 18860, 19810, 20810, 21860, 22960, 24110, 25320, 26590],
+                scale2026: [24000, 25200, 26500, 27800, 29200, 30700, 32200, 33800, 35500, 37300, 39100, 41100, 43200, 45300, 47600, 49900, 52400, 55100, 58000]
+            },
+            14: {
+                scale2015: [10200, 10710, 11250, 11820, 12420, 13050, 13710, 14400, 15120, 15880, 16680, 17520, 18400, 19320, 20290, 21310, 22380, 23500, 24680],
+                scale2026: [23500, 24700, 26000, 27300, 28600, 30000, 31500, 33100, 34800, 36500, 38300, 40200, 42300, 44400, 46600, 48900, 51300, 53900, 56800]
+            },
+            15: {
+                scale2015: [9700, 10190, 10700, 11240, 11810, 12410, 13040, 13700, 14390, 15110, 15870, 16670, 17510, 18390, 19310, 20280, 21300, 22370, 23490],
+                scale2026: [22800, 24000, 25200, 26400, 27800, 29100, 30600, 32100, 33700, 35400, 37200, 39000, 41000, 43000, 45200, 47400, 49800, 52300, 55200]
+            },
+            16: {
+                scale2015: [9300, 9770, 10260, 10780, 11320, 11890, 12490, 13120, 13780, 14470, 15200, 15960, 16760, 17600, 18480, 19410, 20390, 21410, 22490],
+                scale2026: [21900, 23000, 24200, 25400, 26700, 28000, 29400, 30900, 32400, 34000, 35700, 37500, 39400, 41300, 43400, 45600, 47900, 50200, 52900]
+            },
+            17: {
+                scale2015: [9000, 9450, 9930, 10430, 10960, 11510, 12090, 12700, 13340, 14010, 14720, 15460, 16240, 17060, 17920, 18820, 19770, 20760, 21800],
+                scale2026: [21400, 22500, 23600, 24800, 26100, 27400, 28700, 30200, 31700, 33200, 34900, 36700, 38500, 40400, 42400, 44500, 46800, 49100, 51900]
+            },
+            18: {
+                scale2015: [8800, 9240, 9710, 10200, 10710, 11250, 11820, 12420, 13050, 13710, 14400, 15120, 15880, 16680, 17520, 18400, 19320, 20290, 21310],
+                scale2026: [21000, 22100, 23200, 24400, 25600, 26900, 28200, 29600, 31100, 32600, 34300, 36000, 37800, 39600, 41600, 43700, 45900, 48200, 50900]
+            },
+            19: {
+                scale2015: [8500, 8930, 9380, 9850, 10350, 10870, 11420, 12000, 12600, 13230, 13900, 14600, 15330, 16100, 16910, 17760, 18650, 19590, 20570],
+                scale2026: [20500, 21600, 22700, 23800, 25000, 26200, 27500, 28900, 30300, 31900, 33400, 35100, 36900, 38700, 40600, 42700, 44800, 47000, 49600]
+            },
+            20: {
+                scale2015: [8250, 8670, 9110, 9570, 10050, 10560, 11090, 11650, 12240, 12860, 13510, 14190, 14900, 15650, 16440, 17270, 18140, 19050, 20010],
+                scale2026: [20000, 21000, 22100, 23200, 24400, 25600, 26900, 28200, 29600, 31100, 32600, 34300, 36000, 37800, 39600, 41600, 43700, 45900, 48400]
+            }
+        };
+
+        // Utility: Convert English numbers to Bangla Digits
+        function toBanglaDigits(num) {
+            if (num === null || num === undefined) return '০';
+            const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return num.toString().replace(/\d/g, x => banglaDigits[x]);
+        }
+
+        // Utility: Format currency in Indian/Bangladeshi numbering system (e.g. 1,25,000 ৳)
+        function formatBDT(amount) {
+            const num = Math.round(amount || 0);
+            const formatted = new Intl.NumberFormat('en-IN').format(num);
+            return toBanglaDigits(formatted) + ' ৳';
+        }
+
+        // Initialize Grade Selector Dropdown
+        function initGradeSelect() {
+            const gradeSelect = document.getElementById('gradeSelect');
+            gradeSelect.innerHTML = '';
+            for (let g = 1; g <= 20; g++) {
+                const opt = document.createElement('option');
+                opt.value = g;
+                opt.textContent = `গ্রেড - ${toBanglaDigits(g)} (${formatBDT(PAY_DATA[g].scale2026[0])})`;
+                if (g === 10) opt.selected = true; // Default to Grade 10
+                gradeSelect.appendChild(opt);
+            }
+            onGradeChange();
+        }
+
+        // Handle Grade Change event to populate 2015 basic options
+        function onGradeChange() {
+            const grade = parseInt(document.getElementById('gradeSelect').value);
+            const basic2015Select = document.getElementById('basic2015Select');
+            basic2015Select.innerHTML = '';
+
+            const scale2015 = PAY_DATA[grade].scale2015;
+            scale2015.forEach((val, idx) => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = `${formatBDT(val)} (ধাপ ${toBanglaDigits(idx + 1)})`;
+                basic2015Select.appendChild(opt);
+            });
+
+            // Update badge text
+            document.getElementById('gradeBadge').textContent = `গ্রেড - ${toBanglaDigits(grade)}`;
+
+            // Calculate fixation and salary
+            calculateSalary();
+        }
+
+        // Main Core Salary & Pay Fixation Calculation
+        function calculateSalary() {
+            const grade = parseInt(document.getElementById('gradeSelect').value);
+            const basic2015 = parseFloat(document.getElementById('basic2015Select').value) || 0;
+            const phase = document.getElementById('phaseSelect').value;
+            const hrPolicy = document.getElementById('hrPolicySelect').value;
+            const location = document.getElementById('locationSelect').value;
+            const ageGroup = document.getElementById('ageSelect').value;
+            const children = parseInt(document.getElementById('childrenSelect').value) || 0;
+            
+            const washChecked = document.getElementById('washCheck').checked;
+            const conveyanceChecked = document.getElementById('conveyanceCheck').checked;
+            const tiffinChecked = document.getElementById('tiffinCheck').checked;
+            const otherAllowance = parseFloat(document.getElementById('otherAllowanceInput').value) || 0;
+
+            const gpfPercent = parseFloat(document.getElementById('gpfPercentInput').value) || 0;
+            const benevolent = parseFloat(document.getElementById('benevolentInput').value) || 0;
+            const insurance = parseFloat(document.getElementById('insuranceInput').value) || 0;
+            const tax = parseFloat(document.getElementById('taxInput').value) || 0;
+            const otherDeduction = parseFloat(document.getElementById('otherDeductionInput').value) || 0;
+
+            // SECTION 5: PAY FIXATION LOGIC
+            const scale2015 = PAY_DATA[grade].scale2015;
+            const scale2026 = PAY_DATA[grade].scale2026;
+            const initial2015 = scale2015[0];
+            const initial2026 = scale2026[0];
+
+            const diff = basic2015 - initial2015;
+            const rawTarget = initial2026 + diff;
+
+            // Step Lookup in 2026 Scale
+            let fixedBasic2026 = scale2026[scale2026.length - 1];
+            for (let i = 0; i < scale2026.length; i++) {
+                if (scale2026[i] >= rawTarget) {
+                    fixedBasic2026 = scale2026[i];
+                    break;
+                }
+            }
+
+            const totalIncrease = fixedBasic2026 - basic2015;
+
+            // SECTION 1(3): PHASE IMPLEMENTATION PERCENTAGE
+            let payableBasic = fixedBasic2026;
+            let phaseTitle = '৩য় পর্যায়ে আহরণযোগ্য মূল বেতন:';
+            let phaseNote = '(২০২৬ নতুন স্কেলের ১০০% কার্যকরের উপর ভিত্তি করে)';
+
+            if (phase === 'phase1') {
+                const incPct = (grade <= 9) ? 40 : 50;
+                payableBasic = basic2015 + (totalIncrease * (incPct / 100));
+                phaseTitle = `১ম পর্যায়ে প্রদেয় মূল বেতন (${toBanglaDigits(incPct)}% বৃদ্ধি):`;
+                phaseNote = '(১ জুলাই ২০২৬ – ৩১ ডিসেম্বর ২০২৬ সময়কাল)';
+            } else if (phase === 'phase2') {
+                const incPct = (grade <= 9) ? 70 : 75;
+                payableBasic = basic2015 + (totalIncrease * (incPct / 100));
+                phaseTitle = `২য় পর্যায়ে প্রদেয় মূল বেতন (${toBanglaDigits(incPct)}% বৃদ্ধি):`;
+                phaseNote = '(১ জানুয়ারি ২০২৭ – ৩০ জুন ২০২৭ সময়কাল)';
+            }
+
+            // Update Pay Fixation Card Summary
+            document.getElementById('dispBasic2015').textContent = formatBDT(basic2015);
+            document.getElementById('dispFixed2026').textContent = formatBDT(fixedBasic2026);
+            document.getElementById('dispTotalIncrease').textContent = formatBDT(totalIncrease);
+            document.getElementById('dispPayableBasic').textContent = formatBDT(payableBasic);
+            document.getElementById('dispPhaseTitle').textContent = phaseTitle;
+            document.getElementById('dispPhaseNote').textContent = phaseNote;
+
+            // SECTION 13: MEDICAL ALLOWANCE
+            const medical = (ageGroup === 'above50') ? 4000 : 3000;
+
+            // SECTION 22: MOBILE ALLOWANCE
+            const mobile = (grade <= 5) ? 500 : 150;
+
+            // SECTION 18: EDUCATION ALLOWANCE
+            const education = Math.min(children, 2) * 500;
+
+            // SECTION 19: TIFFIN ALLOWANCE (Grade 11-20)
+            const tiffin = (grade >= 11 && grade <= 20 && tiffinChecked) ? 500 : 0;
+
+            // SECTION 21: CONVEYANCE ALLOWANCE (Grade 11-20 in CC areas)
+            const conveyance = (grade >= 11 && grade <= 20 && location !== 'other' && conveyanceChecked) ? 600 : 0;
+
+            // SECTION 23: WASH ALLOWANCE
+            const wash = washChecked ? 300 : 0;
+
+            // SECTION 15: HOUSE RENT ALLOWANCE
+            let houseRent = 0;
+            if (hrPolicy === 'pre2028') {
+                // Pre-2028: Calculated using 2015 rules on 2015 Basic
+                let hrPct = 0;
+                let minHR = 0;
+                if (grade >= 16) {
+                    if (location === 'dhaka') { hrPct = 65; minHR = 5600; }
+                    else if (location === 'city_corp') { hrPct = 55; minHR = 5000; }
+                    else { hrPct = 50; minHR = 4500; }
+                } else if (grade >= 10) {
+                    if (location === 'dhaka') { hrPct = 60; minHR = 8000; }
+                    else if (location === 'city_corp') { hrPct = 50; minHR = 6500; }
+                    else { hrPct = 45; minHR = 6000; }
+                } else if (grade >= 5) {
+                    if (location === 'dhaka') { hrPct = 55; minHR = 12500; }
+                    else if (location === 'city_corp') { hrPct = 45; minHR = 10500; }
+                    else { hrPct = 40; minHR = 9500; }
+                } else {
+                    if (location === 'dhaka') { hrPct = 50; minHR = 25000; }
+                    else if (location === 'city_corp') { hrPct = 40; minHR = 20000; }
+                    else { hrPct = 35; minHR = 17500; }
+                }
+                houseRent = Math.max((basic2015 * hrPct / 100), minHR);
+            } else {
+                // Post 1 Jan 2028: Calculated using 2026 rates (Section 15(6)) on Payable Basic
+                let hrPct = 0;
+                if (grade >= 16) {
+                    if (location === 'dhaka') hrPct = 60;
+                    else if (location === 'city_corp') hrPct = 50;
+                    else hrPct = 45;
+                } else if (grade >= 10) {
+                    if (location === 'dhaka') hrPct = 50;
+                    else if (location === 'city_corp') hrPct = 40;
+                    else hrPct = 35;
+                } else if (grade >= 5) {
+                    if (location === 'dhaka') hrPct = 45;
+                    else if (location === 'city_corp') hrPct = 35;
+                    else hrPct = 30;
+                } else {
+                    if (location === 'dhaka') hrPct = 40;
+                    else if (location === 'city_corp') hrPct = 30;
+                    else hrPct = 25;
+                }
+                houseRent = payableBasic * (hrPct / 100);
+            }
+
+            // GROSS SALARY CALCULATION
+            const grossSalary = payableBasic + houseRent + medical + mobile + education + tiffin + conveyance + wash + otherAllowance;
+
+            // DEDUCTIONS
+            const gpfAmount = payableBasic * (gpfPercent / 100);
+            const totalDeductions = gpfAmount + benevolent + insurance + tax + otherDeduction;
+
+            // NET PAYABLE SALARY
+            const netSalary = grossSalary - totalDeductions;
+
+            // Update Detailed Slip Display Table
+            document.getElementById('itemBasicPay').textContent = formatBDT(payableBasic);
+            document.getElementById('itemHouseRent').textContent = formatBDT(houseRent);
+            document.getElementById('itemMedical').textContent = formatBDT(medical);
+            document.getElementById('itemMobile').textContent = formatBDT(mobile);
+            document.getElementById('itemEducation').textContent = formatBDT(education);
+            document.getElementById('itemTiffin').textContent = formatBDT(tiffin);
+            document.getElementById('itemConveyance').textContent = formatBDT(conveyance);
+            document.getElementById('itemWash').textContent = formatBDT(wash);
+            document.getElementById('itemOtherAllowance').textContent = formatBDT(otherAllowance);
+            document.getElementById('itemGrossSalary').textContent = formatBDT(grossSalary);
+
+            document.getElementById('itemGPF').textContent = formatBDT(gpfAmount);
+            document.getElementById('itemBenevolent').textContent = formatBDT(benevolent);
+            document.getElementById('itemInsurance').textContent = formatBDT(insurance);
+            document.getElementById('itemTax').textContent = formatBDT(tax);
+            document.getElementById('itemOtherDeduction').textContent = formatBDT(otherDeduction);
+            document.getElementById('itemTotalDeduction').textContent = formatBDT(totalDeductions);
+
+            document.getElementById('itemNetSalary').textContent = formatBDT(netSalary);
+
+            // Annual Festival Bonuses (Section 25)
+            document.getElementById('bonusEid').textContent = `${formatBDT(payableBasic)} (প্রতিটিতে)`;
+            document.getElementById('bonusBoishakh').textContent = formatBDT(payableBasic * 0.15);
+        }
+
+        // Theme Management (Dark Mode / Light Mode Auto & Toggle)
+        function initTheme() {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const savedTheme = localStorage.getItem('theme');
+            
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+                updateThemeUI(true);
+            } else {
+                document.documentElement.classList.remove('dark');
+                updateThemeUI(false);
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeUI(isDark);
+        }
+
+        function updateThemeUI(isDark) {
+            document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+            document.getElementById('themeText').textContent = isDark ? 'লাইট মোড' : 'ডার্ক মোড';
+        }
+
+        // Modal Controls
+        function openIbasModal() {
+            document.getElementById('ibasModal').classList.remove('hidden');
+        }
+        function closeIbasModal() {
+            document.getElementById('ibasModal').classList.add('hidden');
+        }
+
+        // Copy Text Summary to Clipboard
+        function copySummaryText() {
+            const grade = document.getElementById('gradeSelect').value;
+            const payableBasic = document.getElementById('itemBasicPay').textContent;
+            const gross = document.getElementById('itemGrossSalary').textContent;
+            const deductions = document.getElementById('itemTotalDeduction').textContent;
+            const net = document.getElementById('itemNetSalary').textContent;
+
+            const summaryText = `জাতীয় বেতনস্কেল ২০২৬ - বেতন বিবরণী:\n` +
+                `------------------------------------\n` +
+                `গ্রেড: ${toBanglaDigits(grade)}\n` +
+                `প্রদেয় মূল বেতন: ${payableBasic}\n` +
+                `সর্বমোট প্রাপ্তি (Gross): ${gross}\n` +
+                `সর্বমোট কর্তন: ${deductions}\n` +
+                `নিট প্রদেয় বেতন (Net): ${net}\n` +
+                `------------------------------------\n` +
+                `জাতীয় বেতনস্কেল ২০২৬ ক্যালকুলেটর থেকে সংগৃহীত।`;
+
+            const tempInput = document.createElement('textarea');
+            tempInput.value = summaryText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            showToast('✅ বেতন বিবরণী ক্লিপবোর্ডে কপি হয়েছে!');
+        }
+
+        // Toast Message Notification
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastMessage').textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Window Load Event Handler
+        window.onload = function() {
+            initTheme();
+            initGradeSelect();
+        };
+    </script>
+</body>
+</html>
