@@ -33,7 +33,7 @@
                 --primary: #38bdf8;
                 --primary-hover: #0284c7;
                 --secondary-bg: #0f172a;
-                --accent-bg: #1e3a8a;
+                --accent-bg: #172554;
                 --accent-border: #38bdf8;
                 --input-bg: #334155;
                 --input-text: #f8fafc;
@@ -167,7 +167,6 @@
             outline: none;
         }
 
-        /* Fix Dark Mode Dropdown text */
         select option {
             background-color: var(--input-bg);
             color: var(--input-text);
@@ -215,7 +214,6 @@
             background-color: var(--primary-hover);
         }
 
-        /* Results Display */
         .results-section {
             display: none;
             margin-top: 30px;
@@ -329,10 +327,10 @@
             </div>
 
             <div class="form-group">
-                <label for="ageSelect">কর্মচারীর বয়স:</label>
+                <label for="ageSelect">কর্মচারীর বয়স (১ জানুয়ারি ২০২৮ হতে প্রযোজ্য):</label>
                 <select id="ageSelect" required>
-                    <option value="under50">৫০ বছরের নিচে (চিকিৎসা ভাতা ৩,০০০)</option>
-                    <option value="over50">৫০ বছর বা তার বেশি (চিকিৎসা ভাতা ৪,০০০)</option>
+                    <option value="under50">৫০ বছরের নিচে (নতুন চিকিৎসা ভাতা ৩,০০০)</option>
+                    <option value="over50">৫০ বছর বা তার বেশি (নতুন চিকিৎসা ভাতা ৪,০০০)</option>
                 </select>
             </div>
 
@@ -423,8 +421,8 @@
                 <div class="amount text-success" id="sumP1Net">০ ৳</div>
             </div>
             <div class="card">
-                <h4>শতভাগ কার্যকর নিট বেতন (১ জুলাই '২৭)</h4>
-                <div class="amount text-success" id="sumP3Net">০ ৳</div>
+                <h4>সম্পূর্ণ কার্যকর নিট বেতন (১ জানু '২৮)</h4>
+                <div class="amount text-success" id="sumP4Net">০ ৳</div>
             </div>
         </div>
 
@@ -436,7 +434,7 @@
                         <th>১ জুলাই ২০২৬ হতে<br>(৪০%/৫০% বৃদ্ধি)</th>
                         <th>১ জানুয়ারি ২০২৭ হতে<br>(৭০%/৭৫% বৃদ্ধি)</th>
                         <th>১ জুলাই ২০২৭ হতে<br>(১০০% নতুন স্কেল)</th>
-                        <th>১ জানুয়ারি ২০২৮ হতে<br>(নতুন বাসা ভাড়া সহ)</th>
+                        <th>১ জানুয়ারি ২০২৮ হতে<br>(নতুন বাসা ভাড়া ও চিকিৎসা)</th>
                     </tr>
                 </thead>
                 <tbody id="salaryTableBody">
@@ -448,7 +446,6 @@
 </div>
 
 <script>
-    // Pay Scale Data based on Gazette S.R.O. 347-Law/2026
     const payScales = {
         1: { steps15: [78000], steps26: [156000] },
         2: { steps15: [66000, 68480, 71050, 73720, 76490], steps26: [132000, 135700, 139400, 143200, 147200, 151200, 153000] },
@@ -498,7 +495,6 @@
         }
     });
 
-    // Pay Fixation logic
     function getFixed2026Basic(grade, basic15) {
         const data = payScales[grade];
         if (!data) return 0;
@@ -546,7 +542,12 @@
         let p4Basic = fixed2026Basic;
 
         // 2. Allowances Calculations
-        const medical = (age === 'over50') ? 4000 : 3000;
+        // Medical Allowance: 1500 Tk until Jan 1, 2028 (Phases 1-3). Phase 4 gets new scale (3000/4000).
+        const p1Medical = 1500;
+        const p2Medical = 1500;
+        const p3Medical = 1500;
+        const p4Medical = (age === 'over50') ? 4000 : 3000;
+
         const tiffin = (grade >= 11 && grade <= 20) ? 500 : 0;
         const conv = (grade >= 11 && grade <= 20 && location !== 'other') ? 600 : 0;
         const edu = child * 500;
@@ -557,17 +558,17 @@
         const charge = isCharge ? 1500 : 0;
         const deputation = isDeputation ? Math.round(p3Basic * 0.10) : 0;
 
-        // Hill & Haor Allowances (20% max 5000)
+        // Hill & Haor Allowances
         let hillVal = 0, haorVal = 0;
         if (isHill) hillVal = Math.min(Math.round(p3Basic * 0.20), location === 'other' ? 5500 : 5000);
         if (isHaor) haorVal = Math.min(Math.round(p3Basic * 0.20), 5000);
 
-        // 2015 House Rent (Estimated baseline rate based on location & 2015 basic)
+        // House Rent 2015
         let hr15Pct = 0.45;
         if (grade >= 10) hr15Pct = (location === 'dhaka') ? 0.60 : (location === 'city' ? 0.50 : 0.45);
         const hr15Amt = Math.round(basic15 * hr15Pct);
 
-        // 2028 House Rent (2026 Scale %)
+        // House Rent 2028
         let hr28Pct = 0.30;
         if (grade >= 16) hr28Pct = (location === 'dhaka') ? 0.60 : (location === 'city' ? 0.50 : 0.45);
         else if (grade >= 10) hr28Pct = (location === 'dhaka') ? 0.50 : (location === 'city' ? 0.40 : 0.35);
@@ -575,15 +576,15 @@
         else hr28Pct = (location === 'dhaka') ? 0.40 : (location === 'city' ? 0.30 : 0.25);
         const hr28Amt = Math.round(p4Basic * hr28Pct);
 
-        const totalFixedAllowances = medical + tiffin + conv + edu + disChild + mob + wash + charge + deputation + hillVal + haorVal;
+        const otherAllowances = tiffin + conv + edu + disChild + mob + wash + charge + deputation + hillVal + haorVal;
 
         // Gross
-        const p1Gross = p1Basic + hr15Amt + totalFixedAllowances;
-        const p2Gross = p2Basic + hr15Amt + totalFixedAllowances;
-        const p3Gross = p3Basic + hr15Amt + totalFixedAllowances;
-        const p4Gross = p4Basic + hr28Amt + totalFixedAllowances;
+        const p1Gross = p1Basic + hr15Amt + p1Medical + otherAllowances;
+        const p2Gross = p2Basic + hr15Amt + p2Medical + otherAllowances;
+        const p3Gross = p3Basic + hr15Amt + p3Medical + otherAllowances;
+        const p4Gross = p4Basic + hr28Amt + p4Medical + otherAllowances;
 
-        // GPF Deductions based on phase basics
+        // GPF Deductions
         const p1Gpf = Math.round(p1Basic * (gpfPct / 100));
         const p2Gpf = Math.round(p2Basic * (gpfPct / 100));
         const p3Gpf = Math.round(p3Basic * (gpfPct / 100));
@@ -605,7 +606,7 @@
         // Update UI Summary
         document.getElementById('sumFixedBasic').textContent = toBanglaNum(fixed2026Basic) + ' ৳';
         document.getElementById('sumP1Net').textContent = toBanglaNum(p1Net) + ' ৳';
-        document.getElementById('sumP3Net').textContent = toBanglaNum(p3Net) + ' ৳';
+        document.getElementById('sumP4Net').textContent = toBanglaNum(p4Net) + ' ৳';
 
         // Render Detailed Table
         const tbody = document.getElementById('salaryTableBody');
@@ -626,10 +627,10 @@
             </tr>
             <tr>
                 <td>চিকিৎসা ভাতা</td>
-                <td>${toBanglaNum(medical)}</td>
-                <td>${toBanglaNum(medical)}</td>
-                <td>${toBanglaNum(medical)}</td>
-                <td>${toBanglaNum(medical)}</td>
+                <td>${toBanglaNum(p1Medical)}</td>
+                <td>${toBanglaNum(p2Medical)}</td>
+                <td>${toBanglaNum(p3Medical)}</td>
+                <td>${toBanglaNum(p4Medical)}</td>
             </tr>
             ${tiffin ? `<tr><td>টিফিন ভাতা</td><td>${toBanglaNum(tiffin)}</td><td>${toBanglaNum(tiffin)}</td><td>${toBanglaNum(tiffin)}</td><td>${toBanglaNum(tiffin)}</td></tr>` : ''}
             ${conv ? `<tr><td>যাতায়াত ভাতা</td><td>${toBanglaNum(conv)}</td><td>${toBanglaNum(conv)}</td><td>${toBanglaNum(conv)}</td><td>${toBanglaNum(conv)}</td></tr>` : ''}
@@ -679,7 +680,6 @@
         document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
     });
 
-    // Helper: Theme Toggle
     document.getElementById('themeToggleBtn').addEventListener('click', () => {
         if (document.body.classList.contains('dark-mode')) {
             document.body.classList.remove('dark-mode');
@@ -690,7 +690,6 @@
         }
     });
 
-    // Helper: Bangla Numerals
     function toBanglaNum(num) {
         const bd = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
         return num.toString().replace(/\d/g, d => bd[d]);
