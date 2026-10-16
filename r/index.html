@@ -14,7 +14,19 @@
         body {
             font-family: 'Kalpurush', 'Noto Sans Bengali', sans-serif;
         }
+
+        /* Strict A4 1-Page Print Configuration */
+        @page {
+            size: A4 portrait;
+            margin: 8mm;
+        }
+
         @media print {
+            html, body {
+                height: 100%;
+                overflow: hidden;
+                background: #fff !important;
+            }
             body * {
                 visibility: hidden;
             }
@@ -25,11 +37,15 @@
                 position: absolute;
                 left: 0;
                 top: 0;
-                width: 100%;
-                margin: 0;
-                padding: 15mm;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 100% !important;
+                margin: 0 !important;
+                padding: 10mm !important;
                 box-shadow: none !important;
-                border: none !important;
+                border: 2px solid #334155 !important;
+                border-radius: 0 !important;
+                box-sizing: border-box;
             }
             .no-print {
                 display: none !important;
@@ -128,7 +144,7 @@
                             <span class="text-xs font-normal text-slate-500">স্বয়ংক্রিয় গণনা</span>
                         </label>
                         <div class="space-y-2.5 max-h-60 overflow-y-auto pr-1" id="marksInputsContainer">
-                            <!-- Marks inputs will be dynamically generated here -->
+                            <!-- Marks inputs generated with empty values -->
                         </div>
                     </div>
                 </form>
@@ -140,7 +156,7 @@
                     <i class="fa-solid fa-sync-alt"></i> প্রিভিউ আপডেট
                 </button>
                 <button type="button" id="printBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm">
-                    <i class="fa-solid fa-print"></i> প্রিন্ট কার্ড
+                    <i class="fa-solid fa-print"></i> প্রিন্ট কার্ড (A4 Page 1)
                 </button>
             </div>
         </section>
@@ -149,151 +165,151 @@
         <section class="lg:col-span-7 flex flex-col items-center">
             <div class="w-full flex justify-between items-center mb-3 no-print px-1">
                 <h3 class="text-sm font-semibold text-slate-600 flex items-center gap-2">
-                    <i class="fa-solid fa-eye text-emerald-600"></i> লাইভ রেজাল্ট কার্ড প্রিভিউ (A4 ফরম্যাট)
+                    <i class="fa-solid fa-eye text-emerald-600"></i> লাইভ রেজাল্ট কার্ড প্রিভিউ (১ পাতা A4)
                 </h3>
                 <span class="text-xs text-slate-500 bg-white px-2.5 py-1 rounded-full border shadow-xs">ফরম্যাট: সরকারি প্রাথমিক বিদ্যালয়</span>
             </div>
 
             <!-- Printable Card Wrapper -->
-            <div id="printable-card" class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 md:p-8 relative overflow-hidden flex flex-col justify-between min-h-[720px]">
+            <div id="printable-card" class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 md:p-8 relative overflow-hidden flex flex-col justify-between min-h-[780px]">
                 
                 <!-- Watermark Logo subtle background -->
                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03]">
                     <i class="fa-solid fa-school text-[280px] text-indigo-900"></i>
                 </div>
 
-                <!-- Top School Header -->
+                <!-- Top School Header & Top-Right Tiny Grade Table -->
                 <div>
-                    <div class="text-center border-b-2 border-indigo-900 pb-4 mb-5">
-                        <div class="inline-block bg-indigo-50 text-indigo-800 text-xs font-semibold px-3 py-1 rounded-full mb-1.5 border border-indigo-100">
-                            গণপ্রজাতন্ত্রী বাংলাদেশ সরকার
-                        </div>
-                        <h2 class="text-xl md:text-2xl font-bold text-indigo-950 tracking-wide">২০০ নং কংশুর সরকারি প্রাথমিক বিদ্যালয়</h2>
-                        <p class="text-xs md:text-sm text-slate-600 mt-0.5">উপজেলা: গোপালগঞ্জ সদর, জেলা: গোপালগঞ্জ</p>
-                        <div class="mt-2.5 inline-block bg-emerald-700 text-white text-xs md:text-sm font-bold px-4 py-1 rounded-lg shadow-xs" id="previewTermTitle">
-                            প্রথম প্রান্তিক মূল্যায়ন ২০২৬
-                        </div>
-                    </div>
-
-                    <!-- Student Info & Grading System Side by Side Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-5">
-                        <!-- Student Info (8 cols) -->
-                        <div class="md:col-span-7 bg-slate-50 rounded-xl p-3.5 border border-slate-200/80 text-sm grid grid-cols-2 gap-y-2 gap-x-3">
-                            <div>
-                                <span class="text-slate-500 font-medium text-xs block">শিক্ষার্থীর নাম:</span>
-                                <span id="previewName" class="font-bold text-slate-900 text-sm md:text-base">---</span>
+                    <div class="relative border-b-2 border-indigo-900 pb-3 mb-4 flex justify-between items-start">
+                        <!-- School Header Text (Left & Center) -->
+                        <div class="text-center flex-1 pr-2">
+                            <div class="inline-block bg-indigo-50 text-indigo-800 text-[10px] md:text-xs font-semibold px-2.5 py-0.5 rounded-full mb-1 border border-indigo-100">
+                                গণপ্রজাতন্ত্রী বাংলাদেশ সরকার
                             </div>
-                            <div>
-                                <span class="text-slate-500 font-medium text-xs block">শ্রেণি:</span>
-                                <span id="previewClass" class="font-semibold text-slate-800">---</span>
-                            </div>
-                            <div>
-                                <span class="text-slate-500 font-medium text-xs block">রোল নম্বর:</span>
-                                <span id="previewRoll" class="font-semibold text-slate-800">---</span>
-                            </div>
-                            <div>
-                                <span class="text-slate-500 font-medium text-xs block">শিক্ষাবর্ষ:</span>
-                                <span class="font-semibold text-slate-800">২০২৬</span>
+                            <h2 class="text-lg md:text-xl font-bold text-indigo-950 tracking-wide">২০০ নং কংশুর সরকারি প্রাথমিক বিদ্যালয়</h2>
+                            <p class="text-[11px] md:text-xs text-slate-600 mt-0.5">উপজেলা: গোপালগঞ্জ সদর, জেলা: গোপালগঞ্জ</p>
+                            <div class="mt-2 inline-block bg-emerald-700 text-white text-xs font-bold px-3 py-1 rounded-md shadow-xs" id="previewTermTitle">
+                                প্রথম প্রান্তিক মূল্যায়ন ২০২৬
                             </div>
                         </div>
 
-                        <!-- Grading System Table (5 cols)[cite: 1] -->
-                        <div class="md:col-span-5 bg-indigo-50/60 rounded-xl p-2.5 border border-indigo-100 flex flex-col justify-center">
-                            <span class="text-[11px] font-bold text-indigo-900 text-center block mb-1">গ্রেডিং পদ্ধতি ও শিখন অর্জন</span>
-                            <table class="w-full text-center text-[10px] bg-white rounded-lg overflow-hidden border border-slate-200">
+                        <!-- Tiny Grade System Table fixed at Top Right Corner -->
+                        <div class="w-36 bg-slate-50 p-1 rounded border border-slate-300 shadow-2xs">
+                            <span class="text-[9px] font-bold text-indigo-900 text-center block mb-0.5 border-b pb-0.5">মূল্যায়ন স্কিল</span>
+                            <table class="w-full text-center text-[8px] leading-tight border-collapse">
                                 <thead>
                                     <tr class="bg-indigo-900 text-white">
-                                        <th class="p-1">প্রাপ্ত নম্বর</th>
-                                        <th class="p-1">গ্রেড</th>
-                                        <th class="p-1">শিখন অর্জন</th>
+                                        <th class="p-0.5">নম্বর</th>
+                                        <th class="p-0.5">গ্রেড</th>
+                                        <th class="p-0.5">অর্জন</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-100 text-slate-700">
+                                <tbody class="divide-y divide-slate-200 text-slate-700">
                                     <tr>
-                                        <td class="p-1">৮০%-১০০%</td>
-                                        <td class="p-1 font-bold text-emerald-700">A</td>
-                                        <td class="p-1 font-medium">অতি উত্তম</td>
+                                        <td class="p-0.5">৮০-১০০%</td>
+                                        <td class="p-0.5 font-bold text-emerald-700">A</td>
+                                        <td class="p-0.5">অতি উত্তম</td>
                                     </tr>
                                     <tr>
-                                        <td class="p-1">৬০%-৭৯%</td>
-                                        <td class="p-1 font-bold text-indigo-700">B</td>
-                                        <td class="p-1 font-medium">উত্তম</td>
+                                        <td class="p-0.5">৬০-৭৯%</td>
+                                        <td class="p-0.5 font-bold text-indigo-700">B</td>
+                                        <td class="p-0.5">উত্তম</td>
                                     </tr>
                                     <tr>
-                                        <td class="p-1">৪০%-৫৯%</td>
-                                        <td class="p-1 font-bold text-amber-600">C</td>
-                                        <td class="p-1 font-medium">সন্তোষজনক</td>
+                                        <td class="p-0.5">৪০-৫৯%</td>
+                                        <td class="p-0.5 font-bold text-amber-600">C</td>
+                                        <td class="p-0.5">সন্তোষজনক</td>
                                     </tr>
                                     <tr>
-                                        <td class="p-1">০%-৩৯%</td>
-                                        <td class="p-1 font-bold text-red-600">D</td>
-                                        <td class="p-1 font-medium">সহায়তা প্রয়োজন</td>
+                                        <td class="p-0.5">০-৩৯%</td>
+                                        <td class="p-0.5 font-bold text-red-600">D</td>
+                                        <td class="p-0.5">সহায়তা প্র.</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
+                    <!-- Student Info Grid -->
+                    <div class="bg-slate-50 rounded-xl p-3 border border-slate-200/80 mb-4 text-xs md:text-sm grid grid-cols-2 gap-y-1.5 gap-x-4">
+                        <div>
+                            <span class="text-slate-500 font-medium text-[11px] block">শিক্ষার্থীর নাম:</span>
+                            <span id="previewName" class="font-bold text-slate-900 text-sm">---</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 font-medium text-[11px] block">শ্রেণি:</span>
+                            <span id="previewClass" class="font-semibold text-slate-800">---</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 font-medium text-[11px] block">রোল নম্বর:</span>
+                            <span id="previewRoll" class="font-semibold text-slate-800">---</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 font-medium text-[11px] block">শিক্ষাবর্ষ:</span>
+                            <span class="font-semibold text-slate-800">২০২৬</span>
+                        </div>
+                    </div>
+
                     <!-- Marks Table -->
-                    <div class="overflow-x-auto mb-6">
+                    <div class="overflow-x-auto mb-4">
                         <table class="w-full text-left border-collapse text-xs md:text-sm">
                             <thead>
                                 <tr class="bg-indigo-900 text-white">
-                                    <th class="p-2.5 rounded-l-lg">ক্র.নং</th>
-                                    <th class="p-2.5">বিষয়ের নাম</th>
-                                    <th class="p-2.5 text-center">পূর্ণমান</th>
-                                    <th class="p-2.5 text-center">প্রাপ্ত নম্বর</th>
-                                    <th class="p-2.5 text-center">লেটার গ্রেড</th>
-                                    <th class="p-2.5 text-center rounded-r-lg">শিখন অর্জন</th>
+                                    <th class="p-2 rounded-l-lg">ক্র.নং</th>
+                                    <th class="p-2">বিষয়ের নাম</th>
+                                    <th class="p-2 text-center">পূর্ণমান</th>
+                                    <th class="p-2 text-center">প্রাপ্ত নম্বর</th>
+                                    <th class="p-2 text-center">লেটার গ্রেড</th>
+                                    <th class="p-2 text-center rounded-r-lg">শিখন অর্জন</th>
                                 </tr>
                             </thead>
                             <tbody id="previewMarksTableBody" class="divide-y divide-slate-100">
-                                <!-- Populated dynamically -->
+                                <!-- Dynamic content -->
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Summary Box -->
-                    <div class="bg-gradient-to-r from-indigo-50 via-slate-50 to-emerald-50 rounded-xl p-4 border border-indigo-100 mb-8 grid grid-cols-3 gap-3 text-center">
+                    <div class="bg-gradient-to-r from-indigo-50 via-slate-50 to-emerald-50 rounded-xl p-3 border border-indigo-100 mb-6 grid grid-cols-3 gap-3 text-center">
                         <div class="bg-white p-2 rounded-lg shadow-2xs border border-slate-100">
-                            <span class="text-[11px] text-slate-500 block font-medium">মোট নম্বর</span>
-                            <span id="previewTotalMarks" class="text-base font-bold text-indigo-900">০</span>
+                            <span class="text-[10px] text-slate-500 block font-medium">মোট নম্বর</span>
+                            <span id="previewTotalMarks" class="text-sm font-bold text-indigo-900">-</span>
                         </div>
                         <div class="bg-white p-2 rounded-lg shadow-2xs border border-slate-100">
-                            <span class="text-[11px] text-slate-500 block font-medium">গড় শতকরা (%)</span>
-                            <span id="previewPercentage" class="text-base font-bold text-indigo-900">০%</span>
+                            <span class="text-[10px] text-slate-500 block font-medium">গড় শতকরা (%)</span>
+                            <span id="previewPercentage" class="text-sm font-bold text-indigo-900">-</span>
                         </div>
                         <div class="bg-white p-2 rounded-lg shadow-2xs border border-slate-100">
-                            <span class="text-[11px] text-slate-500 block font-medium">চূড়ান্ত মূল্যায়ন</span>
-                            <span id="previewFinalGrade" class="text-base font-bold text-emerald-700">-</span>
+                            <span class="text-[10px] text-slate-500 block font-medium">চূড়ান্ত মূল্যায়ন</span>
+                            <span id="previewFinalGrade" class="text-sm font-bold text-emerald-700">-</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Signature Section -->
-                <div class="pt-6 border-t border-slate-200 mt-auto">
+                <div class="pt-4 border-t border-slate-200 mt-auto">
                     <div class="grid grid-cols-3 gap-4 text-center text-xs">
                         <div class="flex flex-col items-center">
-                            <div class="h-10 mb-1 flex items-end">
-                                <span class="text-slate-400 italic font-serif">স্বাক্ষরিত</span>
+                            <div class="h-8 mb-1 flex items-end">
+                                <span class="text-slate-400 italic font-serif text-[11px]">স্বাক্ষরিত</span>
                             </div>
-                            <div class="w-full border-t border-slate-400 pt-1 font-semibold text-slate-700">শ্রেণি শিক্ষক</div>
+                            <div class="w-full border-t border-slate-400 pt-0.5 font-semibold text-slate-700">শ্রেণি শিক্ষক</div>
                         </div>
                         <div class="flex flex-col items-center">
-                            <div class="h-10 mb-1 flex items-end">
-                                <span class="text-slate-400 italic font-serif">স্বাক্ষরিত ও সীল</span>
+                            <div class="h-8 mb-1 flex items-end">
+                                <span class="text-slate-400 italic font-serif text-[11px]">স্বাক্ষরিত ও সীল</span>
                             </div>
-                            <div class="w-full border-t border-slate-400 pt-1 font-semibold text-slate-700">প্রধান শিক্ষক</div>
+                            <div class="w-full border-t border-slate-400 pt-0.5 font-semibold text-slate-700">প্রধান শিক্ষক</div>
                         </div>
                         <div class="flex flex-col items-center">
-                            <div class="h-10 mb-1 flex items-end">
-                                <span class="text-slate-400 italic font-serif">স্বাক্ষরিত</span>
+                            <div class="h-8 mb-1 flex items-end">
+                                <span class="text-slate-400 italic font-serif text-[11px]">স্বাক্ষরিত</span>
                             </div>
-                            <div class="w-full border-t border-slate-400 pt-1 font-semibold text-slate-700">অভিভাবক</div>
+                            <div class="w-full border-t border-slate-400 pt-0.5 font-semibold text-slate-700">অভিভাবক</div>
                         </div>
                     </div>
-                    <div class="text-center text-[10px] text-slate-400 mt-6">
-                        নথি আইডি: KPS-2026-RES | ২০০ নং কংশুর সরকারি প্রাথমিক বিদ্যালয়, গোপালগঞ্জ সদর, গোপালগঞ্জ
+                    <div class="text-center text-[9px] text-slate-400 mt-4">
+                        নথি আইডি: KPS-2026-RES | ২০০ নং কংশুর সরকারি প্রাথমিক বিদ্যালয়, গোপালগঞ্জ সদর
                     </div>
                 </div>
 
@@ -303,13 +319,12 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-4 text-center text-xs no-print mt-auto border-t border-slate-800">
+    <footer class="bg-slate-900 text-slate-400 py-3 text-center text-xs no-print mt-auto border-t border-slate-800">
         <p>© ২০২৬ ২০০ নং কংশুর সরকারি প্রাথমিক বিদ্যালয়। সর্বস্বত্ব সংরক্ষিত।</p>
     </footer>
 
     <!-- JavaScript Application Logic -->
     <script>
-        // Subject lists based on class
         const primarySubjects = ["বাংলা", "ইংরেজি", "গণিত"];
         const upperSubjects = [
             "বাংলা",
@@ -322,26 +337,26 @@
 
         const studentDatabase = {
             "প্রথম": [
-                { roll: "০১", name: "সাকিব খান", marks: { "বাংলা": 85, "ইংরেজি": 80, "গণিত": 90 } },
-                { roll: "০২", name: "ফাতিমা আক্তার", marks: { "বাংলা": 92, "ইংরেজি": 88, "গণিত": 95 } },
-                { roll: "০৩", name: "রাকিবুল ইসলাম", marks: { "বাংলা": 70, "ইংরেজি": 65, "গণিত": 75 } }
+                { roll: "০১", name: "সাকিব খান" },
+                { roll: "০২", name: "ফাতিমা আক্তার" },
+                { roll: "০৩", name: "রাকিবুল ইসলাম" }
             ],
             "দ্বিতীয়": [
-                { roll: "০১", name: "তানভীর আহমেদ", marks: { "বাংলা": 78, "ইংরেজি": 82, "গণিত": 85 } },
-                { roll: "০২", name: "আয়েশা সিদ্দিকা", marks: { "বাংলা": 95, "ইংরেজি": 94, "গণিত": 98 } }
+                { roll: "০১", name: "তানভীর আহমেদ" },
+                { roll: "০২", name: "আয়েশা সিদ্দিকা" }
             ],
             "তৃতীয়": [
-                { roll: "০১", name: "মাহিন রহমান", marks: { "বাংলা": 88, "ইংরেজি": 85, "গণিত": 92, "বাংলাদেশ ও বিশ্বপরিচয়": 86, "প্রাথমিক বিজ্ঞান": 89, "ধর্ম ও নৈতিক শিক্ষা": 90 } },
-                { roll: "০২", name: "নুসরাত জাহান", marks: { "বাংলা": 90, "ইংরেজি": 91, "গণিত": 94, "বাংলাদেশ ও বিশ্বপরিচয়": 88, "প্রাথমিক বিজ্ঞান": 92, "ধর্ম ও নৈতিক শিক্ষা": 96 } }
+                { roll: "০১", name: "মাহিন রহমান" },
+                { roll: "০২", name: "নুসরাত জাহান" }
             ],
             "চতুর্থ": [
-                { roll: "০১", name: "আব্দুল্লাহ আল মামুন", marks: { "বাংলা": 82, "ইংরেজি": 79, "গণিত": 88, "বাংলাদেশ ও বিশ্বপরিচয়": 81, "প্রাথমিক বিজ্ঞান": 85, "ধর্ম ও নৈতিক শিক্ষা": 90 } },
-                { roll: "০২", name: "সাদিয়া ইসলাম", marks: { "বাংলা": 96, "ইংরেজি": 92, "গণিত": 99, "বাংলাদেশ ও বিশ্বপরিচয়": 94, "প্রাথমিক বিজ্ঞান": 95, "ধর্ম ও নৈতিক শিক্ষা": 98 } }
+                { roll: "০১", name: "আব্দুল্লাহ আল মামুন" },
+                { roll: "০২", name: "সাদিয়া ইসলাম" }
             ],
             "পঞ্চম": [
-                { roll: "০১", name: "প্রীতম বিশ্বাস", marks: { "বাংলা": 91, "ইংরেজি": 89, "গণিত": 95, "বাংলাদেশ ও বিশ্বপরিচয়": 90, "প্রাথমিক বিজ্ঞান": 92, "ধর্ম ও নৈতিক শিক্ষা": 94 } },
-                { roll: "০২", name: "মেহজাবিন হক", marks: { "বাংলা": 94, "ইংরেজি": 95, "গণিত": 97, "বাংলাদেশ ও বিশ্বপরিচয়": 93, "প্রাথমিক বিজ্ঞান": 96, "ধর্ম ও নৈতিক শিক্ষা": 99 } },
-                { roll: "০৩", name: "ইমরান হোসেন", marks: { "বাংলা": 75, "ইংরেজি": 72, "গণিত": 80, "বাংলাদেশ ও বিশ্বপরিচয়": 74, "প্রাথমিক বিজ্ঞান": 78, "ধর্ম ও নৈতিক শিক্ষা": 85 } }
+                { roll: "০১", name: "প্রীতম বিশ্বাস" },
+                { roll: "০২", name: "মেহজাবিন হক" },
+                { roll: "০৩", name: "ইমরান হোসেন" }
             ]
         };
 
@@ -364,7 +379,6 @@
         const previewPercentage = document.getElementById('previewPercentage');
         const previewFinalGrade = document.getElementById('previewFinalGrade');
 
-        // Helper: Get active subjects list based on selected class
         function getSubjectsForClass(className) {
             if (className === "প্রথম" || className === "দ্বিতীয়") {
                 return primarySubjects;
@@ -372,33 +386,31 @@
             return upperSubjects;
         }
 
-        // Helper: Calculate Grade & Achievement based on user image
         function getGradeAndAchievement(marks) {
+            if (marks === null || isNaN(marks)) return { grade: '-', achievement: '-' };
             if (marks >= 80) return { grade: 'A', achievement: 'অতি উত্তম' };
             if (marks >= 60) return { grade: 'B', achievement: 'উত্তম' };
             if (marks >= 40) return { grade: 'C', achievement: 'সন্তোষজনক' };
-            return { grade: 'D', achievement: 'সহায়তা প্রয়োজন' };
+            return { grade: 'D', achievement: 'সহায়তা প্রয়োজন' };
         }
 
-        // Initialize Marks Input Fields
-        function renderMarksInputs(currentMarks = {}) {
+        // Render input fields with strictly EMPTY default values
+        function renderMarksInputs() {
             marksContainer.innerHTML = '';
-            const className = classSelect.value || "পঞ্চম";
+            const className = classSelect.value || "প্রথম";
             const subjects = getSubjectsForClass(className);
 
             subjects.forEach((subject, index) => {
-                const val = currentMarks[subject] !== undefined ? currentMarks[subject] : 80;
                 const div = document.createElement('div');
                 div.className = 'flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200';
                 div.innerHTML = `
                     <span class="text-xs font-medium text-slate-700 w-36 truncate">${index + 1}. ${subject}</span>
-                    <input type="number" min="0" max="100" data-subject="${subject}" value="${val}" class="subject-mark-input w-20 bg-white border border-slate-300 rounded-lg px-2 py-1 text-center text-sm font-semibold text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="number" min="0" max="100" placeholder="নম্বর" data-subject="${subject}" value="" class="subject-mark-input w-20 bg-white border border-slate-300 rounded-lg px-2 py-1 text-center text-sm font-semibold text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 `;
                 marksContainer.appendChild(div);
             });
         }
 
-        // Update Select options for rolls when class changes
         classSelect.addEventListener('change', function() {
             const selectedClass = this.value;
             rollSelect.innerHTML = '<option value="">-- রোল নির্বাচন করুন --</option>';
@@ -419,7 +431,6 @@
             updateResultCardPreview();
         });
 
-        // When Roll is selected, auto-select Name and populate marks
         rollSelect.addEventListener('change', function() {
             const selectedClass = classSelect.value;
             const selectedRoll = this.value;
@@ -436,59 +447,72 @@
                     opt.selected = true;
                     nameSelect.appendChild(opt);
 
-                    renderMarksInputs(student.marks);
+                    renderMarksInputs();
                     updateResultCardPreview();
                 }
             }
         });
 
-        // Live Preview Update function
         function updateResultCardPreview() {
             const className = classSelect.value || "প্রথম";
-            const rollNum = rollSelect.value || "০১";
-            const studentName = nameSelect.value || "শিক্ষার্থীর নাম";
+            const rollNum = rollSelect.value || "---";
+            const studentName = nameSelect.value || "---";
             const termName = termSelect.value;
 
             previewTermTitle.textContent = termName;
-            previewClass.textContent = className + " শ্রেণি";
+            previewClass.textContent = classSelect.value ? className + " শ্রেণি" : "---";
             previewRoll.textContent = rollNum;
             previewName.textContent = studentName;
 
             const markInputs = document.querySelectorAll('.subject-mark-input');
             let totalMarks = 0;
-            let subjectCount = markInputs.length;
+            let enteredSubjectCount = 0;
+            let totalSubjectCount = markInputs.length;
 
             previewMarksTableBody.innerHTML = '';
 
             markInputs.forEach((input, index) => {
                 const subjectName = input.getAttribute('data-subject');
-                const obtainedMarks = parseFloat(input.value) || 0;
-                totalMarks += obtainedMarks;
+                const rawVal = input.value.trim();
+                let obtainedMarks = null;
+                
+                if (rawVal !== '') {
+                    obtainedMarks = parseFloat(rawVal);
+                    if (!isNaN(obtainedMarks)) {
+                        totalMarks += obtainedMarks;
+                        enteredSubjectCount++;
+                    }
+                }
 
                 const { grade, achievement } = getGradeAndAchievement(obtainedMarks);
 
                 const tr = document.createElement('tr');
                 tr.className = index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50';
                 tr.innerHTML = `
-                    <td class="p-2.5 font-medium text-slate-500">${index + 1}</td>
-                    <td class="p-2.5 font-semibold text-slate-800">${subjectName}</td>
-                    <td class="p-2.5 text-center text-slate-600">১০০</td>
-                    <td class="p-2.5 text-center font-bold text-indigo-900">${obtainedMarks}</td>
-                    <td class="p-2.5 text-center font-bold text-emerald-700">${grade}</td>
-                    <td class="p-2.5 text-center font-semibold text-slate-700">${achievement}</td>
+                    <td class="p-2 font-medium text-slate-500">${index + 1}</td>
+                    <td class="p-2 font-semibold text-slate-800">${subjectName}</td>
+                    <td class="p-2 text-center text-slate-600">১০০</td>
+                    <td class="p-2 text-center font-bold text-indigo-900">${obtainedMarks !== null ? obtainedMarks : '-'}</td>
+                    <td class="p-2 text-center font-bold text-emerald-700">${grade}</td>
+                    <td class="p-2 text-center font-semibold text-slate-700">${achievement}</td>
                 `;
                 previewMarksTableBody.appendChild(tr);
             });
 
-            const avgPercentage = subjectCount > 0 ? (totalMarks / (subjectCount * 100)) * 100 : 0;
-            const finalObj = getGradeAndAchievement(avgPercentage);
+            if (enteredSubjectCount > 0) {
+                const avgPercentage = (totalMarks / (totalSubjectCount * 100)) * 100;
+                const finalObj = getGradeAndAchievement(avgPercentage);
 
-            previewTotalMarks.textContent = totalMarks;
-            previewPercentage.textContent = avgPercentage.toFixed(1) + '%';
-            previewFinalGrade.textContent = `${finalObj.grade} (${finalObj.achievement})`;
+                previewTotalMarks.textContent = totalMarks;
+                previewPercentage.textContent = avgPercentage.toFixed(1) + '%';
+                previewFinalGrade.textContent = `${finalObj.grade} (${finalObj.achievement})`;
+            } else {
+                previewTotalMarks.textContent = '-';
+                previewPercentage.textContent = '-';
+                previewFinalGrade.textContent = '-';
+            }
         }
 
-        // Event Listeners for updating
         updateBtn.addEventListener('click', updateResultCardPreview);
         termSelect.addEventListener('change', updateResultCardPreview);
         document.addEventListener('input', function(e) {
@@ -497,17 +521,13 @@
             }
         });
 
-        // Print Button Event
         printBtn.addEventListener('click', function() {
             window.print();
         });
 
-        // Initial Load setup with default student pre-selected
         window.addEventListener('DOMContentLoaded', () => {
             classSelect.value = "প্রথম";
             classSelect.dispatchEvent(new Event('change'));
-            rollSelect.value = "০১";
-            rollSelect.dispatchEvent(new Event('change'));
         });
     </script>
 </body>
