@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>রেজাল্ট কার্ড ম্যানেজমেন্ট সিস্টেম - ২০০ নং কংশুর সরকারি প্রাথমিক বিদ্যালয়</title>
+    <title>রেজাল্ট কার্ড ও ফিস ম্যানেজমেন্ট - ২০০ নং কংশুর সরকারি প্রাথমিক বিদ্যালয়</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
@@ -16,10 +16,10 @@
         @media print {
             html, body { height: 100%; overflow: hidden; background: #fff !important; }
             body * { visibility: hidden; }
-            #printable-card, #printable-card * { visibility: visible; }
-            #printable-card {
+            .printable-active, .printable-active * { visibility: visible; }
+            .printable-active {
                 position: absolute; left: 0; top: 0; width: 100% !important;
-                max-width: 100% !important; height: 100% !important; margin: 0 !important;
+                max-width: 100% !important; height: auto !important; margin: 0 !important;
                 padding: 10mm !important; box-shadow: none !important; border: 2px solid #334155 !important;
                 border-radius: 0 !important; box-sizing: border-box;
             }
@@ -38,7 +38,7 @@
                 </div>
                 <div>
                     <h1 class="text-xl md:text-2xl font-bold tracking-wide">২০০ নং কংশুর সরকারি প্রাথমিক বিদ্যালয়</h1>
-                    <p class="text-xs md:text-sm text-indigo-200">উপজেলা: গোপালগঞ্জ সদর, জেলা: গোপালগঞ্জ | ফলাফল ব্যবস্থাপনা পোর্টাল</p>
+                    <p class="text-xs md:text-sm text-indigo-200">উপজেলা: গোপালগঞ্জ সদর, জেলা: গোপালগঞ্জ | ফলাফল ও ফিস পোর্টাল</p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
@@ -58,87 +58,135 @@
         <!-- Left Column: Controls & Data Entry -->
         <section class="lg:col-span-5 bg-white rounded-2xl shadow-xl border border-slate-100 p-5 md:p-6 no-print flex flex-col justify-between">
             <div>
-                <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
-                    <h2 class="text-lg font-bold text-indigo-900 flex items-center gap-2">
-                        <i class="fa-solid fa-sliders text-indigo-600"></i> স্টুডেন্ট ও পরীক্ষার তথ্য
-                    </h2>
-                    <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">ধাপ ১ থেকে ৪</span>
+                <!-- Mode Switcher Tabs (Result Card vs Fee Invoice) -->
+                <div class="flex border-b border-slate-200 pb-3 mb-4 gap-2">
+                    <button id="modeResultBtn" class="flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-indigo-600 text-white shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-all">
+                        <i class="fa-solid fa-square-poll-vertical"></i> রেজাল্ট কার্ড
+                    </button>
+                    <button id="modeFeeBtn" class="flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center gap-1.5 cursor-pointer transition-all">
+                        <i class="fa-solid fa-receipt"></i> ফিস সংগ্রহ ও রসিদ
+                    </button>
                 </div>
 
-                <form id="resultForm" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="classSelect">
-                            <i class="fa-solid fa-school text-indigo-500 mr-1"></i> শ্রেণি নির্বাচন করুন
-                        </label>
-                        <select id="classSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
-                            <option value="">-- শ্রেণি বাছাই করুন --</option>
-                            <option value="প্রথম">প্রথম শ্রেণি</option>
-                            <option value="দ্বিতীয়">দ্বিতীয় শ্রেণি</option>
-                            <option value="তৃতীয়">তৃতীয় শ্রেণি</option>
-                            <option value="চতুর্থ">চতুর্থ শ্রেণি</option>
-                            <option value="পঞ্চম">পঞ্চম শ্রেণি</option>
-                        </select>
+                <!-- Student Common Selection -->
+                <form id="resultForm" class="space-y-3.5">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" for="classSelect">
+                                <i class="fa-solid fa-school text-indigo-500 mr-1"></i> শ্রেণি
+                            </label>
+                            <select id="classSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="">-- শ্রেণি বাছাই --</option>
+                                <option value="প্রথম">প্রথম শ্রেণি</option>
+                                <option value="দ্বিতীয়">দ্বিতীয় শ্রেণি</option>
+                                <option value="তৃতীয়">তৃতীয় শ্রেণি</option>
+                                <option value="চতুর্থ">চতুর্থ শ্রেণি</option>
+                                <option value="পঞ্চম">পঞ্চম শ্রেণি</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" for="rollSelect">
+                                <i class="fa-solid fa-id-card text-indigo-500 mr-1"></i> রোল নম্বর
+                            </label>
+                            <select id="rollSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500" disabled>
+                                <option value="">-- রোল বাছাই --</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="rollSelect">
-                            <i class="fa-solid fa-id-card text-indigo-500 mr-1"></i> রোল নম্বর
-                        </label>
-                        <select id="rollSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" disabled>
-                            <option value="">-- প্রথমে শ্রেণি নির্বাচন করুন --</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="nameSelect">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="nameSelect">
                             <i class="fa-solid fa-user-graduate text-indigo-500 mr-1"></i> শিক্ষার্থীর নাম
                         </label>
-                        <select id="nameSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" disabled>
-                            <option value="">-- রোল নির্বাচন করুন --</option>
+                        <select id="nameSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500" disabled>
+                            <option value="">-- প্রথমে রোল বাছাই করুন --</option>
                         </select>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="termSelect">
-                            <i class="fa-solid fa-file-lines text-indigo-500 mr-1"></i> রিজালতের ধরন (প্রান্তিক)
-                        </label>
-                        <select id="termSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
-                            <option value="প্রথম প্রান্তিক মূল্যায়ন ২০২৬">প্রথম প্রান্তিক মূল্যায়ন</option>
-                            <option value="দ্বিতীয় প্রান্তিক মূল্যায়ন ২০২৬">দ্বিতীয় প্রান্তিক মূল্যায়ন</option>
-                            <option value="তৃতীয় প্রান্তিক মূল্যায়ন ২০২৬">তৃতীয় প্রান্তিক মূল্যায়ন</option>
-                        </select>
+                    <!-- RESULT CARD SPECIFIC INPUTS -->
+                    <div id="resultControlsGroup" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" for="termSelect">
+                                <i class="fa-solid fa-file-lines text-indigo-500 mr-1"></i> পরীক্ষার নাম (প্রান্তিক)
+                            </label>
+                            <select id="termSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="প্রথম প্রান্তিক মূল্যায়ন ২০২৬">প্রথম প্রান্তিক মূল্যায়ন</option>
+                                <option value="দ্বিতীয় প্রান্তিক মূল্যায়ন ২০২৬">দ্বিতীয় প্রান্তিক মূল্যায়ন</option>
+                                <option value="তৃতীয় প্রান্তিক মূল্যায়ন ২০২৬">তৃতীয় প্রান্তিক মূল্যায়ন</option>
+                            </select>
+                        </div>
+
+                        <div class="pt-1">
+                            <label class="block text-xs font-bold text-slate-800 mb-2 flex items-center justify-between">
+                                <span><i class="fa-solid fa-book-open text-indigo-500 mr-1"></i> বিষয়ভিত্তিক নম্বর</span>
+                                <span class="text-[11px] font-normal text-slate-500">স্বয়ংক্রিয় জিপিএ</span>
+                            </label>
+                            <div class="space-y-2 max-h-52 overflow-y-auto pr-1" id="marksInputsContainer"></div>
+                        </div>
                     </div>
 
-                    <div class="pt-2">
-                        <label class="block text-sm font-bold text-slate-800 mb-2.5 flex items-center justify-between">
-                            <span><i class="fa-solid fa-book-open text-indigo-500 mr-1"></i> বিষয়ভিত্তিক নম্বর (১০০ এর মধ্যে)</span>
-                            <span class="text-xs font-normal text-slate-500">স্বয়ংক্রিয় গণনা</span>
-                        </label>
-                        <div class="space-y-2.5 max-h-60 overflow-y-auto pr-1" id="marksInputsContainer"></div>
+                    <!-- FEE INVOICE SPECIFIC INPUTS -->
+                    <div id="feeControlsGroup" class="space-y-3 hidden border-t border-slate-200 pt-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">রসিদ নং</label>
+                                <input type="text" id="feeInvoiceNo" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-indigo-900">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">তারিখ</label>
+                                <input type="date" id="feeDate" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">ফি-এর বিবরণ / ধরন</label>
+                            <select id="feeTypeSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="পরীক্ষার ফি">পরীক্ষার ফি</option>
+                                <option value="সেশন ও ভর্তি ফি">সেশন ও ভর্তি ফি</option>
+                                <option value="মাসিক বেতন">মাসিক বেতন</option>
+                                <option value="প্রশংসাপত্র / সনদ ফি">প্রশংসাপত্র / সনদ ফি</option>
+                                <option value="অন্যান্য ফি">অন্যান্য ফি</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">টাকার পরিমাণ (৳)</label>
+                            <input type="number" min="0" placeholder="যেমন: ১৫০" id="feeAmountInput" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-emerald-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">মন্তব্য (ঐচ্ছিক)</label>
+                            <input type="text" placeholder="যেমন: প্রথম প্রান্তিকের ফি" id="feeNoteInput" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
                     </div>
                 </form>
             </div>
 
-            <div class="mt-6 pt-4 border-t border-slate-100 flex gap-3">
-                <button type="button" id="updateBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm cursor-pointer">
-                    <i class="fa-solid fa-sync-alt"></i> প্রিভিউ আপডেট
+            <!-- Action Buttons -->
+            <div class="mt-4 pt-3 border-t border-slate-100 flex gap-2">
+                <button type="button" id="updateBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 text-xs cursor-pointer">
+                    <i class="fa-solid fa-sync-alt"></i> আপডেট প্রিভিউ
                 </button>
-                <button type="button" id="printBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm cursor-pointer">
-                    <i class="fa-solid fa-print"></i> প্রিন্ট কার্ড (A4 Page 1)
+                <button type="button" id="saveFeeCloudBtn" class="hidden flex-1 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 px-3 rounded-xl shadow-md transition-all items-center justify-center gap-1.5 text-xs cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> ফি ক্লাউডে সেভ
+                </button>
+                <button type="button" id="printBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 text-xs cursor-pointer">
+                    <i class="fa-solid fa-print"></i> প্রিন্ট করুন
                 </button>
             </div>
         </section>
 
-        <!-- Right Column: Live Result Card Preview -->
+        <!-- Right Column: Live Card / Invoice Preview -->
         <section class="lg:col-span-7 flex flex-col items-center">
             <div class="w-full flex justify-between items-center mb-3 no-print px-1">
-                <h3 class="text-sm font-semibold text-slate-600 flex items-center gap-2">
+                <h3 class="text-sm font-semibold text-slate-600 flex items-center gap-2" id="previewHeaderTitle">
                     <i class="fa-solid fa-eye text-emerald-600"></i> লাইভ রেজাল্ট কার্ড প্রিভিউ (১ পাতা A4)
                 </h3>
-                <span class="text-xs text-slate-500 bg-white px-2.5 py-1 rounded-full border shadow-xs">ফরম্যাট: সরকারি প্রাথমিক বিদ্যালয়</span>
+                <span class="text-xs text-slate-500 bg-white px-2.5 py-1 rounded-full border shadow-xs">২০০ নং কংশুর সরকারি প্রা. বি.</span>
             </div>
 
-            <div id="printable-card" class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 md:p-8 relative overflow-hidden flex flex-col justify-between min-h-[780px]">
+            <!-- VIEW 1: Printable Result Card Wrapper -->
+            <div id="printable-card" class="printable-active w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 md:p-8 relative overflow-hidden flex flex-col justify-between min-h-[780px]">
                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03]">
                     <i class="fa-solid fa-school text-[280px] text-indigo-900"></i>
                 </div>
@@ -247,6 +295,90 @@
                     </div>
                 </div>
             </div>
+
+            <!-- VIEW 2: Printable Fee Receipt / Money Invoice Wrapper -->
+            <div id="printable-invoice" class="hidden w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 md:p-8 relative overflow-hidden flex-col justify-between min-h-[500px]">
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03]">
+                    <i class="fa-solid fa-receipt text-[280px] text-emerald-900"></i>
+                </div>
+
+                <div>
+                    <!-- School Invoice Header -->
+                    <div class="text-center border-b-2 border-emerald-800 pb-3 mb-4">
+                        <div class="inline-block bg-emerald-50 text-emerald-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full mb-1 border border-emerald-200">
+                            ফিস আদায় রসিদ (অফিসিয়াল ক্যাশ মেমো)
+                        </div>
+                        <h2 class="text-lg md:text-xl font-bold text-emerald-950 tracking-wide">২০০ নং কংশুর সরকারি প্রাথমিক বিদ্যালয়</h2>
+                        <p class="text-[11px] text-slate-600">উপজেলা: গোপালগঞ্জ সদর, জেলা: গোপালগঞ্জ</p>
+                    </div>
+
+                    <!-- Invoice ID & Date Grid -->
+                    <div class="flex justify-between items-center text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-200 mb-4 font-semibold">
+                        <div>রসিদ নং: <span id="invPreviewNo" class="text-indigo-900 font-bold">KPS-INV-0001</span></div>
+                        <div>তারিখ: <span id="invPreviewDate" class="text-slate-800">---</span></div>
+                    </div>
+
+                    <!-- Student Info -->
+                    <div class="bg-slate-50/80 rounded-xl p-3 border border-slate-200/80 mb-5 text-xs md:text-sm grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-slate-500 font-medium text-[11px] block">শিক্ষার্থীর নাম:</span>
+                            <span id="invPreviewName" class="font-bold text-slate-900">---</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 font-medium text-[11px] block">শ্রেণি:</span>
+                            <span id="invPreviewClass" class="font-semibold text-slate-800">---</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 font-medium text-[11px] block">রোল নম্বর:</span>
+                            <span id="invPreviewRoll" class="font-semibold text-slate-800">---</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 font-medium text-[11px] block">শিক্ষাবর্ষ:</span>
+                            <span class="font-semibold text-slate-800">২০২৬</span>
+                        </div>
+                    </div>
+
+                    <!-- Fee Particulars Table -->
+                    <table class="w-full text-left border-collapse text-xs md:text-sm mb-6">
+                        <thead>
+                            <tr class="bg-emerald-800 text-white">
+                                <th class="p-2.5 rounded-l-lg">ক্র.নং</th>
+                                <th class="p-2.5">ফি-এর বিবরণ</th>
+                                <th class="p-2.5">মন্তব্য</th>
+                                <th class="p-2.5 text-right rounded-r-lg">টাকার পরিমাণ</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 bg-white">
+                            <tr>
+                                <td class="p-2.5 font-medium">১</td>
+                                <td class="p-2.5 font-bold text-slate-800" id="invPreviewType">পরীক্ষার ফি</td>
+                                <td class="p-2.5 text-slate-500" id="invPreviewNote">-</td>
+                                <td class="p-2.5 text-right font-bold text-emerald-800 text-base">৳ <span id="invPreviewAmount">0</span>/-</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-emerald-50 font-bold text-slate-900 border-t-2 border-emerald-700">
+                                <td colspan="3" class="p-2.5 text-right">সর্বমোট প্রাপ্ত টাকা:</td>
+                                <td class="p-2.5 text-right text-emerald-900 text-base">৳ <span id="invPreviewTotal">0</span>/-</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Signatures -->
+                <div class="pt-8 border-t border-slate-200 mt-auto">
+                    <div class="grid grid-cols-2 gap-8 text-center text-xs">
+                        <div class="flex flex-col items-center">
+                            <div class="h-8 mb-1 flex items-end"><span class="text-slate-400 italic font-serif text-[11px]">স্বাক্ষরিত</span></div>
+                            <div class="w-full border-t border-slate-400 pt-0.5 font-semibold text-slate-700">আদায়কারীর স্বাক্ষর</div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="h-8 mb-1 flex items-end"><span class="text-slate-400 italic font-serif text-[11px]">স্বাক্ষরিত ও সীল</span></div>
+                            <div class="w-full border-t border-slate-400 pt-0.5 font-semibold text-slate-700">প্রধান শিক্ষক</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
     </main>
@@ -288,7 +420,7 @@
                     </button>
                 </div>
 
-                <!-- ADD NEW STUDENT FORM (Always Visible at Top of Dashboard) -->
+                <!-- ADD NEW STUDENT FORM -->
                 <div class="bg-indigo-50/70 p-4 rounded-xl border border-indigo-200 space-y-3">
                     <h4 id="formBoxTitle" class="font-bold text-indigo-900 text-sm flex items-center gap-2">
                         <i class="fa-solid fa-user-plus text-indigo-600"></i> <span id="formTitleText">নতুন শিক্ষার্থী যোগ করুন</span>
@@ -326,13 +458,16 @@
                     </div>
                 </div>
 
-                <!-- Tabs Header for Student List & Recycle Bin -->
+                <!-- Tabs Header for Student List, Fee History & Recycle Bin -->
                 <div class="flex border-b text-xs font-bold gap-4 pt-2">
                     <button id="tabActiveBtn" class="pb-2 border-b-2 border-indigo-600 text-indigo-900 cursor-pointer">
                         <i class="fa-solid fa-users text-indigo-600"></i> সক্রিয় শিক্ষার্থী তালিকা
                     </button>
+                    <button id="tabFeeHistoryBtn" class="pb-2 text-slate-400 border-b-2 border-transparent hover:text-emerald-700 cursor-pointer">
+                        <i class="fa-solid fa-receipt text-emerald-600"></i> ফিস জমা হিস্ট্রি
+                    </button>
                     <button id="tabTrashBtn" class="pb-2 text-slate-400 border-b-2 border-transparent hover:text-red-600 cursor-pointer">
-                        <i class="fa-solid fa-trash-can text-red-500"></i> ট্র্যাশ / রিসাইকেল বিন (৩০ দিন)
+                        <i class="fa-solid fa-trash-can text-red-500"></i> ট্র্যাশ / রিসাইকেল বিন
                     </button>
                 </div>
 
@@ -361,6 +496,26 @@
                                 </tr>
                             </thead>
                             <tbody id="adminActiveTableBody" class="divide-y divide-slate-100 bg-white"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Fee History Tab Content -->
+                <div id="feeHistoryTabContent" class="space-y-3 hidden">
+                    <p class="text-[11px] text-slate-500">অনলাইনে সেভ হওয়া সকল ফিস সংগ্রহের ইতিহাস:</p>
+                    <div class="overflow-x-auto max-h-48 border rounded-xl">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-emerald-800 text-white sticky top-0">
+                                <tr>
+                                    <th class="p-2">রসিদ নং</th>
+                                    <th class="p-2">তারিখ</th>
+                                    <th class="p-2">শ্রেণি ও রোল</th>
+                                    <th class="p-2">নাম</th>
+                                    <th class="p-2">ফি-এর বিবরণ</th>
+                                    <th class="p-2 text-right">টাকা (৳)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminFeeHistoryTableBody" class="divide-y divide-slate-100 bg-white"></tbody>
                         </table>
                     </div>
                 </div>
@@ -416,7 +571,10 @@
         const upperSubjects = ["বাংলা", "ইংরেজি", "গণিত", "বাংলাদেশ ও বিশ্বপরিচয়", "প্রাথমিক বিজ্ঞান", "ধর্ম ও নৈতিক শিক্ষা"];
 
         let allStudentsList = [];
+        let allFeeHistory = [];
+        let activeMode = "result"; // "result" or "fee"
 
+        // Realtime Listener for Student List
         onSnapshot(doc(db, "school_data", "students_list"), (docSnap) => {
             if (docSnap.exists()) {
                 allStudentsList = docSnap.data().list || [];
@@ -432,11 +590,27 @@
             refreshAllUI();
         });
 
+        // Realtime Listener for Fee History
+        onSnapshot(doc(db, "school_data", "fee_history"), (docSnap) => {
+            if (docSnap.exists()) {
+                allFeeHistory = docSnap.data().records || [];
+            }
+            renderAdminTables();
+        });
+
         async function syncToFirebase() {
             try {
                 await setDoc(doc(db, "school_data", "students_list"), { list: allStudentsList });
             } catch (err) {
                 console.error("Firebase Sync Error: ", err);
+            }
+        }
+
+        async function syncFeesToFirebase() {
+            try {
+                await setDoc(doc(db, "school_data", "fee_history"), { records: allFeeHistory });
+            } catch (err) {
+                console.error("Firebase Fees Sync Error: ", err);
             }
         }
 
@@ -458,6 +632,16 @@
             if (changed) syncToFirebase();
         }
 
+        // DOM Elements
+        const modeResultBtn = document.getElementById('modeResultBtn');
+        const modeFeeBtn = document.getElementById('modeFeeBtn');
+        const resultControlsGroup = document.getElementById('resultControlsGroup');
+        const feeControlsGroup = document.getElementById('feeControlsGroup');
+
+        const printableCard = document.getElementById('printable-card');
+        const printableInvoice = document.getElementById('printable-invoice');
+        const previewHeaderTitle = document.getElementById('previewHeaderTitle');
+
         const classSelect = document.getElementById('classSelect');
         const rollSelect = document.getElementById('rollSelect');
         const nameSelect = document.getElementById('nameSelect');
@@ -465,7 +649,27 @@
         const marksContainer = document.getElementById('marksInputsContainer');
         const updateBtn = document.getElementById('updateBtn');
         const printBtn = document.getElementById('printBtn');
+        const saveFeeCloudBtn = document.getElementById('saveFeeCloudBtn');
 
+        // Fee Input Elements
+        const feeInvoiceNo = document.getElementById('feeInvoiceNo');
+        const feeDate = document.getElementById('feeDate');
+        const feeTypeSelect = document.getElementById('feeTypeSelect');
+        const feeAmountInput = document.getElementById('feeAmountInput');
+        const feeNoteInput = document.getElementById('feeNoteInput');
+
+        // Invoice Preview Elements
+        const invPreviewNo = document.getElementById('invPreviewNo');
+        const invPreviewDate = document.getElementById('invPreviewDate');
+        const invPreviewName = document.getElementById('invPreviewName');
+        const invPreviewClass = document.getElementById('invPreviewClass');
+        const invPreviewRoll = document.getElementById('invPreviewRoll');
+        const invPreviewType = document.getElementById('invPreviewType');
+        const invPreviewNote = document.getElementById('invPreviewNote');
+        const invPreviewAmount = document.getElementById('invPreviewAmount');
+        const invPreviewTotal = document.getElementById('invPreviewTotal');
+
+        // Result Preview Elements
         const previewTermTitle = document.getElementById('previewTermTitle');
         const previewName = document.getElementById('previewName');
         const previewClass = document.getElementById('previewClass');
@@ -475,6 +679,7 @@
         const previewPercentage = document.getElementById('previewPercentage');
         const previewFinalGrade = document.getElementById('previewFinalGrade');
 
+        // Admin Auth & Modal Elements
         const adminLoginBtn = document.getElementById('adminLoginBtn');
         const adminModal = document.getElementById('adminModal');
         const closeModalBtn = document.getElementById('closeModalBtn');
@@ -488,8 +693,10 @@
         const loggedInUserEmail = document.getElementById('loggedInUserEmail');
 
         const tabActiveBtn = document.getElementById('tabActiveBtn');
+        const tabFeeHistoryBtn = document.getElementById('tabFeeHistoryBtn');
         const tabTrashBtn = document.getElementById('tabTrashBtn');
         const activeTabContent = document.getElementById('activeTabContent');
+        const feeHistoryTabContent = document.getElementById('feeHistoryTabContent');
         const trashTabContent = document.getElementById('trashTabContent');
 
         const adminInputClass = document.getElementById('adminInputClass');
@@ -502,8 +709,107 @@
         const adminFilterClass = document.getElementById('adminFilterClass');
 
         const adminActiveTableBody = document.getElementById('adminActiveTableBody');
+        const adminFeeHistoryTableBody = document.getElementById('adminFeeHistoryTableBody');
         const adminTrashTableBody = document.getElementById('adminTrashTableBody');
 
+        // Mode Switching
+        modeResultBtn.addEventListener('click', () => {
+            activeMode = "result";
+            modeResultBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-indigo-600 text-white shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-all";
+            modeFeeBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center gap-1.5 cursor-pointer transition-all";
+            
+            resultControlsGroup.classList.remove('hidden');
+            feeControlsGroup.classList.add('hidden');
+            saveFeeCloudBtn.classList.add('hidden');
+
+            printableCard.classList.remove('hidden');
+            printableCard.classList.add('printable-active');
+            printableInvoice.classList.add('hidden');
+            printableInvoice.classList.remove('printable-active');
+
+            previewHeaderTitle.innerHTML = `<i class="fa-solid fa-eye text-emerald-600"></i> লাইভ রেজাল্ট কার্ড প্রিভিউ (১ পাতা A4)`;
+            updateResultCardPreview();
+        });
+
+        modeFeeBtn.addEventListener('click', () => {
+            activeMode = "fee";
+            modeFeeBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-emerald-700 text-white shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-all";
+            modeResultBtn.className = "flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center gap-1.5 cursor-pointer transition-all";
+            
+            resultControlsGroup.classList.add('hidden');
+            feeControlsGroup.classList.remove('hidden');
+            saveFeeCloudBtn.classList.remove('hidden');
+
+            printableCard.classList.add('hidden');
+            printableCard.classList.remove('printable-active');
+            printableInvoice.classList.remove('hidden');
+            printableInvoice.classList.add('printable-active');
+
+            previewHeaderTitle.innerHTML = `<i class="fa-solid fa-eye text-emerald-600"></i> লাইভ রসিদ / ক্যাশ মেমো প্রিভিউ`;
+            
+            generateInvoiceNumber();
+            updateInvoicePreview();
+        });
+
+        function generateInvoiceNumber() {
+            const nextNo = (allFeeHistory.length + 1).toString().padStart(4, '0');
+            feeInvoiceNo.value = `KPS-INV-${nextNo}`;
+            if (!feeDate.value) {
+                feeDate.value = new Date().toISOString().split('T')[0];
+            }
+        }
+
+        function updateInvoicePreview() {
+            const className = classSelect.value || "---";
+            const rollNum = rollSelect.value || "---";
+            const studentName = nameSelect.value || "---";
+
+            invPreviewNo.textContent = feeInvoiceNo.value;
+            invPreviewDate.textContent = feeDate.value || new Date().toLocaleDateString('bn-BD');
+            invPreviewClass.textContent = classSelect.value ? className + " শ্রেণি" : "---";
+            invPreviewRoll.textContent = rollNum;
+            invPreviewName.textContent = studentName;
+
+            invPreviewType.textContent = feeTypeSelect.value;
+            invPreviewNote.textContent = feeNoteInput.value.trim() || "-";
+            const amt = parseFloat(feeAmountInput.value) || 0;
+            invPreviewAmount.textContent = amt;
+            invPreviewTotal.textContent = amt;
+        }
+
+        saveFeeCloudBtn.addEventListener('click', async () => {
+            const className = classSelect.value;
+            const rollNum = rollSelect.value;
+            const studentName = nameSelect.value;
+            const amt = parseFloat(feeAmountInput.value);
+
+            if (!className || !rollNum || !studentName) {
+                alert('দয়া করে শিক্ষার্থী নির্বাচন করুন!');
+                return;
+            }
+            if (!amt || amt <= 0) {
+                alert('দয়া করে সঠিক টাকার পরিমাণ লিখুন!');
+                return;
+            }
+
+            const record = {
+                id: Date.now().toString(),
+                invoiceNo: feeInvoiceNo.value,
+                date: feeDate.value,
+                class: className,
+                roll: rollNum,
+                name: studentName,
+                type: feeTypeSelect.value,
+                amount: amt,
+                note: feeNoteInput.value.trim()
+            };
+
+            allFeeHistory.unshift(record);
+            await syncFeesToFirebase();
+            alert('ফিস সংগ্রহের তথ্য সফলভাবে ফায়ারবেসে সেভ হয়েছে!');
+        });
+
+        // Firebase Auth Listener
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 adminLoginView.classList.add('hidden');
@@ -537,7 +843,7 @@
                 adminEmailInput.value = '';
                 adminPasswordInput.value = '';
             } catch (error) {
-                loginErrorBox.textContent = "ভুল ইমেইল বা পাসওয়ার্ড! অথবা প্রজেক্টে Email Authentication অপশন এনাবল করা নেই।";
+                loginErrorBox.textContent = "ভুল ইমেইল বা পাসওয়ার্ড!";
                 loginErrorBox.classList.remove('hidden');
             } finally {
                 loginSubmitBtn.disabled = false;
@@ -602,7 +908,8 @@
             }
 
             renderAdminTables();
-            updateResultCardPreview();
+            if (activeMode === "result") updateResultCardPreview();
+            else updateInvoicePreview();
         }
 
         classSelect.addEventListener('change', function() {
@@ -627,7 +934,8 @@
                     nameSelect.appendChild(opt);
 
                     renderMarksInputs();
-                    updateResultCardPreview();
+                    if (activeMode === "result") updateResultCardPreview();
+                    else updateInvoicePreview();
                 }
             }
         });
@@ -692,8 +1000,17 @@
             }
         }
 
-        updateBtn.addEventListener('click', updateResultCardPreview);
+        updateBtn.addEventListener('click', () => {
+            if (activeMode === "result") updateResultCardPreview();
+            else updateInvoicePreview();
+        });
+
         termSelect.addEventListener('change', updateResultCardPreview);
+        feeTypeSelect.addEventListener('change', updateInvoicePreview);
+        feeAmountInput.addEventListener('input', updateInvoicePreview);
+        feeNoteInput.addEventListener('input', updateInvoicePreview);
+        feeDate.addEventListener('change', updateInvoicePreview);
+
         document.addEventListener('input', function(e) {
             if (e.target.classList.contains('subject-mark-input')) {
                 updateResultCardPreview();
@@ -714,19 +1031,34 @@
 
         tabActiveBtn.addEventListener('click', () => {
             tabActiveBtn.className = "pb-2 border-b-2 border-indigo-600 text-indigo-900 cursor-pointer";
+            tabFeeHistoryBtn.className = "pb-2 text-slate-400 border-b-2 border-transparent hover:text-emerald-700 cursor-pointer";
             tabTrashBtn.className = "pb-2 text-slate-400 border-b-2 border-transparent hover:text-red-600 cursor-pointer";
+            
             activeTabContent.classList.remove('hidden');
+            feeHistoryTabContent.classList.add('hidden');
+            trashTabContent.classList.add('hidden');
+        });
+
+        tabFeeHistoryBtn.addEventListener('click', () => {
+            tabFeeHistoryBtn.className = "pb-2 border-b-2 border-emerald-600 text-emerald-800 cursor-pointer";
+            tabActiveBtn.className = "pb-2 text-slate-400 border-b-2 border-transparent hover:text-indigo-600 cursor-pointer";
+            tabTrashBtn.className = "pb-2 text-slate-400 border-b-2 border-transparent hover:text-red-600 cursor-pointer";
+            
+            feeHistoryTabContent.classList.remove('hidden');
+            activeTabContent.classList.add('hidden');
             trashTabContent.classList.add('hidden');
         });
 
         tabTrashBtn.addEventListener('click', () => {
             tabTrashBtn.className = "pb-2 border-b-2 border-red-600 text-red-600 cursor-pointer";
             tabActiveBtn.className = "pb-2 text-slate-400 border-b-2 border-transparent hover:text-indigo-600 cursor-pointer";
+            tabFeeHistoryBtn.className = "pb-2 text-slate-400 border-b-2 border-transparent hover:text-emerald-700 cursor-pointer";
+            
             trashTabContent.classList.remove('hidden');
             activeTabContent.classList.add('hidden');
+            feeHistoryTabContent.classList.add('hidden');
         });
 
-        // Add & Update Student Action
         saveStudentBtn.addEventListener('click', () => {
             const cls = adminInputClass.value;
             const roll = adminInputRoll.value.trim();
@@ -797,6 +1129,27 @@
                 });
             }
 
+            // Fee History Table
+            adminFeeHistoryTableBody.innerHTML = '';
+            if (allFeeHistory.length === 0) {
+                adminFeeHistoryTableBody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-slate-400">কোনো ফিস হিস্ট্রি পাওয়া যায়নি</td></tr>`;
+            } else {
+                allFeeHistory.forEach(f => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50';
+                    tr.innerHTML = `
+                        <td class="p-2 font-bold text-indigo-900">${f.invoiceNo}</td>
+                        <td class="p-2 text-slate-600">${f.date}</td>
+                        <td class="p-2 text-slate-700">${f.class} (${f.roll})</td>
+                        <td class="p-2 font-bold text-slate-800">${f.name}</td>
+                        <td class="p-2 text-slate-700">${f.type}</td>
+                        <td class="p-2 text-right font-bold text-emerald-800">৳ ${f.amount}</td>
+                    `;
+                    adminFeeHistoryTableBody.appendChild(tr);
+                });
+            }
+
+            // Trash Table
             adminTrashTableBody.innerHTML = '';
             const trashList = allStudentsList.filter(s => s.isDeleted);
 
