@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Salary Calculator</title>
+    <title>বেতন ক্যালকুলেটর</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -28,7 +28,7 @@
             margin: 0; padding: 0; min-height: 100vh;
         }
 
-        /* --- Masthead (Matching Home Page) --- */
+        /* --- Masthead --- */
         .masthead {
             max-width: 1000px; margin: 0 auto; padding: 25px 15px;
             border-bottom: 4px double var(--border); text-align: center;
@@ -56,13 +56,14 @@
         .input-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: 700; color: var(--text-dim); font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase;}
 
-        input[type="number"] {
+        input[type="number"], select {
             width: 100%; padding: 14px; background: rgba(0,0,0,0.5);
             border: 1px solid var(--border); border-radius: 12px; color: white;
             font-size: 1rem; font-weight: 600; outline: none; transition: 0.3s;
         }
 
-        input[type="number"]:focus { border-color: var(--accent-gold); background: rgba(0,0,0,0.7); }
+        input[type="number"]:focus, select:focus { border-color: var(--accent-gold); background: rgba(0,0,0,0.7); }
+        select option { background: #0f172a; color: #fff; }
 
         button#calcBtn {
             grid-column: span 2; background: var(--accent-gold); color: #000; border: none;
@@ -70,6 +71,7 @@
             cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px;
             transition: 0.3s; margin-top: 10px;
         }
+        button#calcBtn:hover { background: #f59e0b; }
 
         /* --- Dynamic Breakdown Styling --- */
         .result-panel {
@@ -108,86 +110,114 @@
     </header>
 
     <div class="container">
-        <h1>Salary Calculator</h1>
+        <h1>বেতন ক্যালকুলেটর</h1>
         
         <div class="calc-grid">
             <div class="input-group">
-                <label>Basic Salary (৳)</label>
-                <input type="number" id="currentSalary" placeholder="e.g. 20000">
+                <label>মূল বেতন (৳)</label>
+                <input type="number" id="currentSalary" placeholder="যেমন: ২০০০০">
             </div>
             <div class="input-group">
-                <label>House Rent (%)</label>
-                <input type="number" id="houseRent" placeholder="e.g. 40">
+                <label>বাড়িভাড়া (%)</label>
+                <input type="number" id="houseRent" placeholder="যেমন: ৪০">
             </div>
             <div class="input-group">
-                <label>Medical (৳)</label>
+                <label>চিকিৎসা ভাতা (৳)</label>
                 <input type="number" id="medicalAllowance" value="1500">
             </div>
             <div class="input-group">
-                <label>Tiffin (৳)</label>
-                <input type="number" id="tiffinAllowance" placeholder="0">
+                <label>টিফিন ভাতা (৳)</label>
+                <input type="number" id="tiffinAllowance" placeholder="০">
             </div>
             <div class="input-group">
-                <label>Deduction (%)</label>
-                <input type="number" id="deductionPercentage" value="1">
+                <label>শিক্ষা ভাতা</label>
+                <select id="educationAllowance">
+                    <option value="0">সন্তান নেই (৳০)</option>
+                    <option value="500">এক সন্তান (৳৫০০)</option>
+                    <option value="1000">দুই সন্তান (৳১০০০)</option>
+                </select>
             </div>
             <div class="input-group">
-                <label>Revenue Stamp (৳)</label>
+                <label>মোবাইল ভাতা (৳)</label>
+                <input type="number" id="mobileAllowance" placeholder="০">
+            </div>
+            <div class="input-group">
+                <label>কল্যাণ তহবিল (%) [সর্বোচ্চ ১৫০৳]</label>
+                <input type="number" id="welfarePercentage" value="1">
+            </div>
+            <div class="input-group">
+                <label>জিপিএফ কর্তন (%)</label>
+                <input type="number" id="gpfPercentage" value="10">
+            </div>
+            <div class="input-group" style="grid-column: span 2;">
+                <label>রাজস্ব স্ট্যাম্প (৳)</label>
                 <input type="number" id="deductionAmount" value="10">
             </div>
-            <button id="calcBtn" onclick="calculateSalary()">Calculate Net Salary</button>
+            
+            <button id="calcBtn" onclick="calculateSalary()">নেট বেতন হিসাব করুন</button>
         </div>
 
         <div class="result-panel" id="resultPanel">
             <div class="net-salary-card">
-                <span>NET MONTHLY PAYABLE</span>
-                <h2 id="netSalary">৳0.00</h2>
+                <span>সর্বমোট নিট বেতন</span>
+                <h2 id="netSalary">৳০.০০</h2>
             </div>
             
             <div class="breakdown-grid">
-                <div class="item-box"><span>Gross Earnings</span><strong id="grossText">৳0</strong></div>
-                <div class="item-box deduct"><span>Total Deductions</span><strong id="deductText">৳0</strong></div>
+                <div class="item-box"><span>মোট প্রাপ্তি</span><strong id="grossText">৳০</strong></div>
+                <div class="item-box deduct"><span>মোট কর্তন</span><strong id="deductText">৳০</strong></div>
             </div>
         </div>
     </div>
 
     <footer>
-        &copy; 2026 SATU
+        &copy; ২০২৬ SATU
     </footer>
 
     <script>
         function calculateSalary() {
-            // Get inputs
+            // ইনপুট মান সংগ্রহ
             const basic = parseFloat(document.getElementById("currentSalary").value) || 0;
             const rentPercent = parseFloat(document.getElementById("houseRent").value) || 0;
             const medical = parseFloat(document.getElementById("medicalAllowance").value) || 0;
             const tiffin = parseFloat(document.getElementById("tiffinAllowance").value) || 0;
-            const deductPercent = parseFloat(document.getElementById("deductionPercentage").value) || 0;
+            const education = parseFloat(document.getElementById("educationAllowance").value) || 0;
+            const mobile = parseFloat(document.getElementById("mobileAllowance").value) || 0;
+            
+            const welfarePercent = parseFloat(document.getElementById("welfarePercentage").value) || 0;
+            const gpfPercent = parseFloat(document.getElementById("gpfPercentage").value) || 0;
             const stamp = parseFloat(document.getElementById("deductionAmount").value) || 0;
 
-            if (basic <= 0) { alert("Please enter a basic salary amount."); return; }
+            if (basic <= 0) { alert("দয়া করে সঠিক মূল বেতন লিখুন।"); return; }
 
-            // Calculations
+            // হিসাব-নিকাশ
             const rentAmount = (basic * (rentPercent / 100));
-            const gross = basic + rentAmount + medical + tiffin;
-            const pfDeduction = (basic * (deductPercent / 100));
-            const totalDeduction = pfDeduction + stamp;
+            const gross = basic + rentAmount + medical + tiffin + education + mobile;
+            
+            // কল্যাণ তহবিল: ১% তবে সর্বোচ্চ ১৫০ টাকা
+            let welfareDeduction = basic * (welfarePercent / 100);
+            if (welfareDeduction > 150) {
+                welfareDeduction = 150;
+            }
+
+            const gpfDeduction = basic * (gpfPercent / 100);
+            const totalDeduction = welfareDeduction + gpfDeduction + stamp;
             const netPayable = gross - totalDeduction;
 
-            // Update UI
+            // ইউআই আপডেট
             document.getElementById("resultPanel").style.display = "block";
             document.getElementById("netSalary").innerText = "৳" + netPayable.toLocaleString(undefined, {minimumFractionDigits: 2});
             document.getElementById("grossText").innerText = "৳" + gross.toLocaleString();
             document.getElementById("deductText").innerText = "৳" + totalDeduction.toLocaleString();
             
-            // Scroll down on mobile to see results
+            // নিচে স্ক্রোল করা
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
 
-        // Set Current Date
+        // বর্তমান তারিখ সেট করা
         const d = new Date();
         const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
-        document.getElementById('currentDate').innerText = "" + d.toLocaleDateString(undefined, options).toUpperCase();
+        document.getElementById('currentDate').innerText = d.toLocaleDateString('bn-BD', options);
     </script>
 </body>
 </html>
