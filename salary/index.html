@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>বেতন ক্যালকুলেটর</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <!-- Kalpurush Font & Font Awesome -->
+    <link href="https://fonts.maateen.me/kalpurush/font.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <style>
@@ -22,7 +23,7 @@
 
         * { box-sizing: border-box; }
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Kalpurush', sans-serif;
             background: var(--bg-base) var(--bg-gradient) fixed;
             color: var(--text-bright);
             margin: 0; padding: 0; min-height: 100vh;
@@ -35,8 +36,8 @@
         }
         .main-banner { max-width: 350px; width: 80%; height: auto; }
         .masthead-info-row {
-            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 2px; color: var(--accent-gold); padding-top: 8px;
+            font-size: 0.85rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--accent-gold); padding-top: 8px;
         }
 
         /* --- Calculator Container --- */
@@ -47,28 +48,31 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        h1 { font-family: 'Playfair Display', serif; font-style: italic; color: var(--accent-gold); text-align: center; margin-bottom: 25px; }
+        h1 { font-family: 'Kalpurush', serif; color: var(--accent-gold); text-align: center; margin-bottom: 25px; font-size: 2rem; }
 
         .calc-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
         }
 
-        .input-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: 700; color: var(--text-dim); font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase;}
+        .input-group { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 8px; font-weight: 700; color: var(--text-dim); font-size: 0.85rem; letter-spacing: 0.5px; }
 
         input[type="number"], select {
-            width: 100%; padding: 14px; background: rgba(0,0,0,0.5);
+            width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.5);
             border: 1px solid var(--border); border-radius: 12px; color: white;
-            font-size: 1rem; font-weight: 600; outline: none; transition: 0.3s;
+            font-size: 1rem; font-family: 'Kalpurush', sans-serif; outline: none; transition: 0.3s;
         }
 
         input[type="number"]:focus, select:focus { border-color: var(--accent-gold); background: rgba(0,0,0,0.7); }
         select option { background: #0f172a; color: #fff; }
 
+        .full-width { grid-column: span 2; }
+
         button#calcBtn {
             grid-column: span 2; background: var(--accent-gold); color: #000; border: none;
-            padding: 18px; width: 100%; border-radius: 14px; font-weight: 800; 
-            cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px;
+            padding: 16px; width: 100%; border-radius: 14px; font-weight: 800; 
+            cursor: pointer; letter-spacing: 1px; font-size: 1.1rem;
+            font-family: 'Kalpurush', sans-serif;
             transition: 0.3s; margin-top: 10px;
         }
         button#calcBtn:hover { background: #f59e0b; }
@@ -82,20 +86,23 @@
             background: rgba(251, 191, 36, 0.1); border: 1px solid var(--accent-gold);
             padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 20px;
         }
-        .net-salary-card span { font-size: 0.75rem; color: var(--accent-gold); font-weight: 800; letter-spacing: 2px; }
-        .net-salary-card h2 { font-size: 2.5rem; margin: 5px 0; color: #fff; }
+        .net-salary-card span { font-size: 0.9rem; color: var(--accent-gold); font-weight: 800; letter-spacing: 1px; }
+        .net-salary-card h2 { font-size: 2.3rem; margin: 5px 0; color: #fff; }
 
         .breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .item-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
-        .item-box span { display: block; font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px; }
-        .item-box strong { font-size: 1rem; color: #fff; }
+        .item-box span { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 4px; }
+        .item-box strong { font-size: 1.1rem; color: #fff; }
         .deduct strong { color: var(--accent-red); }
 
-        footer { text-align: center; padding: 40px; color: var(--text-dim); font-size: 0.7rem; letter-spacing: 1px; }
+        footer { text-align: center; padding: 40px; color: var(--text-dim); font-size: 0.85rem; }
 
-        @media (max-width: 600px) {
+        /* --- Responsive View (Mobile View) --- */
+        @media (max-width: 650px) {
             .calc-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
             button#calcBtn { grid-column: span 1; }
+            .breakdown-grid { grid-template-columns: 1fr; }
             .container { margin: 15px; padding: 20px; }
         }
     </style>
@@ -146,10 +153,10 @@
                 <input type="number" id="welfarePercentage" value="1">
             </div>
             <div class="input-group">
-                <label>জিপিএফ কর্তন (%)</label>
-                <input type="number" id="gpfPercentage" value="10">
+                <label>জিপিএফ কর্তন (৳)</label>
+                <input type="number" id="gpfAmount" placeholder="যেমন: ২০০০">
             </div>
-            <div class="input-group" style="grid-column: span 2;">
+            <div class="input-group full-width">
                 <label>রাজস্ব স্ট্যাম্প (৳)</label>
                 <input type="number" id="deductionAmount" value="10">
             </div>
@@ -185,12 +192,12 @@
             const mobile = parseFloat(document.getElementById("mobileAllowance").value) || 0;
             
             const welfarePercent = parseFloat(document.getElementById("welfarePercentage").value) || 0;
-            const gpfPercent = parseFloat(document.getElementById("gpfPercentage").value) || 0;
+            const gpfDeduction = parseFloat(document.getElementById("gpfAmount").value) || 0;
             const stamp = parseFloat(document.getElementById("deductionAmount").value) || 0;
 
             if (basic <= 0) { alert("দয়া করে সঠিক মূল বেতন লিখুন।"); return; }
 
-            // হিসাব-নিকাশ
+            // প্রাপ্তির হিসাব
             const rentAmount = (basic * (rentPercent / 100));
             const gross = basic + rentAmount + medical + tiffin + education + mobile;
             
@@ -200,15 +207,15 @@
                 welfareDeduction = 150;
             }
 
-            const gpfDeduction = basic * (gpfPercent / 100);
+            // কর্তনের হিসাব
             const totalDeduction = welfareDeduction + gpfDeduction + stamp;
             const netPayable = gross - totalDeduction;
 
             // ইউআই আপডেট
             document.getElementById("resultPanel").style.display = "block";
-            document.getElementById("netSalary").innerText = "৳" + netPayable.toLocaleString(undefined, {minimumFractionDigits: 2});
-            document.getElementById("grossText").innerText = "৳" + gross.toLocaleString();
-            document.getElementById("deductText").innerText = "৳" + totalDeduction.toLocaleString();
+            document.getElementById("netSalary").innerText = "৳" + netPayable.toLocaleString('bn-BD', {minimumFractionDigits: 2});
+            document.getElementById("grossText").innerText = "৳" + gross.toLocaleString('bn-BD');
+            document.getElementById("deductText").innerText = "৳" + totalDeduction.toLocaleString('bn-BD');
             
             // নিচে স্ক্রোল করা
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
