@@ -2,777 +2,843 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>বেতন ক্যালকুলেটর | satu.pro.bd</title>
     <meta name="robots" content="index, follow, noodp, noarchive">
-    <meta name="rating" content="5">
-    <meta name="distribution" content="global">
-    <meta name="description" content="বেতন ক্যালকুলেটর">
-    <link rel="icon" href="uploads/logos/MainLogo.png" type="image/x-icon">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <!-- Bootstrap CSS 5.3 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        :root {
+            --bg-base: #020617;
+            --bg-gradient: radial-gradient(circle at 50% -20%, #064e3b 0%, #020617 80%);
+            --card-bg: rgba(15, 23, 42, 0.7);
+            --border: rgba(251, 191, 36, 0.2);
+            --accent-gold: #fbbf24;
+            --text-bright: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-base) var(--bg-gradient) fixed;
+            color: var(--text-bright);
+            margin: 0; padding: 0; min-height: 100vh;
+        }
+
+        /* --- Masthead --- */
+        .masthead {
+            max-width: 1000px; margin: 0 auto; padding: 25px 15px;
+            border-bottom: 4px double var(--border); text-align: center;
+        }
+        .main-banner { max-width: 350px; width: 80%; height: auto; }
+        .masthead-info-row {
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 2px; color: var(--accent-gold); padding-top: 8px;
+        }
+
+        /* --- Calculator UI --- */
+        .v2-page {
+            width: 100%;
+            padding: 18px 12px 35px;
+            box-sizing: border-box;
+        }
+
+        .v2-layout {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .v2-main {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .calculator-title,
+        .result-title {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: var(--accent-gold);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 2.2rem;
+            background: none;
+            box-shadow: none;
+            padding: 0;
+        }
+
+        .calculator-card,
+        .result-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 700;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .required { color: #f87171; }
+
+        .form-control, .form-select, select.form-control {
+            width: 100%;
+            padding: 16px;
+            background: rgba(0,0,0,0.5) !important;
+            border: 2px solid var(--border) !important;
+            border-radius: 16px !important;
+            color: white !important;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, select.form-control:focus {
+            border-color: var(--accent-gold) !important;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.1) !important;
+            transform: translateY(-2px);
+        }
+
+        /* Dropdown options styling for dark theme */
+        select.form-control option {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        .form-help {
+            display: block;
+            margin: 8px 0 0;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+
+        .calculate-button {
+            background: var(--accent-gold) !important;
+            color: #000 !important;
+            border: none !important;
+            padding: 18px !important;
+            width: 100% !important;
+            border-radius: 16px !important;
+            font-weight: 800 !important;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+
+        .calculate-button:active { transform: scale(0.98); }
+
+        .section-title {
+            margin: 0 0 15px;
+            padding: 12px 15px;
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--accent-gold);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 1px solid var(--border);
+        }
+
+        .result-table, .salary-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.95rem;
+            color: var(--text-bright);
+        }
+
+        .result-table td, .salary-table th, .salary-table td {
+            border: 1px solid var(--border);
+            padding: 12px;
+            vertical-align: middle;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .result-table td:first-child { width: 60%; }
+
+        .result-table small, .salary-table small {
+            display: block;
+            margin-top: 3px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+
+        .blue-row { background: rgba(6, 78, 59, 0.3) !important; }
+        .blue-row td { background: rgba(6, 78, 59, 0.3) !important; }
+
+        .green-row {
+            background: rgba(251, 191, 36, 0.15) !important;
+            color: var(--accent-gold);
+            font-size: 1.05rem;
+        }
+        .green-row td { background: rgba(251, 191, 36, 0.15) !important; }
+
+        .date-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .date-box {
+            padding: 15px 10px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .date-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .date-value {
+            margin: 8px 0;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .date-box small {
+            color: var(--text-dim);
+            font-size: 0.75rem;
+        }
+
+        .zone-box {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+
+        .zone-box label {
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-bright);
+            font-weight: 600;
+        }
+
+        .zone-box input { accent-color: var(--accent-gold); }
+
+        .salary-table thead th {
+            background: rgba(6, 78, 59, 0.6);
+            color: var(--accent-gold);
+            text-align: center;
+        }
+
+        .salary-table .allowance { background: rgba(6, 78, 59, 0.15); }
+        .salary-table .deduction { background: rgba(153, 27, 27, 0.15); }
+
+        .salary-table .total-row td {
+            font-weight: 700;
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--accent-gold);
+        }
+
+        .net-salary {
+            margin-top: 15px;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid var(--accent-gold);
+            border-radius: 16px;
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--accent-gold);
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+
+        .note-box {
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: rgba(255,255,255,0.02);
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        #resetButton {
+            width: 100%;
+            min-height: 48px;
+            border-radius: 16px;
+            background: transparent;
+            color: #f87171;
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            font-weight: 700;
+            transition: 0.3s;
+        }
+        #resetButton:hover {
+            background: rgba(248, 113, 113, 0.1);
+        }
+
+        @media(max-width: 600px) {
+            .date-grid { grid-template-columns: 1fr; }
+            .calculator-card, .result-card { padding: 20px 15px; }
+            .calculator-title, .result-title { font-size: 1.8rem; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- Header -->
-<div class="header-top d-flex justify-content-between align-items-center pt-2 px-3">
-    <div class="col-auto m-hide">
-        <img class="header-logo m-hide" src="/logo.png" alt="LOGO" style="height: 40px;">
-    </div>
-</div>
+    <!-- Header -->
+    <header class="masthead">
+        <div class="banner-container">
+            <a href="/index"><img src="logo.png" alt="satu.pro.bd" class="main-banner"></a>
+        </div>
+        <div class="masthead-info-row" id="currentDate"></div>
+    </header>
 
-  <div class="v2-page">
-    <div class="v2-layout">
-        <div class="v2-main">
-            <h3 class="calculator-title">
-                বেতন ক্যালকুলেটর
-            </h3>
+    <div class="v2-page">
+        <div class="v2-layout">
+            <div class="v2-main">
 
-            <div id="inputSection">
-                <div class="calculator-card">
-                    <form id="salaryForm">
-
-                        <!-- বেতন গ্রেড -->
-                        <div class="mb-3">
-                            <label class="form-label">বেতন গ্রেড <span class="required">*</span></label>
-                            <select id="grade" class="form-control" required>
-                                <option value="">গ্রেড নির্বাচন করুন</option>
-                                <option value="1">গ্রেড 1</option>
-                                <option value="2">গ্রেড 2</option>
-                                <option value="3">গ্রেড 3</option>
-                                <option value="4">গ্রেড 4</option>
-                                <option value="5">গ্রেড 5</option>
-                                <option value="6">গ্রেড 6</option>
-                                <option value="7">গ্রেড 7</option>
-                                <option value="8">গ্রেড 8</option>
-                                <option value="9">গ্রেড 9</option>
-                                <option value="10">গ্রেড 10</option>
-                                <option value="11">গ্রেড 11</option>
-                                <option value="12">গ্রেড 12</option>
-                                <option value="13">গ্রেড 13</option>
-                                <option value="14">গ্রেড 14</option>
-                                <option value="15">গ্রেড 15</option>
-                                <option value="16">গ্রেড 16</option>
-                                <option value="17">গ্রেড 17</option>
-                                <option value="18">গ্রেড 18</option>
-                                <option value="19">গ্রেড 19</option>
-                                <option value="20">গ্রেড 20</option>
-                            </select>
-                        </div>
-
-                        <!-- ৩০ জুন ২০২৬ বেসিকের ধাপ -->
-                        <div class="mb-3">
-                            <label class="form-label">৩০ জুন, ২০২৬ তারিখে বেসিক <span class="required">*</span></label>
-                            <select id="basic" class="form-control" required disabled>
-                                <option value="">আগে বেতন গ্রেড নির্বাচন করুন</option>
-                            </select>
-                            <small id="basicHelp" class="form-help mt-1 d-block">গ্রেড নির্বাচন করলে সংশ্লিষ্ট বেতন ধাপগুলো এখানে প্রদর্শিত হবে।</small>
-                        </div>
-
-                        <!-- শিক্ষা ভাতা -->
-                        <div class="mb-3">
-                            <label class="form-label">শিক্ষা ভাতা</label>
-                            <input type="number" id="education" class="form-control" min="0" value="0" placeholder="প্রযোজ্য হলে পরিমাণ দিন">
-                        </div>
-
-                        <!-- GPF -->
-                        <div class="mb-3">
-                            <label class="form-label">জিপি ফান্ড (কর্তন)</label>
-                            <input type="number" id="gpfund" class="form-control" min="0" value="0" placeholder="জিপি ফান্ডের পরিমাণ">
-                        </div>
-
-                        <!-- Calculate Button -->
-                        <button type="submit" class="btn btn-primary calculate-button">
-                            🧮 ক্যালকুলেট
-                        </button>
-
-                    </form>
-                </div>
-            </div>
-
-            <!-- =================================================
-                 RESULT SECTION
-            ================================================== -->
-            <div id="resultSection" style="display:none;">
-                <h3 class="result-title">
-                    বেতন হিসাবের ফলাফল
+                <h3 class="calculator-title">
+                    বেতন ক্যালকুলেটর
                 </h3>
 
+                <div id="inputSection">
+                    <div class="calculator-card">
+                        <form id="salaryForm">
+
+                            <!-- বেতন গ্রেড -->
+                            <div class="mb-3">
+                                <label class="form-label">বেতন গ্রেড <span class="required">*</span></label>
+                                <select id="grade" class="form-control" required>
+                                    <option value="">গ্রেড নির্বাচন করুন</option>
+                                    <option value="1">গ্রেড 1</option>
+                                    <option value="2">গ্রেড 2</option>
+                                    <option value="3">গ্রেড 3</option>
+                                    <option value="4">গ্রেড 4</option>
+                                    <option value="5">গ্রেড 5</option>
+                                    <option value="6">গ্রেড 6</option>
+                                    <option value="7">গ্রেড 7</option>
+                                    <option value="8">গ্রেড 8</option>
+                                    <option value="9">গ্রেড 9</option>
+                                    <option value="10">গ্রেড 10</option>
+                                    <option value="11">গ্রেড 11</option>
+                                    <option value="12">গ্রেড 12</option>
+                                    <option value="13">গ্রেড 13</option>
+                                    <option value="14">গ্রেড 14</option>
+                                    <option value="15">গ্রেড 15</option>
+                                    <option value="16">গ্রেড 16</option>
+                                    <option value="17">গ্রেড 17</option>
+                                    <option value="18">গ্রেড 18</option>
+                                    <option value="19">গ্রেড 19</option>
+                                    <option value="20">গ্রেড 20</option>
+                                </select>
+                            </div>
+
+                            <!-- ৩০ জুন ২০২৬ বেসিকের ধাপ -->
+                            <div class="mb-3">
+                                <label class="form-label">৩০ জুন, ২০২৬ তারিখে বেসিক <span class="required">*</span></label>
+                                <select id="basic" class="form-control" required disabled>
+                                    <option value="">আগে বেতন গ্রেড নির্বাচন করুন</option>
+                                </select>
+                                <small id="basicHelp" class="form-help">গ্রেড নির্বাচন করলে সংশ্লিষ্ট বেতন ধাপগুলো এখানে প্রদর্শিত হবে।</small>
+                            </div>
+
+                            <!-- শিক্ষা ভাতা -->
+                            <div class="mb-3">
+                                <label class="form-label">শিক্ষা ভাতা</label>
+                                <input type="number" id="education" class="form-control" min="0" value="0" placeholder="প্রযোজ্য হলে পরিমাণ দিন">
+                            </div>
+
+                            <!-- GPF -->
+                            <div class="mb-3">
+                                <label class="form-label">জিপি ফান্ড (কর্তন)</label>
+                                <input type="number" id="gpfund" class="form-control" min="0" value="0" placeholder="জিপি ফান্ডের পরিমাণ">
+                            </div>
+
+                            <!-- Calculate Button -->
+                            <button type="submit" class="btn btn-primary calculate-button">
+                                🧮 ক্যালকুলেট
+                            </button>
+
+                        </form>
+                    </div>
+                </div>
+
+                <!-- =================================================
+                     RESULT SECTION
+                ================================================== -->
+                <div id="resultSection" style="display:none;">
+                    <h3 class="result-title">
+                        বেতন হিসাবের ফলাফল
+                    </h3>
+
+                    <div class="result-card">
+                        <h5 class="section-title">
+                            নতুন বেতন নির্ধারণের হিসাব
+                        </h5>
+                        <div class="table-responsive">
+                            <table class="result-table">
+                                <tbody>
+                                    <tr>
+                                        <td>বর্তমান গ্রেড</td>
+                                        <td id="resultGrade"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>৩০ জুন বেসিক</td>
+                                        <td id="resultCurrentBasic"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>২০১৫ সালের সংশ্লিষ্ট গ্রেডের প্রথম ধাপ</td>
+                                        <td id="resultOldFirstStep"></td>
+                                    </tr>
+                                    <tr class="blue-row">
+                                        <td>
+                                            পার্থক্য
+                                            <small>বর্তমান বেসিক − ২০১৫ সালের প্রথম ধাপ</small>
+                                        </td>
+                                        <td id="resultDifference"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>২০২৬ সালের সংশ্লিষ্ট গ্রেডের প্রথম ধাপ</td>
+                                        <td id="resultNewFirstStep"></td>
+                                    </tr>
+                                    <tr class="blue-row">
+                                        <td>
+                                            সমতাকরণ
+                                            <small>২০২৬ সালের প্রথম ধাপ + পার্থক্য</small>
+                                        </td>
+                                        <td id="resultCalculatedBasic"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>২০২৬ সালের নির্ধারিত ধাপ</td>
+                                        <td id="resultFixedStep"></td>
+                                    </tr>
+                                    <tr class="green-row">
+                                        <td><strong>ফিক্সড বেতন</strong></td>
+                                        <td><strong id="resultFixedBasic"></strong></td>
+                                    </tr>
+                                    <tr style="color:#f87171; font-weight:bold;">
+                                        <td>১ জুলাই, ২০২৬ তারিখে নতুন বেসিক</td>
+                                        <td id="resultNewBasic"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            বর্ধিত বেতন
+                                            <small>ফিক্সড বেতন − বর্তমান বেসিক</small>
+                                        </td>
+                                        <td id="resultIncreased"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- =================================================
+                         DATE WISE BASIC
+                    ================================================== -->
+                    <div class="result-card">
+                        <h5 class="section-title">
+                            পর্যায়ভিত্তিক প্রাপ্য মূল বেতন
+                        </h5>
+                        <div class="date-grid">
+                            <div class="date-box">
+                                <div class="date-title">১ জুলাই ২০২৬</div>
+                                <div class="date-value" id="salaryJuly2026"></div>
+                                <small>বর্ধিত বেতনের পর্যায়ভিত্তিক হার</small>
+                            </div>
+                            <div class="date-box">
+                                <div class="date-title">১ জানুয়ারি ২০২৭</div>
+                                <div class="date-value" id="salaryJanuary2027"></div>
+                                <small>বর্ধিত বেতনের পর্যায়ভিত্তিক হার</small>
+                            </div>
+                            <div class="date-box">
+                                <div class="date-title">১ জুলাই ২০২৭</div>
+                                <div class="date-value" id="salaryJuly2027"></div>
+                                <small>ইনক্রিমেন্ট সহ নতুন বেসিক</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =================================================
+                         ZONE SELECTION
+                    ================================================== -->
+                    <div class="result-card">
+                        <h5 class="section-title">
+                            কর্মস্থল নির্বাচন করুন
+                        </h5>
+                        <div class="zone-box">
+                            <label><input type="radio" name="zone" value="normal" checked> সাধারণ জেলা</label>
+                            <label><input type="radio" name="zone" value="dhaka"> ঢাকা সিটি</label>
+                            <label><input type="radio" name="zone" value="othercity"> অন্যান্য সিটি কর্পোরেশন</label>
+                        </div>
+                    </div>
+
+                    <!-- =================================================
+                         SALARY TABLES
+                    ================================================== -->
+                    <div id="salaryTables"></div>
+
+                    <div class="note-box">
+                        <strong>বিশেষ দ্রষ্টব্য:</strong><br>
+                        এই হিসাব বর্তমানে <strong>১ম গ্রেড থেকে ২০তম গ্রেড</strong> এর জন্য প্রযোজ্য।<br>
+                        ২০২৬–২০২৭ সালের অন্যান্য ভাতাদি ২০১৫ সালের প্রচলিত হিসাব অনুযায়ী রাখা হয়েছে।<br>
+                        ১ম–৯ম গ্রেডে পর্যায়ভিত্তিক বেতন ৪০% ও ৭০% এবং ১০ম–২০তম গ্রেডে ৫০% ও ৭৫% হারে হিসাব করা হয়েছে।<br>
+                        ২০২৮ সালের নতুন ভাতার হিসাব পরবর্তীতে যুক্ত করা হবে।
+                    </div>
+
+                    <!-- RESET -->
+                    <div class="text-center mt-4">
+                        <button type="button" id="resetButton" class="btn">
+                            ↻ নতুন করে হিসাব করুন
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="masthead mt-5">
+        <div class="d-flex justify-content-between align-items-center py-3">
+            <p class="mb-0 text-muted" style="font-size: 0.8rem;">© 2026 satu.pro.bd</p>
+            <a href="#" onclick="document.body.scrollTop=0;document.documentElement.scrollTop=0;event.preventDefault()" 
+               class="text-decoration-none" style="color: var(--accent-gold); font-size: 0.8rem;">
+                <b>Top &#8593;</b>
+            </a>
+        </div>
+    </footer>
+
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================= -->
+    <script>
+        // Set Current Date in Masthead
+        const d = new Date();
+        const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+        document.getElementById('currentDate').innerText = " " + d.toLocaleDateString(undefined, options).toUpperCase();
+
+        const scale2015 = {
+            1: [78000],
+            2: [66000, 68480, 71050, 73720, 76490],
+            3: [56500, 58760, 61120, 63570, 66120, 68770, 71530, 74400],
+            4: [50000, 52000, 54080, 56250, 58500, 60840, 63280, 65820, 68460, 71200],
+            5: [43000, 44940, 46970, 49090, 51300, 53610, 56030, 58560, 61200, 63960, 66840, 69850],
+            6: [35500, 37280, 39150, 41110, 43170, 45330, 47600, 49980, 52480, 55110, 57870, 60770, 63810, 67010],
+            7: [29000, 30450, 31980, 33580, 35260, 37030, 38890, 40840, 42890, 45040, 47300, 49670, 52160, 54770, 57510, 60390, 63410],
+            8: [23000, 24150, 25360, 26630, 27970, 29370, 30840, 32390, 34010, 35720, 37510, 39390, 41360, 43430, 45610, 47900, 50300, 52820, 55470],
+            9: [22000, 23100, 24260, 25480, 26760, 28100, 29510, 30990, 32540, 34170, 35880, 37680, 39570, 41550, 43630, 45820, 48120, 50530, 53060],
+            10: [16000, 16800, 17640, 18530, 19460, 20440, 21470, 22550, 23680, 24870, 26120, 27430, 28810, 30260, 31780, 33370, 35040, 36800, 38640],
+            11: [12500, 13130, 13790, 14480, 15210, 15980, 16780, 17620, 18510, 19440, 20420, 21450, 22530, 23660, 24850, 26100, 27410, 28790, 30230],
+            12: [11300, 11870, 12470, 13100, 13760, 14450, 15180, 15940, 16740, 17580, 18460, 19390, 20360, 21380, 22450, 23580, 24760, 26000, 27300],
+            13: [11000, 11550, 12130, 12740, 13380, 14050, 14760, 15500, 16280, 17100, 17960, 18860, 19810, 20810, 21860, 22960, 24110, 25320, 26590],
+            14: [10200, 10710, 11250, 11820, 12420, 13050, 13710, 14400, 15120, 15880, 16680, 17520, 18400, 19320, 20290, 21310, 22380, 23500, 24680],
+            15: [9700, 10190, 10700, 11240, 11810, 12410, 13040, 13700, 14390, 15110, 15870, 16670, 17510, 18390, 19310, 20280, 21300, 22370, 23490],
+            16: [9300, 9770, 10260, 10780, 11320, 11890, 12490, 13120, 13780, 14470, 15200, 15960, 16760, 17600, 18480, 19410, 20390, 21410, 22490],
+            17: [9000, 9450, 9930, 10430, 10960, 11510, 12090, 12700, 13340, 14010, 14720, 15460, 16240, 17060, 17920, 18820, 19770, 20760, 21800],
+            18: [8800, 9240, 9710, 10200, 10710, 11250, 11820, 12420, 13050, 13710, 14400, 15120, 15880, 16680, 17520, 18400, 19320, 20290, 21310],
+            19: [8500, 8930, 9380, 9850, 10350, 10870, 11420, 12000, 12600, 13230, 13900, 14600, 15330, 16100, 16910, 17760, 18650, 19590, 20570],
+            20: [8250, 8670, 9110, 9570, 10050, 10560, 11090, 11650, 12240, 12860, 13510, 14190, 14900, 15650, 16440, 17270, 18140, 19050, 20010]
+        };
+
+        const scale2026 = {
+            1: [156000],
+            2: [132000, 135700, 139400, 143200, 147200, 151200, 153000],
+            3: [113000, 117000, 121100, 125300, 129700, 134300, 139000, 143800, 148800],
+            4: [100000, 103500, 107200, 110900, 114800, 118800, 123000, 127300, 131700, 136300, 142400],
+            5: [86000, 89500, 93100, 96800, 100700, 104700, 108900, 113200, 117700, 122500, 127400, 132400, 139700],
+            6: [71000, 74600, 78300, 82200, 86400, 90700, 95200, 100000, 104900, 110200, 115700, 121500, 127600, 134000],
+            7: [58000, 60900, 64000, 67200, 70500, 74100, 77800, 81700, 85700, 90000, 94500, 99200, 104200, 109400, 114900, 120600, 126800],
+            8: [46000, 48300, 50800, 53300, 56000, 58800, 61700, 64800, 68000, 71400, 75000, 78700, 82700, 86800, 91100, 95700, 100500, 105500, 110800],
+            9: [44000, 46200, 48600, 51000, 53500, 56200, 59000, 62000, 65100, 68300, 71700, 75300, 79100, 83000, 87200, 91500, 96100, 100900, 105900],
+            10: [32000, 33600, 35300, 37100, 38900, 40900, 42900, 45100, 47300, 49700, 52200, 54800, 57500, 60400, 63400, 66600, 69900, 73400, 77300],
+            11: [25000, 26300, 27600, 29000, 30400, 32000, 33600, 35200, 37000, 38800, 40800, 42800, 44900, 47200, 49500, 52000, 54600, 57300, 60500],
+            12: [24300, 25600, 26800, 28200, 29600, 31100, 32600, 34200, 36000, 37700, 39600, 41600, 43700, 45900, 48200, 50600, 53100, 55700, 58700],
+            13: [24000, 25200, 26500, 27800, 29200, 30700, 32200, 33800, 35500, 37300, 39100, 41100, 43200, 45300, 47600, 49900, 52400, 55100, 58000],
+            14: [23500, 24700, 26000, 27300, 28600, 30000, 31500, 33100, 34800, 36500, 38300, 40200, 42300, 44400, 46600, 48900, 51300, 53900, 56800],
+            15: [22800, 24000, 25200, 26400, 27800, 29100, 30600, 32100, 33700, 35400, 37200, 39000, 41000, 43000, 45200, 47400, 49800, 52300, 55200],
+            16: [21900, 23000, 24200, 25400, 26700, 28000, 29400, 30900, 32400, 34000, 35700, 37500, 39400, 41300, 43400, 45600, 47900, 50200, 52900],
+            17: [21400, 22500, 23600, 24800, 26100, 27400, 28700, 30200, 31700, 33200, 34900, 36700, 38500, 40400, 42400, 44500, 46800, 49100, 51900],
+            18: [21000, 22100, 23200, 24400, 25600, 26900, 28200, 29600, 31100, 32600, 34300, 36000, 37800, 39600, 41600, 43700, 45900, 48200, 50900],
+            19: [20500, 21600, 22700, 23800, 25000, 26200, 27500, 28900, 30300, 31900, 33400, 35100, 36900, 38700, 40600, 42700, 44800, 47000, 49600],
+            20: [20000, 21000, 22100, 23200, 24400, 25600, 26900, 28200, 29600, 31100, 32600, 34300, 36000, 37800, 39600, 41600, 43700, 45900, 48400]
+        };
+
+        let currentData = {
+            basic: 0, grade: 0, education: 0, gpfund: 0, difference: 0,
+            fixedBasic: 0, newBasic: 0, increasedSalary: 0,
+            salaryJuly2026: 0, salaryJanuary2027: 0, salaryJuly2027: null,
+            fixedStepIndex: 0, newBasicStepIndex: 0, phase1Percent: 50, phase2Percent: 75
+        };
+
+        function money(value) {
+            return Number(value).toLocaleString("bn-BD", { maximumFractionDigits: 0 });
+        }
+
+        document.getElementById("grade").addEventListener("change", function() {
+            const grade = Number(this.value);
+            const basicSelect = document.getElementById("basic");
+            const basicHelp = document.getElementById("basicHelp");
+            basicSelect.innerHTML = "";
+            if (!grade || !scale2015[grade]) {
+                basicSelect.disabled = true;
+                basicSelect.innerHTML = '<option value="">আগে বেতন গ্রেড নির্বাচন করুন</option>';
+                basicHelp.innerText = "গ্রেড নির্বাচন করলে সংশ্লিষ্ট বেতন ধাপগুলো এখানে প্রদর্শিত হবে।";
+                return;
+            }
+            basicSelect.disabled = false;
+            basicSelect.innerHTML = '<option value="">৩০ জুনের বেসিকের ধাপ নির্বাচন করুন</option>';
+            scale2015[grade].forEach(function(step) {
+                const option = document.createElement("option");
+                option.value = step;
+                option.textContent = money(step) + " টাকা";
+                basicSelect.appendChild(option);
+            });
+            basicHelp.innerText = "গ্রেড " + grade + "-এর ২০১৫ সালের বেতনস্কেলের ধাপ থেকে একটি বেসিক নির্বাচন করুন।";
+        });
+
+        document.getElementById("salaryForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const basic = Number(document.getElementById("basic").value);
+            const grade = Number(document.getElementById("grade").value);
+            const education = Number(document.getElementById("education").value) || 0;
+            const gpfund = Number(document.getElementById("gpfund").value) || 0;
+
+            if (!basic) {
+                alert("অনুগ্রহ করে ৩০ জুন ২০২৬ তারিখের বেসিকের ধাপ নির্বাচন করুন।");
+                return;
+            }
+            if (!grade) {
+                alert("অনুগ্রহ করে বেতন গ্রেড নির্বাচন করুন।");
+                return;
+            }
+
+            const oldScale = scale2015[grade];
+            const newScale = scale2026[grade];
+            const stepIndex = oldScale.indexOf(basic);
+
+            if (stepIndex === -1) {
+                alert("আপনার দেওয়া বর্তমান বেসিক নির্বাচিত গ্রেডের কোনো ধাপের সঙ্গে মিলছে না।\n\nঅনুগ্রহ করে সঠিক বেসিক অথবা গ্রেড নির্বাচন করুন।");
+                return;
+            }
+
+            const oldFirstStep = oldScale[0];
+            const difference = basic - oldFirstStep;
+            const newFirstStep = newScale[0];
+            const calculatedBasic = newFirstStep + difference;
+
+            let fixedStepIndex = 0;
+            while (fixedStepIndex < newScale.length - 1) {
+                if (newScale[fixedStepIndex] >= calculatedBasic) {
+                    break;
+                }
+                fixedStepIndex++;
+            }
+
+            const newBasicStepIndex = Math.min(fixedStepIndex + 1, newScale.length - 1);
+            const fixedBasic = newScale[fixedStepIndex];
+            const newBasic = newScale[newBasicStepIndex];
+            const increasedSalary = fixedBasic - basic;
+            const increment = newBasic - fixedBasic;
+
+            const phase1Percent = 50;
+            const phase2Percent = 75;
+
+            const salaryJuly2026 = basic + Math.round(increasedSalary * phase1Percent / 100) + increment;
+            const salaryJanuary2027 = basic + Math.round(increasedSalary * phase2Percent / 100) + increment;
+
+            const salaryJuly2027StepIndex = Math.min(newBasicStepIndex + 1, newScale.length - 1);
+            const salaryJuly2027 = newScale[salaryJuly2027StepIndex];
+
+            currentData = {
+                basic, grade, education, gpfund, difference, fixedBasic, newBasic,
+                increasedSalary, increment, salaryJuly2026, salaryJanuary2027, salaryJuly2027,
+                fixedStepIndex, newBasicStepIndex, phase1Percent, phase2Percent
+            };
+
+            document.getElementById("resultGrade").innerText = "গ্রেড " + grade;
+            document.getElementById("resultCurrentBasic").innerText = money(basic) + " টাকা";
+            document.getElementById("resultOldFirstStep").innerText = money(oldFirstStep) + " টাকা";
+            document.getElementById("resultDifference").innerText = money(difference) + " টাকা";
+            document.getElementById("resultNewFirstStep").innerText = money(newFirstStep) + " টাকা";
+            document.getElementById("resultCalculatedBasic").innerText = money(calculatedBasic) + " টাকা";
+            document.getElementById("resultFixedStep").innerText = "ধাপ " + (fixedStepIndex + 1) + " — " + money(fixedBasic) + " টাকা";
+            document.getElementById("resultFixedBasic").innerText = money(fixedBasic) + " টাকা";
+            document.getElementById("resultNewBasic").innerText = money(newBasic) + " টাকা";
+            document.getElementById("resultIncreased").innerText = money(increasedSalary) + " টাকা";
+
+            document.getElementById("salaryJuly2026").innerText = money(salaryJuly2026) + " টাকা";
+            document.getElementById("salaryJanuary2027").innerText = money(salaryJanuary2027) + " টাকা";
+
+            const phaseNotes = document.querySelectorAll(".date-box small");
+            if (phaseNotes.length >= 2) {
+                phaseNotes[0].innerText = "বর্ধিত বেতনের " + phase1Percent + "% + ইনক্রিমেন্ট";
+                phaseNotes[1].innerText = "বর্ধিত বেতনের " + phase2Percent + "% + ইনক্রিমেন্ট";
+            }
+
+            if (salaryJuly2027 !== null) {
+                document.getElementById("salaryJuly2027").innerText = money(salaryJuly2027) + " টাকা";
+            } else {
+                document.getElementById("salaryJuly2027").innerText = "পরবর্তী ধাপ নেই";
+            }
+
+            document.getElementById("inputSection").style.display = "none";
+            document.getElementById("resultSection").style.display = "block";
+
+            renderSalaryTables();
+
+            document.getElementById("resultSection").scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        });
+
+        function calculateHouseRent(basic, zone) {
+            let house = 0;
+            if (zone === "normal") {
+                if (basic <= 9700) house = Math.max(basic * 0.50, 4500);
+                else if (basic <= 16000) house = Math.max(basic * 0.45, 4800);
+                else if (basic <= 35500) house = Math.max(basic * 0.40, 7000);
+                else house = Math.max(basic * 0.35, 12500);
+            } else if (zone === "dhaka") {
+                if (basic <= 9700) house = Math.max(basic * 0.65, 5600);
+                else if (basic <= 16000) house = Math.max(basic * 0.60, 6400);
+                else if (basic <= 35500) house = Math.max(basic * 0.55, 9600);
+                else house = Math.max(basic * 0.50, 19500);
+            } else if (zone === "othercity") {
+                if (basic <= 9700) house = Math.max(basic * 0.55, 5000);
+                else if (basic <= 16000) house = Math.max(basic * 0.50, 5400);
+                else if (basic <= 35500) house = Math.max(basic * 0.45, 8000);
+                else house = Math.max(basic * 0.40, 16000);
+            }
+            return house;
+        }
+
+        function createSalaryTable(title, basic, zone, grade, isJuly2027 = false) {
+            if (basic === null || basic === undefined) return "";
+
+            const house = calculateHouseRent(currentData.basic, zone);
+            const medical = 1500;
+            const tiffinAllowance = (Number(grade) >= 11 && Number(grade) <= 20) ? 200 : 0;
+            const transportAllowance = (Number(grade) >= 11 && Number(grade) <= 20 && (zone === "dhaka" || zone === "othercity")) ? 300 : 0;
+
+            const allowances = [
+                { name: "বেসিক", amount: basic },
+                { name: "বাসা ভাড়া", amount: house },
+                { name: "চিকিৎসা ভাতা", amount: medical },
+                { name: "শিক্ষা ভাতা", amount: currentData.education },
+            ];
+
+            if (tiffinAllowance > 0) allowances.push({ name: "টিফিন ভাতা", amount: tiffinAllowance });
+            if (transportAllowance > 0) allowances.push({ name: "যাতায়াত ভাতা", amount: transportAllowance });
+
+            const welfare = Math.min(basic * 0.01, 150);
+            const deductions = [
+                { name: "জিপি ফান্ড", amount: currentData.gpfund },
+                { name: "টিকিট", amount: 10 },
+                { name: "কল্যাণ তহবিল", amount: welfare }
+            ];
+
+            const totalAllowance = allowances.reduce((total, item) => total + Number(item.amount), 0);
+            const totalDeduction = deductions.reduce((total, item) => total + Number(item.amount), 0);
+            const netSalary = totalAllowance - totalDeduction;
+
+            const maxRows = Math.max(allowances.length, deductions.length);
+            let rows = "";
+
+            for (let i = 0; i < maxRows; i++) {
+                const allowance = allowances[i] || { name: "", amount: "" };
+                const deduction = deductions[i] || { name: "", amount: "" };
+
+                rows += `
+                    <tr>
+                        <td class="allowance">${allowance.name}</td>
+                        <td class="allowance">${allowance.amount === "" ? "" : money(allowance.amount)}</td>
+                        <td class="deduction">${deduction.name}</td>
+                        <td class="deduction">${deduction.amount === "" ? "" : money(deduction.amount)}</td>
+                    </tr>
+                `;
+            }
+
+            return `
                 <div class="result-card">
-                    <h5 class="section-title">
-                        নতুন বেতন নির্ধারণের হিসাব
-                    </h5>
+                    <h5 class="section-title">${title}</h5>
                     <div class="table-responsive">
-                        <table class="result-table">
-                            <tbody>
+                        <table class="salary-table">
+                            <thead>
                                 <tr>
-                                    <td>বর্তমান গ্রেড</td>
-                                    <td id="resultGrade"></td>
-                                </tr>
-                                <tr>
-                                    <td>৩০ জুন বেসিক</td>
-                                    <td id="resultCurrentBasic"></td>
+                                    <th colspan="2">প্রাপ্য</th>
+                                    <th colspan="2">কর্তন</th>
                                 </tr>
                                 <tr>
-                                    <td>২০১৫ সালের সংশ্লিষ্ট গ্রেডের প্রথম ধাপ</td>
-                                    <td id="resultOldFirstStep"></td>
+                                    <th>খাত</th>
+                                    <th>পরিমাণ</th>
+                                    <th>খাত</th>
+                                    <th>পরিমাণ</th>
                                 </tr>
-                                <tr class="blue-row">
-                                    <td>
-                                        পার্থক্য
-                                        <small>বর্তমান বেসিক − ২০১৫ সালের প্রথম ধাপ</small>
-                                    </td>
-                                    <td id="resultDifference"></td>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td>মোট প্রাপ্য</td>
+                                    <td>${money(totalAllowance)}</td>
+                                    <td>মোট কর্তন</td>
+                                    <td>${money(totalDeduction)}</td>
                                 </tr>
-                                <tr>
-                                    <td>২০২৬ সালের সংশ্লিষ্ট গ্রেডের প্রথম ধাপ</td>
-                                    <td id="resultNewFirstStep"></td>
-                                </tr>
-                                <tr class="blue-row">
-                                    <td>
-                                        সমতাকরণ
-                                        <small>২০২৬ সালের প্রথম ধাপ + পার্থক্য</small>
-                                    </td>
-                                    <td id="resultCalculatedBasic"></td>
-                                </tr>
-                                <tr>
-                                    <td>২০২৬ সালের নির্ধারিত ধাপ</td>
-                                    <td id="resultFixedStep"></td>
-                                </tr>
-                                <tr class="green-row">
-                                    <td><strong>ফিক্সড বেতন</strong></td>
-                                    <td><strong id="resultFixedBasic"></strong></td>
-                                </tr>
-                                <tr style="color:red; font-weight:bold;">
-                                    <td>১ জুলাই, ২০২৬ তারিখে নতুন বেসিক</td>
-                                    <td id="resultNewBasic"></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        বর্ধিত বেতন
-                                        <small>ফিক্সড বেতন − বর্তমান বেসিক</small>
-                                    </td>
-                                    <td id="resultIncreased"></td>
-                                </tr>
-                            </tbody>
+                            </tfoot>
                         </table>
                     </div>
-                </div>
-
-                <!-- =================================================
-                     DATE WISE BASIC
-                ================================================== -->
-                <div class="result-card">
-                    <h5 class="section-title">
-                        পর্যায়ভিত্তিক প্রাপ্য মূল বেতন
-                    </h5>
-                    <div class="date-grid">
-                        <div class="date-box">
-                            <div class="date-title">১ জুলাই ২০২৬</div>
-                            <div class="date-value" id="salaryJuly2026"></div>
-                            <small>বর্ধিত বেতনের পর্যায়ভিত্তিক হার</small>
-                        </div>
-                        <div class="date-box">
-                            <div class="date-title">১ জানুয়ারি ২০২৭</div>
-                            <div class="date-value" id="salaryJanuary2027"></div>
-                            <small>বর্ধিত বেতনের পর্যায়ভিত্তিক হার</small>
-                        </div>
-                        <div class="date-box">
-                            <div class="date-title">১ জুলাই ২০২৭</div>
-                            <div class="date-value" id="salaryJuly2027"></div>
-                            <small>ইনক্রিমেন্ট সহ নতুন বেসিক</small>
-                        </div>
+                    <div class="net-salary">
+                        আপনার প্রাপ্য: ${money(netSalary)} টাকা
                     </div>
                 </div>
-
-                <!-- =================================================
-                     ZONE SELECTION
-                ================================================== -->
-                <div class="result-card">
-                    <h5 class="section-title">
-                        কর্মস্থল নির্বাচন করুন
-                    </h5>
-                    <div class="zone-box">
-                        <label><input type="radio" name="zone" value="normal" checked> সাধারণ জেলা</label>
-                        <label><input type="radio" name="zone" value="dhaka"> ঢাকা সিটি</label>
-                        <label><input type="radio" name="zone" value="othercity"> অন্যান্য সিটি কর্পোরেশন</label>
-                    </div>
-                </div>
-
-                <!-- =================================================
-                     SALARY TABLES
-                ================================================== -->
-                <div id="salaryTables"></div>
-
-                <div class="note-box">
-                    <strong>বিশেষ দ্রষ্টব্য:</strong><br>
-                    এই হিসাব বর্তমানে <strong>১ম গ্রেড থেকে ২০তম গ্রেড</strong> এর জন্য প্রযোজ্য。<br>
-                    ২০২৬–২০২৭ সালের অন্যান্য ভাতাদি ২০১৫ সালের প্রচলিত হিসাব অনুযায়ী রাখা হয়েছে。<br>
-                    ১ম–৯ম গ্রেডে পর্যায়ভিত্তিক বেতন ৪০% ও ৭০% এবং ১০ম–২০তম গ্রেডে ৫০% ও ৭৫% হারে হিসাব করা হয়েছে。<br>
-                    ২০২৮ সালের নতুন ভাতার হিসাব পরবর্তীতে যুক্ত করা হবে।
-                </div>
-
-                <!-- RESET -->
-                <div class="text-center mt-4">
-                    <button type="button" id="resetButton" class="btn btn-danger">
-                        ↻ নতুন করে হিসাব করুন
-                    </button>
-                </div>
-
-            </div>
-
-        </div>
-    </div>
-</div>
-
-<!-- =========================================================
-     CSS
-========================================================= -->
-<style>
-.v2-page{
-    width:100%;
-    padding:18px 12px 35px;
-    box-sizing:border-box;
-}
-.v2-layout{
-    max-width:800px;
-    margin:0 auto;
-    display:grid;
-    grid-template-columns:1fr;
-    gap:24px;
-    align-items:start;
-}
-.v2-main{
-    width:100%;
-    max-width:100%;
-    margin:0 auto;
-    color:#30233d;
-    line-height:1.65;
-    font-size:16px;
-}
-.v2-main *{box-sizing:border-box;}
-
-.calculator-title,
-.result-title{
-    margin:0 0 12px;
-    padding:10px 12px;
-    text-align:center;
-    color:#fff;
-    background:#5b2c83;
-    font-size:22px;
-    line-height:1.45;
-    border-radius:10px;
-    box-shadow:0 3px 10px rgba(91,44,131,.16);
-}
-.calculator-card,
-.result-card{
-    background:#fff;
-    border:1px solid #d9cce5;
-    border-radius:14px;
-    padding:15px;
-    margin-top:12px;
-    box-shadow:0 2px 8px rgba(91,44,131,.06);
-}
-.calculator-card{margin-top:0;}
-.form-label{
-    display:block;
-    font-size:16px;
-    font-weight:700;
-    margin:10px 0 5px;
-    color:#3b2948;
-}
-.required{color:#d40000;}
-.form-control{
-    width:100%;
-    min-height:45px;
-    padding:10px 11px;
-    border:1px solid #bda9cc;
-    border-radius:10px;
-    background:#fff;
-    color:#30233d;
-    font-size:16px;
-    outline:none;
-}
-.form-control:focus{
-    border-color:#6f42c1;
-    box-shadow:0 0 0 3px rgba(111,66,193,.12);
-}
-.form-help{
-    display:block;
-    margin:0 0 10px;
-    color:#675a70;
-    font-size:14px;
-}
-.calculate-button{
-    width:100%;
-    min-height:45px;
-    margin-top:12px;
-    padding:11px 14px;
-    border:0;
-    border-radius:10px;
-    background:#5b2c83 !important;
-    color:#fff !important;
-    font-size:15px;
-    font-weight:700;
-    cursor:pointer;
-}
-.calculate-button:hover{background:#472167 !important;}
-.section-title{
-    margin:0 0 10px;
-    padding:10px 12px;
-    background:#f1eaf7;
-    color:#5b2c83;
-    border-radius:10px;
-    font-size:16px;
-    font-weight:700;
-}
-.result-table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:15px;
-}
-.result-table td{
-    border:1px solid #d5c9df;
-    padding:9px 10px;
-    vertical-align:middle;
-}
-.result-table td:first-child{width:60%;}
-.result-table small{
-    display:block;
-    margin-top:3px;
-    color:#6d6472;
-    font-size:13px;
-}
-.blue-row{background:#f3effa;}
-.green-row{
-    background:#eadcf4;
-    color:#4b216c;
-    font-size:17px;
-}
-.date-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-}
-.date-box{
-    padding:12px 8px;
-    text-align:center;
-    border:1px solid #cdbbda;
-    border-radius:10px;
-    background:#faf7fc;
-}
-.date-title{
-    font-size:14px;
-    font-weight:700;
-    color:#5b2c83;
-}
-.date-value{
-    margin:7px 0;
-    font-size:19px;
-    font-weight:700;
-    color:#3e1f57;
-}
-.date-box small{
-    color:#6d6472;
-    font-size:11px;
-}
-.zone-box{
-    display:flex;
-    justify-content:center;
-    gap:15px;
-    flex-wrap:wrap;
-    padding:5px 0;
-}
-.zone-box label{
-    cursor:pointer;
-    font-size:14px;
-    color:#44354e;
-}
-.zone-box input{accent-color:#5b2c83;}
-.salary-table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:14px;
-}
-.salary-table th,
-.salary-table td{
-    border:1px solid #cfc3d8;
-    padding:8px 7px;
-}
-.salary-table thead th{
-    background:#eee5f5;
-    color:#4d2665;
-}
-.salary-table .allowance{background:#f5f0f9;}
-.salary-table .deduction{background:#fbf0f5;}
-.salary-table .total-row td{
-    font-weight:700;
-    background:#eee5f5;
-}
-.net-salary{
-    margin-top:12px;
-    padding:12px;
-    text-align:center;
-    border:2px solid #5b2c83;
-    border-radius:10px;
-    background:#f1e9f7;
-    color:#45205f;
-    font-size:19px;
-    font-weight:700;
-}
-.note-box{
-    margin-top:12px;
-    padding:12px;
-    border:1px solid #d8cbe2;
-    border-radius:10px;
-    background:#f8f5fa;
-    color:#51455a;
-    font-size:12.5px;
-}
-#resetButton{
-    width:100%;
-    min-height:44px;
-    border-radius:10px;
-}
-
-@media(max-width:600px){
-    .v2-page{padding:10px 8px 25px;}
-    .calculator-title,.result-title{font-size:20px;padding:12px;}
-    .date-grid{grid-template-columns:1fr;}
-    .calculator-card,.result-card{padding:12px;}
-    .result-table,.salary-table{font-size:14px;}
-    .result-table td,.salary-table th,.salary-table td{padding:7px 6px;}
-}
-</style>
-
-<!-- =========================================================
-     JAVASCRIPT
-========================================================= -->
-<script>
-const scale2015 = {
-    1: [78000],
-    2: [66000, 68480, 71050, 73720, 76490],
-    3: [56500, 58760, 61120, 63570, 66120, 68770, 71530, 74400],
-    4: [50000, 52000, 54080, 56250, 58500, 60840, 63280, 65820, 68460, 71200],
-    5: [43000, 44940, 46970, 49090, 51300, 53610, 56030, 58560, 61200, 63960, 66840, 69850],
-    6: [35500, 37280, 39150, 41110, 43170, 45330, 47600, 49980, 52480, 55110, 57870, 60770, 63810, 67010],
-    7: [29000, 30450, 31980, 33580, 35260, 37030, 38890, 40840, 42890, 45040, 47300, 49670, 52160, 54770, 57510, 60390, 63410],
-    8: [23000, 24150, 25360, 26630, 27970, 29370, 30840, 32390, 34010, 35720, 37510, 39390, 41360, 43430, 45610, 47900, 50300, 52820, 55470],
-    9: [22000, 23100, 24260, 25480, 26760, 28100, 29510, 30990, 32540, 34170, 35880, 37680, 39570, 41550, 43630, 45820, 48120, 50530, 53060],
-    10: [16000, 16800, 17640, 18530, 19460, 20440, 21470, 22550, 23680, 24870, 26120, 27430, 28810, 30260, 31780, 33370, 35040, 36800, 38640],
-    11: [12500, 13130, 13790, 14480, 15210, 15980, 16780, 17620, 18510, 19440, 20420, 21450, 22530, 23660, 24850, 26100, 27410, 28790, 30230],
-    12: [11300, 11870, 12470, 13100, 13760, 14450, 15180, 15940, 16740, 17580, 18460, 19390, 20360, 21380, 22450, 23580, 24760, 26000, 27300],
-    13: [11000, 11550, 12130, 12740, 13380, 14050, 14760, 15500, 16280, 17100, 17960, 18860, 19810, 20810, 21860, 22960, 24110, 25320, 26590],
-    14: [10200, 10710, 11250, 11820, 12420, 13050, 13710, 14400, 15120, 15880, 16680, 17520, 18400, 19320, 20290, 21310, 22380, 23500, 24680],
-    15: [9700, 10190, 10700, 11240, 11810, 12410, 13040, 13700, 14390, 15110, 15870, 16670, 17510, 18390, 19310, 20280, 21300, 22370, 23490],
-    16: [9300, 9770, 10260, 10780, 11320, 11890, 12490, 13120, 13780, 14470, 15200, 15960, 16760, 17600, 18480, 19410, 20390, 21410, 22490],
-    17: [9000, 9450, 9930, 10430, 10960, 11510, 12090, 12700, 13340, 14010, 14720, 15460, 16240, 17060, 17920, 18820, 19770, 20760, 21800],
-    18: [8800, 9240, 9710, 10200, 10710, 11250, 11820, 12420, 13050, 13710, 14400, 15120, 15880, 16680, 17520, 18400, 19320, 20290, 21310],
-    19: [8500, 8930, 9380, 9850, 10350, 10870, 11420, 12000, 12600, 13230, 13900, 14600, 15330, 16100, 16910, 17760, 18650, 19590, 20570],
-    20: [8250, 8670, 9110, 9570, 10050, 10560, 11090, 11650, 12240, 12860, 13510, 14190, 14900, 15650, 16440, 17270, 18140, 19050, 20010]
-};
-
-const scale2026 = {
-    1: [156000],
-    2: [132000, 135700, 139400, 143200, 147200, 151200, 153000],
-    3: [113000, 117000, 121100, 125300, 129700, 134300, 139000, 143800, 148800],
-    4: [100000, 103500, 107200, 110900, 114800, 118800, 123000, 127300, 131700, 136300, 142400],
-    5: [86000, 89500, 93100, 96800, 100700, 104700, 108900, 113200, 117700, 122500, 127400, 132400, 139700],
-    6: [71000, 74600, 78300, 82200, 86400, 90700, 95200, 100000, 104900, 110200, 115700, 121500, 127600, 134000],
-    7: [58000, 60900, 64000, 67200, 70500, 74100, 77800, 81700, 85700, 90000, 94500, 99200, 104200, 109400, 114900, 120600, 126800],
-    8: [46000, 48300, 50800, 53300, 56000, 58800, 61700, 64800, 68000, 71400, 75000, 78700, 82700, 86800, 91100, 95700, 100500, 105500, 110800],
-    9: [44000, 46200, 48600, 51000, 53500, 56200, 59000, 62000, 65100, 68300, 71700, 75300, 79100, 83000, 87200, 91500, 96100, 100900, 105900],
-    10: [32000, 33600, 35300, 37100, 38900, 40900, 42900, 45100, 47300, 49700, 52200, 54800, 57500, 60400, 63400, 66600, 69900, 73400, 77300],
-    11: [25000, 26300, 27600, 29000, 30400, 32000, 33600, 35200, 37000, 38800, 40800, 42800, 44900, 47200, 49500, 52000, 54600, 57300, 60500],
-    12: [24300, 25600, 26800, 28200, 29600, 31100, 32600, 34200, 36000, 37700, 39600, 41600, 43700, 45900, 48200, 50600, 53100, 55700, 58700],
-    13: [24000, 25200, 26500, 27800, 29200, 30700, 32200, 33800, 35500, 37300, 39100, 41100, 43200, 45300, 47600, 49900, 52400, 55100, 58000],
-    14: [23500, 24700, 26000, 27300, 28600, 30000, 31500, 33100, 34800, 36500, 38300, 40200, 42300, 44400, 46600, 48900, 51300, 53900, 56800],
-    15: [22800, 24000, 25200, 26400, 27800, 29100, 30600, 32100, 33700, 35400, 37200, 39000, 41000, 43000, 45200, 47400, 49800, 52300, 55200],
-    16: [21900, 23000, 24200, 25400, 26700, 28000, 29400, 30900, 32400, 34000, 35700, 37500, 39400, 41300, 43400, 45600, 47900, 50200, 52900],
-    17: [21400, 22500, 23600, 24800, 26100, 27400, 28700, 30200, 31700, 33200, 34900, 36700, 38500, 40400, 42400, 44500, 46800, 49100, 51900],
-    18: [21000, 22100, 23200, 24400, 25600, 26900, 28200, 29600, 31100, 32600, 34300, 36000, 37800, 39600, 41600, 43700, 45900, 48200, 50900],
-    19: [20500, 21600, 22700, 23800, 25000, 26200, 27500, 28900, 30300, 31900, 33400, 35100, 36900, 38700, 40600, 42700, 44800, 47000, 49600],
-    20: [20000, 21000, 22100, 23200, 24400, 25600, 26900, 28200, 29600, 31100, 32600, 34300, 36000, 37800, 39600, 41600, 43700, 45900, 48400]
-};
-
-let currentData = {
-    basic: 0, grade: 0, education: 0, gpfund: 0, difference: 0,
-    fixedBasic: 0, newBasic: 0, increasedSalary: 0,
-    salaryJuly2026: 0, salaryJanuary2027: 0, salaryJuly2027: null,
-    fixedStepIndex: 0, newBasicStepIndex: 0, phase1Percent: 50, phase2Percent: 75
-};
-
-function money(value) {
-    return Number(value).toLocaleString("bn-BD", { maximumFractionDigits: 0 });
-}
-
-document.getElementById("grade").addEventListener("change", function() {
-    const grade = Number(this.value);
-    const basicSelect = document.getElementById("basic");
-    const basicHelp = document.getElementById("basicHelp");
-    basicSelect.innerHTML = "";
-    if (!grade || !scale2015[grade]) {
-        basicSelect.disabled = true;
-        basicSelect.innerHTML = '<option value="">আগে বেতন গ্রেড নির্বাচন করুন</option>';
-        basicHelp.innerText = "গ্রেড নির্বাচন করলে সংশ্লিষ্ট বেতন ধাপগুলো এখানে প্রদর্শিত হবে।";
-        return;
-    }
-    basicSelect.disabled = false;
-    basicSelect.innerHTML = '<option value="">৩০ জুনের বেসিকের ধাপ নির্বাচন করুন</option>';
-    scale2015[grade].forEach(function(step) {
-        const option = document.createElement("option");
-        option.value = step;
-        option.textContent = money(step) + " টাকা";
-        basicSelect.appendChild(option);
-    });
-    basicHelp.innerText = "গ্রেড " + grade + "-এর ২০১৫ সালের বেতনস্কেলের ধাপ থেকে একটি বেসিক নির্বাচন করুন।";
-});
-
-document.getElementById("salaryForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-    const basic = Number(document.getElementById("basic").value);
-    const grade = Number(document.getElementById("grade").value);
-    const education = Number(document.getElementById("education").value) || 0;
-    const gpfund = Number(document.getElementById("gpfund").value) || 0;
-
-    if (!basic) {
-        alert("অনুগ্রহ করে ৩০ জুন ২০২৬ তারিখের বেসিকের ধাপ নির্বাচন করুন।");
-        return;
-    }
-    if (!grade) {
-        alert("অনুগ্রহ করে বেতন গ্রেড নির্বাচন করুন।");
-        return;
-    }
-
-    const oldScale = scale2015[grade];
-    const newScale = scale2026[grade];
-    const stepIndex = oldScale.indexOf(basic);
-
-    if (stepIndex === -1) {
-        alert("আপনার দেওয়া বর্তমান বেসিক নির্বাচিত গ্রেডের কোনো ধাপের সঙ্গে মিলছে না।\n\nঅনুগ্রহ করে সঠিক বেসিক অথবা গ্রেড নির্বাচন করুন।");
-        return;
-    }
-
-    const oldFirstStep = oldScale[0];
-    const difference = basic - oldFirstStep;
-    const newFirstStep = newScale[0];
-    const calculatedBasic = newFirstStep + difference;
-
-    let fixedStepIndex = 0;
-    while (fixedStepIndex < newScale.length - 1) {
-        if (newScale[fixedStepIndex] >= calculatedBasic) {
-            break;
+            `;
         }
-        fixedStepIndex++;
-    }
 
-    const newBasicStepIndex = Math.min(fixedStepIndex + 1, newScale.length - 1);
-    const fixedBasic = newScale[fixedStepIndex];
-    const newBasic = newScale[newBasicStepIndex];
-    const increasedSalary = fixedBasic - basic;
-    const increment = newBasic - fixedBasic;
+        function renderSalaryTables() {
+            const selectedZone = document.querySelector('input[name="zone"]:checked');
+            if (!selectedZone) return;
 
-    const phase1Percent = 50;
-    const phase2Percent = 75;
+            const zone = selectedZone.value;
+            let html = "";
 
-    const salaryJuly2026 = basic + Math.round(increasedSalary * phase1Percent / 100) + increment;
-    const salaryJanuary2027 = basic + Math.round(increasedSalary * phase2Percent / 100) + increment;
+            html += createSalaryTable("১ জুলাই ২০২৬ থেকে প্রাপ্য বেতন ও ভাতা", currentData.salaryJuly2026, zone, currentData.grade, false);
+            html += createSalaryTable("১ জানুয়ারি ২০২৭ থেকে প্রাপ্য বেতন ও ভাতা", currentData.salaryJanuary2027, zone, currentData.grade, false);
+            html += createSalaryTable("১ জুলাই ২০২৭ থেকে প্রাপ্য বেতন ও ভাতা", currentData.salaryJuly2027, zone, currentData.grade, true);
 
-    const salaryJuly2027StepIndex = Math.min(newBasicStepIndex + 1, newScale.length - 1);
-    const salaryJuly2027 = newScale[salaryJuly2027StepIndex];
+            document.getElementById("salaryTables").innerHTML = html;
+        }
 
-    currentData = {
-        basic, grade, education, gpfund, difference, fixedBasic, newBasic,
-        increasedSalary, increment, salaryJuly2026, salaryJanuary2027, salaryJuly2027,
-        fixedStepIndex, newBasicStepIndex, phase1Percent, phase2Percent
-    };
+        document.querySelectorAll('input[name="zone"]').forEach(function(radio) {
+            radio.addEventListener("change", function() {
+                renderSalaryTables();
+            });
+        });
 
-    document.getElementById("resultGrade").innerText = "গ্রেড " + grade;
-    document.getElementById("resultCurrentBasic").innerText = money(basic) + " টাকা";
-    document.getElementById("resultOldFirstStep").innerText = money(oldFirstStep) + " টাকা";
-    document.getElementById("resultDifference").innerText = money(difference) + " টাকা";
-    document.getElementById("resultNewFirstStep").innerText = money(newFirstStep) + " টাকা";
-    document.getElementById("resultCalculatedBasic").innerText = money(calculatedBasic) + " টাকা";
-    document.getElementById("resultFixedStep").innerText = "ধাপ " + (fixedStepIndex + 1) + " — " + money(fixedBasic) + " টাকা";
-    document.getElementById("resultFixedBasic").innerText = money(fixedBasic) + " টাকা";
-    document.getElementById("resultNewBasic").innerText = money(newBasic) + " টাকা";
-    document.getElementById("resultIncreased").innerText = money(increasedSalary) + " টাকা";
+        document.getElementById("resetButton").addEventListener("click", function() {
+            document.getElementById("resultSection").style.display = "none";
+            document.getElementById("inputSection").style.display = "block";
+            document.getElementById("salaryForm").reset();
+            document.getElementById("basic").innerHTML = '<option value="">আগে বেতন গ্রেড নির্বাচন করুন</option>';
+            document.getElementById("basic").disabled = true;
+            document.getElementById("basicHelp").innerText = "গ্রেড নির্বাচন করলে সংশ্লিষ্ট বেতন ধাপগুলো এখানে প্রদর্শিত হবে।";
 
-    document.getElementById("salaryJuly2026").innerText = money(salaryJuly2026) + " টাকা";
-    document.getElementById("salaryJanuary2027").innerText = money(salaryJanuary2027) + " টাকা";
-
-    const phaseNotes = document.querySelectorAll(".date-box small");
-    if (phaseNotes.length >= 2) {
-        phaseNotes[0].innerText = "বর্ধিত বেতনের " + phase1Percent + "% + ইনক্রিমেন্ট";
-        phaseNotes[1].innerText = "বর্ধিত বেতনের " + phase2Percent + "% + ইনক্রিমেন্ট";
-    }
-
-    if (salaryJuly2027 !== null) {
-        document.getElementById("salaryJuly2027").innerText = money(salaryJuly2027) + " টাকা";
-    } else {
-        document.getElementById("salaryJuly2027").innerText = "পরবর্তী ধাপ নেই";
-    }
-
-    document.getElementById("inputSection").style.display = "none";
-    document.getElementById("resultSection").style.display = "block";
-
-    renderSalaryTables();
-
-    document.getElementById("resultSection").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-});
-
-function calculateHouseRent(basic, zone) {
-    let house = 0;
-    if (zone === "normal") {
-        if (basic <= 9700) house = Math.max(basic * 0.50, 4500);
-        else if (basic <= 16000) house = Math.max(basic * 0.45, 4800);
-        else if (basic <= 35500) house = Math.max(basic * 0.40, 7000);
-        else house = Math.max(basic * 0.35, 12500);
-    } else if (zone === "dhaka") {
-        if (basic <= 9700) house = Math.max(basic * 0.65, 5600);
-        else if (basic <= 16000) house = Math.max(basic * 0.60, 6400);
-        else if (basic <= 35500) house = Math.max(basic * 0.55, 9600);
-        else house = Math.max(basic * 0.50, 19500);
-    } else if (zone === "othercity") {
-        if (basic <= 9700) house = Math.max(basic * 0.55, 5000);
-        else if (basic <= 16000) house = Math.max(basic * 0.50, 5400);
-        else if (basic <= 35500) house = Math.max(basic * 0.45, 8000);
-        else house = Math.max(basic * 0.40, 16000);
-    }
-    return house;
-}
-
-function createSalaryTable(title, basic, zone, grade, isJuly2027 = false) {
-    if (basic === null || basic === undefined) return "";
-
-    const house = calculateHouseRent(currentData.basic, zone);
-    const medical = 1500;
-    const tiffinAllowance = (Number(grade) >= 11 && Number(grade) <= 20) ? 200 : 0;
-    const transportAllowance = (Number(grade) >= 11 && Number(grade) <= 20 && (zone === "dhaka" || zone === "othercity")) ? 300 : 0;
-
-    const allowances = [
-        { name: "বেসিক", amount: basic },
-        { name: "বাসা ভাড়া", amount: house },
-        { name: "চিকিৎসা ভাতা", amount: medical },
-        { name: "শিক্ষা ভাতা", amount: currentData.education },
-    ];
-
-    if (tiffinAllowance > 0) allowances.push({ name: "টিফিন ভাতা", amount: tiffinAllowance });
-    if (transportAllowance > 0) allowances.push({ name: "যাতায়াত ভাতা", amount: transportAllowance });
-
-    const welfare = Math.min(basic * 0.01, 150);
-    const deductions = [
-        { name: "জিপি ফান্ড", amount: currentData.gpfund },
-        { name: "টিকিট", amount: 10 },
-        { name: "কল্যাণ তহবিল", amount: welfare }
-    ];
-
-    const totalAllowance = allowances.reduce((total, item) => total + Number(item.amount), 0);
-    const totalDeduction = deductions.reduce((total, item) => total + Number(item.amount), 0);
-    const netSalary = totalAllowance - totalDeduction;
-
-    const maxRows = Math.max(allowances.length, deductions.length);
-    let rows = "";
-
-    for (let i = 0; i < maxRows; i++) {
-        const allowance = allowances[i] || { name: "", amount: "" };
-        const deduction = deductions[i] || { name: "", amount: "" };
-
-        rows += `
-            <tr>
-                <td class="allowance">${allowance.name}</td>
-                <td class="allowance">${allowance.amount === "" ? "" : money(allowance.amount)}</td>
-                <td class="deduction">${deduction.name}</td>
-                <td class="deduction">${deduction.amount === "" ? "" : money(deduction.amount)}</td>
-            </tr>
-        `;
-    }
-
-    return `
-        <div class="result-card">
-            <h5 class="section-title">${title}</h5>
-            <div class="table-responsive">
-                <table class="salary-table">
-                    <thead>
-                        <tr>
-                            <th colspan="2">প্রাপ্য</th>
-                            <th colspan="2">কর্তন</th>
-                        </tr>
-                        <tr>
-                            <th>খাত</th>
-                            <th>পরিমাণ</th>
-                            <th>খাত</th>
-                            <th>পরিমাণ</th>
-                        </tr>
-                    </thead>
-                    <tbody>${rows}</tbody>
-                    <tfoot>
-                        <tr class="total-row">
-                            <td>মোট প্রাপ্য</td>
-                            <td>${money(totalAllowance)}</td>
-                            <td>মোট কর্তন</td>
-                            <td>${money(totalDeduction)}</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-            <div class="net-salary">
-                আপনার প্রাপ্য: ${money(netSalary)} টাকা
-            </div>
-        </div>
-    `;
-}
-
-function renderSalaryTables() {
-    const selectedZone = document.querySelector('input[name="zone"]:checked');
-    if (!selectedZone) return;
-
-    const zone = selectedZone.value;
-    let html = "";
-
-    html += createSalaryTable("১ জুলাই ২০২৬ থেকে প্রাপ্য বেতন ও ভাতা", currentData.salaryJuly2026, zone, currentData.grade, false);
-    html += createSalaryTable("১ জানুয়ারি ২০২৭ থেকে প্রাপ্য বেতন ও ভাতা", currentData.salaryJanuary2027, zone, currentData.grade, false);
-    html += createSalaryTable("১ জুলাই ২০২৭ থেকে প্রাপ্য বেতন ও ভাতা", currentData.salaryJuly2027, zone, currentData.grade, true);
-
-    document.getElementById("salaryTables").innerHTML = html;
-}
-
-document.querySelectorAll('input[name="zone"]').forEach(function(radio) {
-    radio.addEventListener("change", function() {
-        renderSalaryTables();
-    });
-});
-
-document.getElementById("resetButton").addEventListener("click", function() {
-    document.getElementById("resultSection").style.display = "none";
-    document.getElementById("inputSection").style.display = "block";
-    document.getElementById("salaryForm").reset();
-    document.getElementById("basic").innerHTML = '<option value="">আগে বেতন গ্রেড নির্বাচন করুন</option>';
-    document.getElementById("basic").disabled = true;
-    document.getElementById("basicHelp").innerText = "গ্রেড নির্বাচন করলে সংশ্লিষ্ট বেতন ধাপগুলো এখানে প্রদর্শিত হবে।";
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-});
-</script>
-
-<!-- Footer -->
-<footer class="footer mt-4">
-    <div class="d-flex justify-content-center align-items-center border-top border-danger mt-3 pt-3 position-relative px-3">
-        <p class="mb-0 text-center">© 2026 satu.pro.bd</p>
-        <a href="#" onclick="document.body.scrollTop=0;document.documentElement.scrollTop=0;event.preventDefault()" 
-           class="position-absolute end-0 text-decoration-none px-3">
-            <b>Top&#8593;</b>
-        </a>
-    </div>
-</footer>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    </script>
 </body>
 </html>
