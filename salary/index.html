@@ -12,14 +12,46 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     
     <style>
+        /* --- Light Mode (Default variables) --- */
         :root {
-            --bg-base: #020617;
-            --bg-gradient: radial-gradient(circle at 50% -20%, #064e3b 0%, #020617 80%);
-            --card-bg: rgba(15, 23, 42, 0.7);
-            --border: rgba(251, 191, 36, 0.2);
-            --accent-gold: #fbbf24;
-            --text-bright: #f8fafc;
-            --text-dim: #94a3b8;
+            --bg-base: #f1f5f9;
+            --bg-gradient: radial-gradient(circle at 50% -20%, #d1fae5 0%, #f1f5f9 80%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --border: rgba(16, 185, 129, 0.3);
+            --accent-gold: #047857;
+            --text-bright: #0f172a;
+            --text-dim: #475569;
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
+            --option-bg: #ffffff;
+            --option-text: #0f172a;
+            --table-row-bg: rgba(255, 255, 255, 0.6);
+            --date-box-bg: rgba(0, 0, 0, 0.03);
+            --date-val-color: #065f46;
+            --btn-text: #ffffff;
+            --net-salary-bg: rgba(16, 185, 129, 0.1);
+        }
+
+        /* --- Dark Mode (Triggered by OS Settings or System Preference) --- */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-base: #020617;
+                --bg-gradient: radial-gradient(circle at 50% -20%, #064e3b 0%, #020617 80%);
+                --card-bg: rgba(15, 23, 42, 0.7);
+                --border: rgba(251, 191, 36, 0.2);
+                --accent-gold: #fbbf24;
+                --text-bright: #f8fafc;
+                --text-dim: #94a3b8;
+                --input-bg: rgba(0, 0, 0, 0.5);
+                --input-border: rgba(251, 191, 36, 0.2);
+                --option-bg: #0f172a;
+                --option-text: #f8fafc;
+                --table-row-bg: rgba(0, 0, 0, 0.3);
+                --date-box-bg: rgba(255, 255, 255, 0.03);
+                --date-val-color: #ffffff;
+                --btn-text: #000000;
+                --net-salary-bg: rgba(251, 191, 36, 0.1);
+            }
         }
 
         * { box-sizing: border-box; }
@@ -28,6 +60,7 @@
             background: var(--bg-base) var(--bg-gradient) fixed;
             color: var(--text-bright);
             margin: 0; padding: 0; min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         /* --- Masthead --- */
@@ -64,7 +97,7 @@
             font-style: italic;
             color: var(--accent-gold);
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             font-size: 2.2rem;
             background: none;
             box-shadow: none;
@@ -79,7 +112,7 @@
             border-radius: 28px;
             padding: 25px;
             margin-top: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
         }
 
         .form-label {
@@ -97,10 +130,10 @@
         .form-control, .form-select, select.form-control {
             width: 100%;
             padding: 16px;
-            background: rgba(0,0,0,0.5) !important;
-            border: 2px solid var(--border) !important;
+            background: var(--input-bg) !important;
+            border: 2px solid var(--input-border) !important;
             border-radius: 16px !important;
-            color: white !important;
+            color: var(--text-bright) !important;
             font-size: 1rem;
             font-weight: 600;
             font-family: inherit;
@@ -110,14 +143,14 @@
 
         .form-control:focus, select.form-control:focus {
             border-color: var(--accent-gold) !important;
-            box-shadow: 0 0 15px rgba(251, 191, 36, 0.1) !important;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.2) !important;
             transform: translateY(-2px);
         }
 
-        /* Dropdown options styling for dark theme */
+        /* Dropdown options styling */
         select.form-control option {
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: var(--option-bg);
+            color: var(--option-text);
         }
 
         .form-help {
@@ -129,7 +162,7 @@
 
         .calculate-button {
             background: var(--accent-gold) !important;
-            color: #000 !important;
+            color: var(--btn-text) !important;
             border: none !important;
             padding: 18px !important;
             width: 100% !important;
@@ -147,7 +180,7 @@
         .section-title {
             margin: 0 0 15px;
             padding: 12px 15px;
-            background: rgba(251, 191, 36, 0.1);
+            background: rgba(16, 185, 129, 0.1);
             color: var(--accent-gold);
             border-radius: 12px;
             font-size: 1rem;
@@ -167,7 +200,7 @@
             border: 1px solid var(--border);
             padding: 12px;
             vertical-align: middle;
-            background: rgba(0,0,0,0.3);
+            background: var(--table-row-bg);
         }
 
         .result-table td:first-child { width: 60%; }
@@ -179,15 +212,15 @@
             font-size: 0.8rem;
         }
 
-        .blue-row { background: rgba(6, 78, 59, 0.3) !important; }
-        .blue-row td { background: rgba(6, 78, 59, 0.3) !important; }
+        .blue-row { background: rgba(6, 78, 59, 0.15) !important; }
+        .blue-row td { background: rgba(6, 78, 59, 0.15) !important; }
 
         .green-row {
-            background: rgba(251, 191, 36, 0.15) !important;
+            background: rgba(16, 185, 129, 0.2) !important;
             color: var(--accent-gold);
             font-size: 1.05rem;
         }
-        .green-row td { background: rgba(251, 191, 36, 0.15) !important; }
+        .green-row td { background: rgba(16, 185, 129, 0.2) !important; }
 
         .date-grid {
             display: grid;
@@ -200,7 +233,7 @@
             text-align: center;
             border: 1px solid var(--border);
             border-radius: 16px;
-            background: rgba(255,255,255,0.03);
+            background: var(--date-box-bg);
         }
 
         .date-title {
@@ -213,7 +246,7 @@
             margin: 8px 0;
             font-size: 1.2rem;
             font-weight: 800;
-            color: #fff;
+            color: var(--date-val-color);
         }
 
         .date-box small {
@@ -239,17 +272,17 @@
         .zone-box input { accent-color: var(--accent-gold); }
 
         .salary-table thead th {
-            background: rgba(6, 78, 59, 0.6);
+            background: rgba(6, 78, 59, 0.4);
             color: var(--accent-gold);
             text-align: center;
         }
 
-        .salary-table .allowance { background: rgba(6, 78, 59, 0.15); }
-        .salary-table .deduction { background: rgba(153, 27, 27, 0.15); }
+        .salary-table .allowance { background: rgba(6, 78, 59, 0.1); }
+        .salary-table .deduction { background: rgba(153, 27, 27, 0.1); }
 
         .salary-table .total-row td {
             font-weight: 700;
-            background: rgba(251, 191, 36, 0.1);
+            background: rgba(16, 185, 129, 0.15);
             color: var(--accent-gold);
         }
 
@@ -259,7 +292,7 @@
             text-align: center;
             border: 2px solid var(--accent-gold);
             border-radius: 16px;
-            background: rgba(251, 191, 36, 0.1);
+            background: var(--net-salary-bg);
             color: var(--accent-gold);
             font-size: 1.25rem;
             font-weight: 800;
@@ -270,7 +303,7 @@
             padding: 15px;
             border: 1px solid var(--border);
             border-radius: 16px;
-            background: rgba(255,255,255,0.02);
+            background: var(--date-box-bg);
             color: var(--text-dim);
             font-size: 0.85rem;
             line-height: 1.6;
@@ -282,7 +315,7 @@
             border-radius: 16px;
             background: transparent;
             color: #f87171;
-            border: 1px solid rgba(248, 113, 113, 0.3);
+            border: 1px solid rgba(248, 113, 113, 0.4);
             font-weight: 700;
             transition: 0.3s;
         }
@@ -314,6 +347,13 @@
                 <h3 class="calculator-title">
                     বেতন ক্যালকুলেটর
                 </h3>
+
+                <!-- Top Arrear Bill Link Card -->
+                <div class="calculator-card text-center mb-3" style="background: rgba(16, 185, 129, 0.08); border: 1px dashed var(--accent-gold); padding: 15px; border-radius: 20px;">
+                    <a href="https://satu.pro.bd/salary/arrear" class="text-decoration-none" style="color: var(--accent-gold); font-weight: 700; font-size: 1rem; display: block;">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> বকেয়া বিলের হিসাব দেখতে এখানে ক্লিক করুন।
+                    </a>
+                </div>
 
                 <div id="inputSection">
                     <div class="calculator-card">
@@ -493,14 +533,14 @@
 
                     <div class="note-box">
                         <strong>বিশেষ দ্রষ্টব্য:</strong><br>
-                        এই হিসাব বর্তমানে <strong>১ম গ্রেড থেকে ২০তম গ্রেড</strong> এর জন্য প্রযোজ্য。<br>
-                        ২০২৬–২০২৭ সালের অন্যান্য ভাতাদি ২০১৫ সালের প্রচলিত হিসাব অনুযায়ী রাখা হয়েছে。<br>
-                        ১ম–৯ম গ্রেডে পর্যায়ভিত্তিক বেতন ৪০% ও ৭০% এবং ১০ম–২০তম গ্রেডে ৫০% ও ৭৫% হারে হিসাব করা হয়েছে。<br>
-                        ২০২৮ সালের নতুন ভাতার হিসাব পরবর্তীতে যুক্ত করা হবে。
+                        এই হিসাব বর্তমানে <strong>১ম গ্রেড থেকে ২০তম গ্রেড</strong> এর জন্য প্রযোজ্য।<br>
+                        ২০২৬–২০২৭ সালের অন্যান্য ভাতাদি ২০১৫ সালের প্রচলিত হিসাব অনুযায়ী রাখা হয়েছে।<br>
+                        ১ম–৯ম গ্রেডে পর্যায়ভিত্তিক বেতন ৪০% ও ৭০% এবং ১০ম–২০তম গ্রেডে ৫০% ও ৭৫% হারে হিসাব করা হয়েছে।<br>
+                        ২০২৮ সালের নতুন ভাতার হিসাব পরবর্তীতে যুক্ত করা হবে।
                     </div>
 
-                    <!-- Arrear Bill Link Card -->
-                    <div class="result-card text-center mt-3" style="background: rgba(251, 191, 36, 0.08); border: 1px dashed var(--accent-gold); padding: 20px; border-radius: 20px;">
+                    <!-- Bottom Arrear Bill Link Card -->
+                    <div class="result-card text-center mt-3" style="background: rgba(16, 185, 129, 0.08); border: 1px dashed var(--accent-gold); padding: 20px; border-radius: 20px;">
                         <a href="https://satu.pro.bd/salary/arrear" class="text-decoration-none" style="color: var(--accent-gold); font-weight: 700; font-size: 1.05rem; display: block;">
                             <i class="fas fa-file-invoice-dollar me-2"></i> বকেয়া বিলের হিসাব দেখতে এখানে ক্লিক করুন।
                         </a>
