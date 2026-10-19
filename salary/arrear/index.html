@@ -1,197 +1,454 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>জাতীয় বেতনস্কেল ২০২৬ — বকেয়া বিল ক্যালকুলেটর</title>
-<style>
-:root{
-  --bg: #0d1117;
-  --card: #161b22;
-  --ink: #e6edf3;
-  --mut: #8b949e;
-  --line: #30363d;
-  --acc: #2f81f7;
-  --acc2: #1f2937;
-  --warn: #272115;
-  --warnl: #d29922;
-  --bad: #f85149;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Bengali","Kalpurush","SolaimanLipi","Nirmala UI","Vrinda",sans-serif;line-height:1.6;font-size:16px}
-.wrap{max-width:900px;margin:0 auto;padding:16px}
-h1{font-size:1.4rem;margin:.2em 0;color:var(--acc)}
-h2{font-size:1.05rem;margin:0 0 .6em;color:var(--ink)}
-.sub{color:var(--mut);margin:0 0 14px;font-size:.92rem}
-.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:14px;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-label{display:block;font-size:.88rem;font-weight:600;margin-bottom:3px;color:var(--ink)}
-input,select,textarea,button{font:inherit}
-input,select,textarea{width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;background:#21262d;color:var(--ink)}
-input:focus,select:focus,textarea:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
-.hint{font-size:.78rem;color:var(--mut);font-weight:400}
-.chk{display:flex;gap:8px;align-items:flex-start;font-weight:400}.chk input{width:auto;margin-top:6px}
-.hide{display:none}
-button{background:var(--acc);color:#fff;border:0;border-radius:6px;padding:9px 16px;cursor:pointer;font-weight:600;transition:opacity 0.2s}
-button:hover{opacity:0.9}
-button.sec{background:transparent;color:var(--acc);border:1px solid var(--acc)}
-.warn{background:var(--warn);border:1px solid var(--warnl);border-radius:6px;padding:9px 12px;font-size:.86rem;margin-bottom:14px;color:#f0e6d2}
-table{width:100%;border-collapse:collapse;font-size:.92rem;color:var(--ink)}
-th,td{border:1px solid var(--line);padding:6px 8px;text-align:right}
-th:first-child,td:first-child{text-align:left}
-th{background:#21262d;color:var(--ink)}
-tr.tot td{font-weight:700;background:#21262d;color:var(--acc)}
-.neg{color:var(--bad)}
-.big{font-size:1.5rem;font-weight:700;color:var(--acc)}
-.steps li{margin:3px 0}
-.scroll{overflow-x:auto}
-textarea{font-family:monospace;font-size:.8rem;min-height:210px;background:#21262d;color:var(--ink)}
-.sign{display:flex;justify-content:space-between;margin-top:46px;font-size:.88rem;color:var(--ink)}
-.sign div{border-top:1px solid var(--line);padding-top:4px;min-width:150px;text-align:center}
-.hd{text-align:center;display:none}
-@media print{
-  body{background:#fff!important;color:#16231d!important}
-  .noprint{display:none!important}
-  .card{border:0;padding:0;background:#fff!important;box-shadow:none!important}
-  .hd{display:block}
-  .wrap{padding:0}
-  input,select,textarea{background:#fff!important;color:#000!important;border:1px solid #000!important}
-  table,th,td{border:1px solid #000!important;color:#000!important}
-  th,tr.tot td{background:#e8f3ee!important;color:#000!important}
-  .big{color:#0b6b4d!important}
-  .sign div{border-top:1px solid #000!important;color:#000!important}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Smart Hidden Metadata for Scrapers & Search Crawlers -->
+    <meta name="author" content="SATU (satu.pro.bd)">
+    <meta name="copyright" content="Copyright © 2026 SATU. All Rights Reserved. Unlawful copying, scraping, or redistribution is strictly prohibited.">
+    <meta name="designer" content="SATU Engineering Team">
+
+    <title>satu.pro.bd | জাতীয় বেতনস্কেল ২০২৬ — বকেয়া বিল ক্যালকুলেটর</title>
+    <link rel="icon" type="image/svg+xml" href="/icon.svg"> 
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* --- Light Mode (Default) --- */
+            --bg-main: #f1f5f9;
+            --bg-gradient: radial-gradient(circle at top right, #e2e8f0, #f1f5f9);
+            --glass: rgba(255, 255, 255, 0.75);
+            --glass-hover: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --accent-cyan: #0891b2;
+            --accent-gold: #b45309;
+            --accent-red: #e11d48;
+            --text-main: #0f172a;
+            --text-dim: #475569;
+            --header-bg: rgba(255, 255, 255, 0.85);
+            --bad: #a4262c;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* --- Dark Mode --- */
+                --bg-main: #0a0f1d;
+                --bg-gradient: radial-gradient(circle at top right, #1e293b, #0a0f1d);
+                --glass: rgba(30, 41, 59, 0.75);
+                --glass-hover: rgba(51, 65, 85, 0.95);
+                --glass-border: rgba(255, 255, 255, 0.1);
+                --accent-cyan: #22d3ee;
+                --accent-gold: #fbbf24;
+                --accent-red: #f43f5e;
+                --text-main: #f1f5f9;
+                --text-dim: #94a3b8;
+                --header-bg: rgba(10, 15, 29, 0.85);
+                --bad: #f85149;
+            }
+        }
+
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+
+        body {
+            color: var(--text-main);
+            font-family: 'SolaimanLipi', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* --- Header --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: var(--header-bg);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            text-align: center;
+        }
+
+        .header-img {
+            height: 35px;
+            width: auto;
+            margin-bottom: 2px;
+            filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.4));
+        }
+
+        .icon-btn {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .icon-btn:hover { border-color: var(--accent-cyan); background: var(--glass-hover); }
+
+        /* --- Side Menu --- */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 300px;
+            height: 100%;
+            background: var(--bg-main);
+            box-shadow: 20px 0 50px rgba(0,0,0,0.3);
+            z-index: 2000;
+            padding: 20px;
+            transition: 0.4s ease;
+            overflow-y: auto;
+        }
+        .side-menu.active { left: 0; }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .side-menu h3 { color: var(--accent-cyan); margin: 0; border-left: 4px solid var(--accent-gold); padding-left: 10px; }
+        .close-btn { color: var(--accent-red); border: none; background: none; cursor: pointer; display: flex; align-items: center; }
+
+        .menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; z-index: 1500; backdrop-filter: blur(4px); }
+        .menu-overlay.active { display: block; }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 12px 15px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .menu-link:hover { border-color: var(--accent-cyan); background: var(--glass-hover); transform: translateX(4px); }
+
+        /* --- Main Layout & Cards --- */
+        .wrap { max-width: 900px; margin: 0 auto; padding: 20px 15px; width: 100%; flex: 1; }
+        
+        h1 { font-size: 1.4rem; margin: 0 0 5px; color: var(--accent-cyan); }
+        h2 { font-size: 1.05rem; margin: 0 0 12px; color: var(--accent-cyan); }
+        .sub { color: var(--text-dim); margin: 0 0 16px; font-size: 0.92rem; }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+        }
+        .card:hover { border-color: rgba(34, 211, 238, 0.3); }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+        
+        label { display: block; font-size: 0.88rem; font-weight: 600; margin-bottom: 5px; color: var(--text-main); }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            background: var(--glass);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
+        }
+
+        .hint { font-size: 0.78rem; color: var(--text-dim); font-weight: 400; }
+        .chk { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; margin-top: 12px; cursor: pointer; }
+        .chk input { width: auto; margin-top: 4px; accent-color: var(--accent-cyan); }
+        .hide { display: none; }
+
+        button {
+            background: var(--accent-cyan);
+            color: #0f172a;
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 18px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: inherit;
+        }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+        button.sec { background: transparent; color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
+
+        .warn {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid var(--accent-gold);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 0.88rem;
+            margin-bottom: 16px;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        /* --- Tables & Output --- */
+        .scroll { overflow-x: auto; width: 100%; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin-top: 6px; }
+        th, td { border: 1px solid var(--glass-border); padding: 8px 10px; text-align: right; }
+        th:first-child, td:first-child { text-align: left; }
+        th { background: rgba(34, 211, 238, 0.1); color: var(--accent-cyan); font-weight: 600; }
+        tr.tot td { font-weight: 700; background: rgba(34, 211, 238, 0.15); color: var(--accent-cyan); }
+        
+        .neg { color: var(--bad); }
+        .big { font-size: 1.5rem; font-weight: 700; color: var(--accent-cyan); margin-top: 10px; }
+        .steps li { margin: 4px 0; color: var(--text-dim); }
+        .steps li b { color: var(--text-main); }
+
+        textarea { font-family: monospace; font-size: 0.8rem; min-height: 180px; resize: vertical; }
+        
+        .sign { display: flex; justify-content: space-between; margin-top: 40px; font-size: 0.88rem; gap: 20px; }
+        .sign div { border-top: 1px solid var(--text-dim); padding-top: 6px; flex: 1; text-align: center; color: var(--text-dim); }
+
+        .hd { text-align: center; display: none; margin-bottom: 20px; }
+        
+        details summary { cursor: pointer; color: var(--accent-cyan); font-weight: 600; padding: 4px 0; }
+
+        /* Footer */
+        footer { background: var(--header-bg); padding: 25px 20px; border-top: 1px solid var(--glass-border); text-align: center; margin-top: auto; }
+        .footer-legal { font-size: 0.75rem; color: var(--text-dim); line-height: 1.5; }
+
+        @media print {
+            body { background: #fff !important; color: #000 !important; }
+            .noprint { display: none !important; }
+            .card { border: 0; padding: 0; background: #fff !important; box-shadow: none !important; }
+            .hd { display: block; }
+            .wrap { padding: 0; max-width: 100%; }
+            input, select, textarea { background: #fff !important; color: #000 !important; border: 1px solid #000 !important; }
+            table, th, td { border: 1px solid #000 !important; color: #000 !important; }
+            th, tr.tot td { background: #f0f0f0 !important; color: #000 !important; }
+            .big { color: #0b6b4d !important; }
+            .sign div { border-top: 1px solid #000 !important; color: #000 !important; }
+        }
+    </style>
 </head>
 <body>
-<div class="wrap">
-<div class="noprint">
-<h1>জাতীয় বেতনস্কেল ২০২৬ — বকেয়া বিল ক্যালকুলেটর</h1>
-<p class="sub">গ্রেড, ৩০ জুন ২০২৬-এর মূল বেতন ও জুলাই ২০২৬-এ গৃহীত মূল বেতন দিলেই নতুন মূল বেতন, বিশেষ সুবিধা ও বাড়ি ভাড়া সমন্বয়সহ বকেয়া বিবরণী তৈরি হবে।</p>
-<div class="warn"><b>লক্ষ্য করুন:</b> নতুন স্কেলের ধাপগুলো প্রকাশিত সূত্র থেকে নেওয়া এবং কিছু গ্রেডের অঙ্ক নিশ্চিত নয়। ব্যবহারের আগে নিচের “স্কেল টেবিল” গেজেট (এস.আর.ও. ৩৪৭-আইন/২০২৬) দেখে মিলিয়ে নিন। এটি অনানুষ্ঠানিক হিসাব; চূড়ান্ত নির্ধারণ iBAS++ এ হবে।</div>
 
-<div class="card">
-<h2>ব্যক্তিগত তথ্য (বিবরণীর শিরোনামে আসবে)</h2>
-<div class="grid">
-<div><label for="nm">নাম</label><input id="nm"></div>
-<div><label for="dg">পদবি</label><input id="dg"></div>
-<div><label for="of">অফিস / প্রতিষ্ঠান</label><input id="of"></div>
-</div>
-</div>
+    <div class="menu-overlay" id="overlay" onclick="toggleMenu()"></div>
 
-<div class="card">
-<h2>বেতন তথ্য</h2>
-<div class="grid">
-<div><label for="gr">বর্তমান (২০১৫ স্কেলের) গ্রেড</label><select id="gr"></select></div>
-<div><label for="b30">৩০ জুন ২০২৬ তারিখের মূল বেতন</label><select id="b30"></select><input id="b30c" type="number" min="0" class="hide" placeholder="টাকার অঙ্ক লিখুন"></div>
-<div><label for="bd">১ জুলাই ২০২৬-এ গৃহীত মূল বেতন <span class="hint">(বার্ষিক বৃদ্ধিসহ, যা তুলেছেন)</span></label><select id="bd"></select><input id="bdc" type="number" min="0" class="hide" placeholder="টাকার অঙ্ক লিখুন"></div>
-<div><label for="lc">কর্মস্থল (বাড়ি ভাড়ার হার)</label><select id="lc"></select></div>
-<div><label for="hr">বাড়ি ভাড়ার হার (%) <span class="hint">পে-স্লিপের সাথে মিলিয়ে নিন</span></label><input id="hr" type="number" step="0.5" min="0"></div>
-<div><label for="mo">বকেয়ার মাস সংখ্যা</label><input id="mo" type="number" min="1" max="6" value="3"></div>
-</div>
-<p class="chk" style="margin-top:10px"><input type="checkbox" id="inc" checked><label for="inc" style="font-weight:400">১ জুলাই ২০২৬ এর মধ্যে চাকরির বয়স ন্যূনতম ৬ মাস (১টি বার্ষিক বেতনবৃদ্ধি যোগ হবে)</label></p>
-<details open style="margin-top:8px"><summary>ঐচ্ছিক: পে-স্লিপের প্রকৃত অঙ্ক বা গেজেটের অঙ্ক দিতে চাইলে</summary>
-<div class="grid" style="margin-top:8px">
-<div><label for="o_new">নতুন স্কেলে নির্ধারিত পূর্ণ মূল বেতন <span class="hint">(iBAS++/গেজেট অনুযায়ী, থাকলে এটিই ধরা হবে)</span></label><input id="o_new" type="number" min="0"></div>
-<div><label for="o_inst">প্রথম ধাপে (জুলাই–ডিসেম্বর ২০২৬) প্রাপ্য মূল বেতন <span class="hint">(জানা থাকলে সরাসরি দিন, যেমন ২৬১১০; এটিই ধরা হবে)</span></label><input id="o_inst" type="number" min="0"></div>
-<div><label for="o_hr">জুলাইয়ে প্রকৃত তোলা বাড়ি ভাড়া</label><input id="o_hr" type="number" min="0"></div>
-<div><label for="o_sp">জুলাইয়ে প্রকৃত তোলা বিশেষ সুবিধা</label><input id="o_sp" type="number" min="0"></div>
-</div></details>
-</div>
-</div>
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <h3>Quick Access</h3>
+            <button class="close-btn" onclick="toggleMenu()"><i data-lucide="x" size="24"></i></button>
+        </div>
+        <nav style="display:flex; flex-direction:column; gap:4px;">
+            <a href="/" class="menu-link"><i data-lucide="home" size="18"></i> হোম পেজ (নিউজ ফিড)</a>
+            <a href="https://dpe.gopalganj.gov.bd/pages/notices" class="menu-link" target="_blank"><i data-lucide="map-pin" size="18"></i> DPE Gopalganj</a>
+            <a href="https://dpe.gov.bd/pages/notices" class="menu-link" target="_blank"><i data-lucide="bell" size="18"></i> DPE Notice</a>
+            <a href="/salary" class="menu-link"><i data-lucide="wallet" size="18"></i> Salary Calculator</a>
+            <a href="/age" class="menu-link"><i data-lucide="calendar" size="18"></i> Age Calculator</a>
+            <a href="/photo" class="menu-link"><i data-lucide="image" size="18"></i> Photo Tools</a>
+            <a href="/data" class="menu-link"><i data-lucide="school" size="18"></i> Student Management</a>
+        </nav>
+    </div>
 
-<div id="out" class="card hide">
-<div class="hd"><h2 style="font-size:1.2rem">জাতীয় বেতনস্কেল ২০২৬ — বকেয়া বিল বিবরণী</h2></div>
-<p id="who" style="margin:0 0 10px"></p>
-<h2>১. নতুন মূল বেতন নির্ধারণ</h2>
-<ol class="steps" id="fx"></ol>
-<h2 style="margin-top:14px">২. মাসিক বকেয়া হিসাব</h2>
-<div class="scroll"><table id="tb"></table></div>
-<h2 style="margin-top:14px">৩. মোট বকেয়া</h2>
-<div id="mn" class="scroll"></div>
-<div class="sign"><div>প্রস্তুতকারী</div><div>যাচাইকারী</div><div>প্রতিষ্ঠান প্রধান</div></div>
-<p class="hint" style="margin-top:14px">১ জুলাই ২০২৬ থেকে বিশেষ সুবিধা বিলুপ্ত; ৩০ জুন ২০২৬-এর মূল বেতনের ভিত্তিতে বাড়ি ভাড়া ও অন্যান্য ভাতা ৩১ ডিসেম্বর ২০২৭ পর্যন্ত বলবৎ। এটি অনানুষ্ঠানিক হিসাব; অঙ্ক নিকটতম টাকায়।</p>
-<div class="noprint"><button onclick="window.print()">বিবরণী প্রিন্ট করুন</button></div>
-</div>
+    <header class="noprint">
+        <button class="icon-btn" onclick="toggleMenu()"><i data-lucide="menu" size="20"></i></button>
+        <div class="header-center">
+            <a href="/" style="text-decoration:none; display:flex; flex-direction:column; align-items:center;">
+                <img src="/logo.png" alt="satu.pro.bd" class="header-img">
+            </a>
+        </div>
+        <div style="width: 42px;"></div> <!-- Spacer for symmetry -->
+    </header>
 
-<details class="card noprint"><summary><b>স্কেল টেবিল (দেখুন ও প্রয়োজনে সংশোধন করুন)</b></summary>
-<p class="hint">প্রতি লাইনে একটি গ্রেড: <code>গ্রেড: ধাপ১, ধাপ২, …</code> (ইংরেজি সংখ্যায়)। সংশোধন করে “প্রয়োগ করুন” চাপুন।</p>
-<label for="tOld">২০১৫ স্কেল</label><textarea id="tOld"></textarea>
-<label for="tNew" style="margin-top:8px">২০২৬ স্কেল</label><textarea id="tNew"></textarea>
-<p><button class="sec" onclick="applyT()">প্রয়োগ করুন</button></p>
-</details>
-</div>
+    <div class="wrap">
+        <div class="noprint">
+            <h1>জাতীয় বেতনস্কেল ২০২৬ — বকেয়া বিল ক্যালকুলেটর</h1>
+            <p class="sub">গ্রেড, ৩০ জুন ২০২৬-এর মূল বেতন ও জুলাই ২০২৬-এ গৃহীত মূল বেতন দিলেই নতুন মূল বেতন, বিশেষ সুবিধা ও বাড়ি ভাড়া সমন্বয়সহ বকেয়া বিবরণী তৈরি হবে।</p>
+            
+            <div class="warn"><b>লক্ষ্য করুন:</b> নতুন স্কেলের ধাপগুলো প্রকাশিত সূত্র থেকে নেওয়া এবং কিছু গ্রেডের অঙ্ক নিশ্চিত নয়। ব্যবহারের আগে নিচের “স্কেল টেবিল” গেজেট (এস.আর.ও. ৩৪৭-আইন/২০২৬) দেখে মিলিয়ে নিন। এটি অনানুষ্ঠানিক হিসাব; চূড়ান্ত নির্ধারণ iBAS++ এ হবে।</div>
 
-<script>
-const $=id=>document.getElementById(id);
-const bn=n=>Math.round(n).toLocaleString('bn-BD');
-const OS={1:[78000,78000],2:[66000,76490],3:[56500,74400],4:[50000,71200],5:[43000,69850],6:[35500,67010],7:[29000,63410],8:[23000,55000],9:[22000,53060],10:[16000,38640],11:[12500,30230],12:[11300,27300],13:[11000,26590],14:[10200,24680],15:[9700,23490],16:[9300,22490],17:[8800,21310],18:[8600,20570],19:[8500,20010],20:[8250,19030]};
-const NS={1:[156000,156000],2:[132000,153000],3:[113000,148800],4:[100000,136300],5:[86000,139700],6:[71000,134600],7:[58000,120600],8:[46000,95700],9:[44000,91500],10:[32000,73400],11:[24000,60500],12:[24300,58700],13:[24000,58000],14:[23500,56800],15:[21900,55200],16:[21900,52800],17:[21000,50900],18:[21000,50900],19:[20500,48400],20:[20000,48800]};
-function gen(s,m,r,up){const a=[s];let v=s,k=0;while(v<m){k++;const x=+((up?v*1.05:s*Math.pow(1.05,k))/r).toFixed(6);let n=Math.ceil(x)*r;if(n>=m){if(m>v)a.push(m);break}a.push(n);v=n}return a}
-let OLD={},NEW={};
-for(const g in OS){OLD[g]=gen(OS[g][0],OS[g][1],10,true);NEW[g]=gen(NS[g][0],NS[g][1],100,false)}
-const LOC=[["ঢাকা উত্তর ও দক্ষিণ সিটি কর্পোরেশন",55],["অন্যান্য সিটি কর্পোরেশন",50],["বগুড়া সিটি / সাভার / কক্সবাজার পৌর এলাকা",45],["অন্যান্য সব স্থান",40]];
-function txt(T){return Object.keys(T).map(g=>g+": "+T[g].join(", ")).join("\n")}
-function parse(s){const o={};s.split("\n").forEach(l=>{const m=l.split(":");if(m.length==2){const a=m[1].split(",").map(x=>+x.trim()).filter(x=>x>0);if(a.length)o[+m[0].trim()]=a}});return o}
-function applyT(){const o=parse($("tOld").value),n=parse($("tNew").value);for(const g in o)OLD[g]=o[g];for(const g in n)NEW[g]=n[g];fillSteps();calc()}
-function opts(sel,arr,ph){sel.innerHTML='<option value="">'+ph+'</option>'+arr.map((v,i)=>`<option value="${v}">${bn(v)} (ধাপ ${bn(i+1)})</option>`).join("")+'<option value="x">অন্য অঙ্ক লিখব</option>'}
-function fillSteps(){const g=$("gr").value;opts($("b30"),OLD[g],"— নির্বাচন করুন —");opts($("bd"),OLD[g],"— নির্বাচন করুন —");$("b30c").classList.add("hide");$("bdc").classList.add("hide")}
-function val(s,c){const v=$(s).value;$(c).classList.toggle("hide",v!=="x");return v==="x"?+$(c).value:+v}
-function row(cells,cls){return `<tr class="${cls||""}">${cells.map(c=>`<td>${c}</td>`).join("")}</tr>`}
-function calc(){
- const g=+$("gr").value,old=val("b30","b30c"),dr=val("bd","bdc");
- if(!old||!dr){$("out").classList.add("hide");return}
- const os=OLD[g][0],ns=NEW[g],oldInc=$("inc").checked;
- let full,fxs=[],eq=null,incv=0;
- if(+$("o_new").value>0){full=+$("o_new").value;fxs.push(`নতুন স্কেলে নির্ধারিত পূর্ণ মূল বেতন (হাতে দেওয়া অঙ্ক): <b>৳${bn(full)}</b>`)}
- else if(g===1){full=ns[0];fxs.push(`১ম গ্রেডের নির্ধারিত বেতন: <b>৳${bn(full)}</b>`)}
- else{
-  const diff=old-os,t=ns[0]+diff;let i=ns.findIndex(x=>x>=t);if(i<0)i=ns.length-1;
-  fxs.push(`বর্তমান বেতন − পুরাতন প্রারম্ভিক ধাপ = ${bn(old)} − ${bn(os)} = <b>${bn(diff)}</b>`);
-  fxs.push(`নতুন প্রারম্ভিক ধাপ + পার্থক্য = ${bn(ns[0])} + ${bn(diff)} = <b>${bn(t)}</b>`);
-  fxs.push(ns[i]===t?`সমান ধাপ আছে: ৳${bn(ns[i])}`:`সমান ধাপ নেই, পরবর্তী উচ্চতর ধাপ: <b>৳${bn(ns[i])}</b>`);
-  eq=ns[i];if(oldInc&&i<ns.length-1)i++;
-  full=ns[i];incv=full-eq;
-  fxs.push(oldInc?`১ জুলাই ২০২৬-এর বার্ষিক বেতনবৃদ্ধিসহ পূর্ণ নতুন মূল বেতন: <b>৳${bn(full)}</b>`:`বার্ষিক বেতনবৃদ্ধি যোগ হয়নি। পূর্ণ নতুন মূল বেতন: <b>৳${bn(full)}</b>`);
- }
- const pct=g<=9?0.4:0.5;
- let instB=eq!==null?Math.round(old+(eq-old)*pct)+incv:Math.round(old+(full-old)*pct);
- if(+$("o_inst").value>0){instB=+$("o_inst").value;fxs.push(`প্রথম ধাপে প্রাপ্য মূল বেতন (হাতে দেওয়া অঙ্ক): <b>৳${bn(instB)}</b>`)}
- else if(eq!==null)fxs.push(`বেতন বৃদ্ধির পরিমাণ = ${bn(eq)} − ${bn(old)} = ${bn(eq-old)}; ${bn(pct*100)}% = ${bn(Math.round((eq-old)*pct))}; প্রাপ্য বেতন = ${bn(old)} + ${bn(Math.round((eq-old)*pct))} = ${bn(old+Math.round((eq-old)*pct))}; ইনক্রিমেন্টসহ (জুলাই–ডিসেম্বর ২০২৬): + ${bn(incv)} = <b>৳${bn(instB)}</b>`);
- else fxs.push(`প্রথম ধাপ (জুলাই–ডিসেম্বর ২০২৬): বৃদ্ধির ${bn(pct*100)}% = ${bn(old)} + ${bn(pct*100)}% × (${bn(full)} − ${bn(old)}) = <b>৳${bn(instB)}</b>`);
- if(eq!==null)fxs.push(`১ জানুয়ারি ২০২৭: পরবর্তী ${bn(g<=9?30:25)}% (${bn(Math.round((eq-old)*(g<=9?.3:.25)))}) যোগে ৳${bn(instB+Math.round((eq-old)*(g<=9?.3:.25)))}; ১ জুলাই ২০২৭: পূর্ণ ৳${bn(full)}`);
- $("fx").innerHTML=fxs.map(x=>"<li>"+x+"</li>").join("");
- const rate=(+$("hr").value||0)/100;
- const hrE=Math.round(old*rate);
- const hrD=+$("o_hr").value>0?+$("o_hr").value:Math.round(dr*rate);
- let sp=+$("o_sp").value>0?+$("o_sp").value:(g<=9?Math.round(dr*0.10):Math.max(1500,Math.round(dr*0.15)));
- const bd=instB-dr,hd=hrE-hrD,mon=bd+hd-sp;
- const m=Math.max(1,Math.min(6,+$("mo").value||3));
- const names=["জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
- const neg=v=>v<0?`<span class="neg">−${bn(-v)}</span>`:bn(v);
- let h=`<tr><th>বিবরণ</th><th>প্রাপ্য (নতুন আদেশে)</th><th>গৃহীত (যা তুলেছেন)</th><th>সমন্বয় (প্রাপ্য − গৃহীত)</th></tr>`;
- h+=row(["মূল বেতন",bn(instB),bn(dr),neg(bd)]);
- h+=row([`বাড়ি ভাড়া (${bn(rate*100)}%) — প্রাপ্য: ৩০ জুনের মূল বেতনে; গৃহীত: তোলা মূল বেতনে`,bn(hrE),bn(hrD),neg(hd)]);
- h+=row([`বিশেষ সুবিধা (${g<=9?"১০%":"১৫%"}) — ১ জুলাই ২০২৬ থেকে বিলুপ্ত`,"০",bn(sp),neg(-sp)]);
- h+=row(["মাসিক বকেয়া","","",neg(mon)],"tot");
- $("tb").innerHTML=h;
- let rows=`<table><tr><th>মাস</th><th>মাসিক বকেয়া</th></tr>`;
- for(let i=0;i<m;i++)rows+=row([names[i]+" ২০২৬",neg(mon)]);
- rows+=row([`সর্বমোট বকেয়া (${bn(m)} মাস)`,neg(mon*m)],"tot")+"</table>";
- $("mn").innerHTML=rows+`<p class="big">৳ ${mon*m<0?"−":""}${bn(Math.abs(mon*m))}</p>`;
- const n=$("nm").value,d=$("dg").value,o=$("of").value;
- $("who").innerHTML=[n&&`<b>নাম:</b> ${n}`,d&&`<b>পদবি:</b> ${d}`,o&&`<b>অফিস:</b> ${o}`,`<b>গ্রেড:</b> ${bn(g)}`].filter(Boolean).join(" &nbsp;|&nbsp; ");
- $("out").classList.remove("hide");
-}
-$("gr").innerHTML=Object.keys(OS).map(g=>`<option value="${g}">গ্রেড ${bn(g)}${g==1?" (নির্ধারিত)":""}</option>`).join("");
-$("gr").value="13";
-$("lc").innerHTML=LOC.map((l,i)=>`<option value="${l[1]}">${l[0]}</option>`).join("");
-$("lc").value="40";$("hr").value="40";
-$("tOld").value=txt(OLD);$("tNew").value=txt(NEW);
-fillSteps();
-$("gr").onchange=()=>{fillSteps();calc()};
-$("lc").onchange=()=>{$("hr").value=$("lc").value;calc()};
-document.querySelectorAll("input,select").forEach(e=>{if(!["gr","lc"].includes(e.id))e.addEventListener("input",calc)});
-</script>
+            <div class="card">
+                <h2>ব্যক্তিগত তথ্য (বিবরণীর শিরোনামে আসবে)</h2>
+                <div class="grid">
+                    <div><label for="nm">নাম</label><input id="nm" placeholder="আপনার নাম"></div>
+                    <div><label for="dg">পদবি</label><input id="dg" placeholder="যেমন: সহকারী শিক্ষক"></div>
+                    <div><label for="of">অফিস / প্রতিষ্ঠান</label><input id="of" placeholder="প্রতিষ্ঠানের নাম"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>বেতন তথ্য</h2>
+                <div class="grid">
+                    <div><label for="gr">বর্তমান (২০১৫ স্কেলের) গ্রেড</label><select id="gr"></select></div>
+                    <div><label for="b30">৩০ জুন ২০২৬ তারিখের মূল বেতন</label><select id="b30"></select><input id="b30c" type="number" min="0" class="hide" placeholder="টাকার অঙ্ক লিখুন"></div>
+                    <div><label for="bd">১ জুলাই ২০২৬-এ গৃহীত মূল বেতন <span class="hint">(বার্ষিক বৃদ্ধিসহ, যা তুলেছেন)</span></label><select id="bd"></select><input id="bdc" type="number" min="0" class="hide" placeholder="টাকার অঙ্ক লিখুন"></div>
+                    <div><label for="lc">কর্মস্থল (বাড়ি ভাড়ার হার)</label><select id="lc"></select></div>
+                    <div><label for="hr">বাড়ি ভাড়ার হার (%) <span class="hint">পে-স্লিপের সাথে মিলিয়ে নিন</span></label><input id="hr" type="number" step="0.5" min="0"></div>
+                    <div><label for="mo">বকেয়ার মাস সংখ্যা</label><input id="mo" type="number" min="1" max="6" value="3"></div>
+                </div>
+                
+                <label class="chk"><input type="checkbox" id="inc" checked><span>১ জুলাই ২০২৬ এর মধ্যে চাকরির বয়স ন্যূনতম ৬ মাস (১টি বার্ষিক বেতনবৃদ্ধি যোগ হবে)</span></label>
+                
+                <details style="margin-top:12px"><summary>ঐচ্ছিক: পে-স্লিপের প্রকৃত অঙ্ক বা গেজেটের অঙ্ক দিতে চাইলে</summary>
+                <div class="grid" style="margin-top:10px">
+                    <div><label for="o_new">নতুন স্কেলে নির্ধারিত পূর্ণ মূল বেতন <span class="hint">(iBAS++/গেজেট অনুযায়ী)</span></label><input id="o_new" type="number" min="0"></div>
+                    <div><label for="o_inst">প্রথম ধাপে (জুলাই–ডিসেম্বর ২০২৬) প্রাপ্য মূল বেতন <span class="hint">(জানা থাকলে সরাসরি দিন)</span></label><input id="o_inst" type="number" min="0"></div>
+                    <div><label for="o_hr">জুলাইয়ে প্রকৃত তোলা বাড়ি ভাড়া</label><input id="o_hr" type="number" min="0"></div>
+                    <div><label for="o_sp">জুলাইয়ে প্রকৃত তোলা বিশেষ সুবিধা</label><input id="o_sp" type="number" min="0"></div>
+                </div></details>
+            </div>
+        </div>
+
+        <div id="out" class="card hide">
+            <div class="hd"><h2 style="font-size:1.2rem; color:#000;">জাতীয় বেতনস্কেল ২০২৬ — বকেয়া বিল বিবরণী</h2></div>
+            <p id="who" style="margin:0 0 14px; font-weight: 500;"></p>
+            
+            <h2>১. নতুন মূল বেতন নির্ধারণ</h2>
+            <ol class="steps" id="fx"></ol>
+            
+            <h2 style="margin-top:18px">২. মাসিক বকেয়া হিসাব</h2>
+            <div class="scroll"><table id="tb"></table></div>
+            
+            <h2 style="margin-top:18px">৩. মোট বকেয়া</h2>
+            <div id="mn" class="scroll"></div>
+            
+            <div class="sign">
+                <div>প্রস্তুতকারী</div>
+                <div>যাচাইকারী</div>
+                <div>প্রতিষ্ঠান প্রধান</div>
+            </div>
+            
+            <p class="hint" style="margin-top:20px">১ জুলাই ২০২৬ থেকে বিশেষ সুবিধা বিলুপ্ত; ৩০ জুন ২০২৬-এর মূল বেতনের ভিত্তিতে বাড়ি ভাড়া ও অন্যান্য ভাতা ৩১ ডিসেম্বর ২০২৭ পর্যন্ত বলবৎ। এটি অনানুষ্ঠানিক হিসাব; অঙ্ক নিকটতম টাকায়।</p>
+            <div class="noprint" style="margin-top:15px;"><button onclick="window.print()"><i data-lucide="printer" style="width:16px; height:16px; vertical-align:middle; margin-right:4px;"></i> বিবরণী প্রিন্ট করুন</button></div>
+        </div>
+
+        <details class="card noprint"><summary><b>স্কেল টেবিল (দেখুন ও প্রয়োজনে সংশোধন করুন)</b></summary>
+            <p class="hint" style="margin:8px 0;">প্রতি লাইনে একটি গ্রেড: <code>গ্রেড: ধাপ১, ধাপ২, …</code> (ইংরেজি সংখ্যায়)। সংশোধন করে “প্রয়োগ করুন” চাপুন।</p>
+            <label for="tOld">২০১৫ স্কেল</label><textarea id="tOld"></textarea>
+            <label for="tNew" style="margin-top:10px">২০২৬ স্কেল</label><textarea id="tNew"></textarea>
+            <p style="margin-top:12px"><button class="sec" onclick="applyT()">প্রয়োগ করুন</button></p>
+        </details>
+    </div>
+
+    <footer class="noprint">
+        <div class="footer-legal">
+            Platform architecture & code design &copy; <b>satu.pro.bd</b>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('sideMenu').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        const $=id=>document.getElementById(id);
+        const bn=n=>Math.round(n).toLocaleString('bn-BD');
+        const OS={1:[78000,78000],2:[66000,76490],3:[56500,74400],4:[50000,71200],5:[43000,69850],6:[35500,67010],7:[29000,63410],8:[23000,55000],9:[22000,53060],10:[16000,38640],11:[12500,30230],12:[11300,27300],13:[11000,26590],14:[10200,24680],15:[9700,23490],16:[9300,22490],17:[8800,21310],18:[8600,20570],19:[8500,20010],20:[8250,19030]};
+        const NS={1:[156000,156000],2:[132000,153000],3:[113000,148800],4:[100000,136300],5:[86000,139700],6:[71000,134600],7:[58000,120600],8:[46000,95700],9:[44000,91500],10:[32000,73400],11:[24000,60500],12:[24300,58700],13:[24000,58000],14:[23500,56800],15:[21900,55200],16:[21900,52800],17:[21000,50900],18:[21000,50900],19:[20500,48400],20:[20000,48800]};
+        function gen(s,m,r,up){const a=[s];let v=s,k=0;while(v<m){k++;const x=+((up?v*1.05:s*Math.pow(1.05,k))/r).toFixed(6);let n=Math.ceil(x)*r;if(n>=m){if(m>v)a.push(m);break}a.push(n);v=n}return a}
+        let OLD={},NEW={};
+        for(const g in OS){OLD[g]=gen(OS[g][0],OS[g][1],10,true);NEW[g]=gen(NS[g][0],NS[g][1],100,false)}
+        const LOC=[["ঢাকা উত্তর ও দক্ষিণ সিটি কর্পোরেশন",55],["অন্যান্য সিটি কর্পোরেশন",50],["বগুড়া সিটি / সাভার / কক্সবাজার পৌর এলাকা",45],["অন্যান্য সব স্থান",40]];
+        function txt(T){return Object.keys(T).map(g=>g+": "+T[g].join(", ")).join("\n")}
+        function parse(s){const o={};s.split("\n").forEach(l=>{const m=l.split(":");if(m.length==2){const a=m[1].split(",").map(x=>+x.trim()).filter(x=>x>0);if(a.length)o[+m[0].trim()]=a}});return o}
+        function applyT(){const o=parse($("tOld").value),n=parse($("tNew").value);for(const g in o)OLD[g]=o[g];for(const g in n)NEW[g]=n[g];fillSteps();calc()}
+        function opts(sel,arr,ph){sel.innerHTML='<option value="">'+ph+'</option>'+arr.map((v,i)=>`<option value="${v}">${bn(v)} (ধাপ ${bn(i+1)})</option>`).join("")+'<option value="x">অন্য অঙ্ক লিখব</option>'}
+        function fillSteps(){const g=$("gr").value;opts($("b30"),OLD[g],"— নির্বাচন করুন —");opts($("bd"),OLD[g],"— নির্বাচন করুন —");$("b30c").classList.add("hide");$("bdc").classList.add("hide")}
+        function val(s,c){const v=$(s).value;$(c).classList.toggle("hide",v!=="x");return v==="x"?+$(c).value:+v}
+        function row(cells,cls){return `<tr class="${cls||""}">${cells.map(c=>`<td>${c}</td>`).join("")}</tr>`}
+        function calc(){
+         const g=+$("gr").value,old=val("b30","b30c"),dr=val("bd","bdc");
+         if(!old||!dr){$("out").classList.add("hide");return}
+         const os=OLD[g][0],ns=NEW[g],oldInc=$("inc").checked;
+         let full,fxs=[],eq=null,incv=0;
+         if(+$("o_new").value>0){full=+$("o_new").value;fxs.push(`নতুন স্কেলে নির্ধারিত পূর্ণ মূল বেতন (হাতে দেওয়া অঙ্ক): <b>৳${bn(full)}</b>`)}
+         else if(g===1){full=ns[0];fxs.push(`১ম গ্রেডের নির্ধারিত বেতন: <b>৳${bn(full)}</b>`)}
+         else{
+          const diff=old-os,t=ns[0]+diff;let i=ns.findIndex(x=>x>=t);if(i<0)i=ns.length-1;
+          fxs.push(`বর্তমান বেতন − পুরাতন প্রারম্ভিক ধাপ = ${bn(old)} − ${bn(os)} = <b>${bn(diff)}</b>`);
+          fxs.push(`নতুন প্রারম্ভিক ধাপ + পার্থক্য = ${bn(ns[0])} + ${bn(diff)} = <b>${bn(t)}</b>`);
+          fxs.push(ns[i]===t?`সমান ধাপ আছে: ৳${bn(ns[i])}`:`সমান ধাপ নেই, পরবর্তী উচ্চতর ধাপ: <b>৳${bn(ns[i])}</b>`);
+          eq=ns[i];if(oldInc&&i<ns.length-1)i++;
+          full=ns[i];incv=full-eq;
+          fxs.push(oldInc?`১ জুলাই ২০২৬-এর বার্ষিক বেতনবৃদ্ধিসহ পূর্ণ নতুন মূল বেতন: <b>৳${bn(full)}</b>`:`বার্ষিক বেতনবৃদ্ধি যোগ হয়নি। পূর্ণ নতুন মূল বেতন: <b>৳${bn(full)}</b>`);
+         }
+         const pct=g<=9?0.4:0.5;
+         let instB=eq!==null?Math.round(old+(eq-old)*pct)+incv:Math.round(old+(full-old)*pct);
+         if(+$("o_inst").value>0){instB=+$("o_inst").value;fxs.push(`প্রথম ধাপে প্রাপ্য মূল বেতন (হাতে দেওয়া অঙ্ক): <b>৳${bn(instB)}</b>`)}
+         else if(eq!==null)fxs.push(`বেতন বৃদ্ধির পরিমাণ = ${bn(eq)} − ${bn(old)} = ${bn(eq-old)}; ${bn(pct*100)}% = ${bn(Math.round((eq-old)*pct))}; প্রাপ্য বেতন = ${bn(old)} + ${bn(Math.round((eq-old)*pct))} = ${bn(old+Math.round((eq-old)*pct))}; ইনক্রিমেন্টসহ (জুলাই–ডিসেম্বর ২০২৬): + ${bn(incv)} = <b>৳${bn(instB)}</b>`);
+         else fxs.push(`প্রথম ধাপ (জুলাই–ডিসেম্বর ২০২৬): বৃদ্ধির ${bn(pct*100)}% = ${bn(old)} + ${bn(pct*100)}% × (${bn(full)} − ${bn(old)}) = <b>৳${bn(instB)}</b>`);
+         if(eq!==null)fxs.push(`১ জানুয়ারি ২০২৭: পরবর্তী ${bn(g<=9?30:25)}% (${bn(Math.round((eq-old)*(g<=9?.3:.25)))}) যোগে ৳${bn(instB+Math.round((eq-old)*(g<=9?.3:.25)))}; ১ জুলাই ২০২৭: পূর্ণ ৳${bn(full)}`);
+         $("fx").innerHTML=fxs.map(x=>"<li>"+x+"</li>").join("");
+         const rate=(+$("hr").value||0)/100;
+         const hrE=Math.round(old*rate);
+         const hrD=+$("o_hr").value>0?+$("o_hr").value:Math.round(dr*rate);
+         let sp=+$("o_sp").value>0?+$("o_sp").value:(g<=9?Math.round(dr*0.10):Math.max(1500,Math.round(dr*0.15)));
+         const bd=instB-dr,hd=hrE-hrD,mon=bd+hd-sp;
+         const m=Math.max(1,Math.min(6,+$("mo").value||3));
+         const names=["জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+         const neg=v=>v<0?`<span class="neg">−${bn(-v)}</span>`:bn(v);
+         let h=`<tr><th>বিবরণ</th><th>প্রাপ্য (নতুন আদেশে)</th><th>গৃহীত (যা তুলেছেন)</th><th>সমন্বয় (প্রাপ্য − গৃহীত)</th></tr>`;
+         h+=row(["মূল বেতন",bn(instB),bn(dr),neg(bd)]);
+         h+=row([`বাড়ি ভাড়া (${bn(rate*100)}%) — প্রাপ্য: ৩০ জুনের মূল বেতনে; গৃহীত: তোলা মূল বেতনে`,bn(hrE),bn(hrD),neg(hd)]);
+         h+=row([`বিশেষ সুবিধা (${g<=9?"১০%":"১৫%"}) — ১ জুলাই ২০২৬ থেকে বিলুপ্ত`,"০",bn(sp),neg(-sp)]);
+         h+=row(["মাসিক বকেয়া","","",neg(mon)],"tot");
+         $("tb").innerHTML=h;
+         let rows=`<table><tr><th>মাস</th><th>মাসিক বকেয়া</th></tr>`;
+         for(let i=0;i<m;i++)rows+=row([names[i]+" ২০২৬",neg(mon)]);
+         rows+=row([`সর্বমোট বকেয়া (${bn(m)} মাস)`,neg(mon*m)],"tot")+"</table>";
+         $("mn").innerHTML=rows+`<p class="big">৳ ${mon*m<0?"−":""}${bn(Math.abs(mon*m))}</p>`;
+         const n=$("nm").value,d=$("dg").value,o=$("of").value;
+         $("who").innerHTML=[n&&`<b>নাম:</b> ${n}`,d&&`<b>পদবি:</b> ${d}`,o&&`<b>অফিস:</b> ${o}`,`<b>গ্রেড:</b> ${bn(g)}`].filter(Boolean).join(" &nbsp;|&nbsp; ");
+         $("out").classList.remove("hide");
+        }
+        $("gr").innerHTML=Object.keys(OS).map(g=>`<option value="${g}">গ্রেড ${bn(g)}${g==1?" (নির্ধারিত)":""}</option>`).join("");
+        $("gr").value="13";
+        $("lc").innerHTML=LOC.map((l,i)=>`<option value="${l[1]}">${l[0]}</option>`).join("");
+        $("lc").value="40";$("hr").value="40";
+        $("tOld").value=txt(OLD);$("tNew").value=txt(NEW);
+        fillSteps();
+        $("gr").onchange=()=>{fillSteps();calc()};
+        $("lc").onchange=()=>{$("hr").value=$("lc").value;calc()};
+        document.querySelectorAll("input,select").forEach(e=>{if(!["gr","lc"].includes(e.id))e.addEventListener("input",calc)});
+        lucide.createIcons();
+    </script>
 </body>
 </html>
