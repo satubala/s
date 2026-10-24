@@ -14,7 +14,7 @@
             #printable-area, #printable-area * { visibility: visible; }
             #printable-area {
                 position: absolute; left: 0; top: 0; width: 100%;
-                border: none !important; box-shadow: none !important;
+                border: none !important; box-shadow: none !important; background: white !important;
             }
             .no-print { display: none !important; }
         }
@@ -24,13 +24,13 @@
 
     <div class="max-w-3xl mx-auto">
         <!-- Control Panel -->
-        <div class="bg-white rounded-2xl shadow-xl p-6 mb-6 no-print border border-slate-200/80">
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-6 no-print border border-slate-200">
             <div class="flex justify-between items-center mb-3">
                 <div>
-                    <h1 class="text-2xl font-extrabold text-slate-800">মডেল কোচিং সেন্টার</h1>
-                    <p class="text-xs text-slate-500 mt-0.5">পেমেন্ট স্লিপ অটোমেশন ও হোয়াটসঅ্যাপ পোর্টাল</p>
+                    <h1 class="text-2xl font-black text-slate-900">মডেল কোচিং সেন্টার</h1>
+                    <p class="text-xs text-slate-500 mt-0.5">পেমেন্ট স্লিপ, অটো-সেভ ও হোয়াটসঅ্যাপ পোর্টাল</p>
                 </div>
-                <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">Database Linked</span>
+                <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full border border-indigo-200">Live Portal</span>
             </div>
             
             <div id="loadingStatus" class="text-sm text-blue-600 font-medium mb-3 flex items-center gap-2">
@@ -38,14 +38,14 @@
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Database sheet theke student info load hocche...
+                ডাটাবেজ শিট লোড হচ্ছে...
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">মাসের নাম নির্বাচন করুন:</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">মাসের নাম নির্বাচন:</label>
                     <select id="monthSelect" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition" disabled>
-                        <option value="">প্রথমে ফাইল লোড হচ্ছে...</option>
+                        <option value="">প্রথমে ফাইল লোড করুন</option>
                     </select>
                 </div>
                 <div>
@@ -69,7 +69,7 @@
                 </div>
                 <div class="flex items-end">
                     <button onclick="saveToGoogleSheet()" id="saveBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs py-2.5 px-3 rounded-lg transition flex items-center justify-center gap-1 shadow-md">
-                        💾 Selected Month Sheet-e Save Korun
+                        💾 নির্দিষ্ট মাসের শিটে সেভ করুন
                     </button>
                 </div>
             </div>
@@ -80,41 +80,42 @@
                     🖨️ প্রিন্ট / পিডিএফ সংরক্ষণ
                 </button>
                 <a id="whatsappBtn" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm py-2.5 px-4 rounded-xl transition flex items-center gap-2 shadow-md opacity-50 pointer-events-none">
-                    💬 হোয়াটসঅ্যাপে পাঠান
+                    💬 বাংলায় হোয়াটসঅ্যাপে পাঠান
                 </a>
             </div>
         </div>
 
-        <!-- Printable Payment Slip Area -->
-        <div id="printable-area" class="bg-white rounded-2xl shadow-xl p-8 border border-slate-200 text-slate-800 max-w-xl mx-auto relative overflow-hidden">
-            <div class="absolute -right-12 -top-12 w-32 h-32 bg-blue-50 rounded-full blur-xl pointer-events-none"></div>
-            
+        <!-- Premium Printable Payment Slip Area -->
+        <div id="printable-area" class="bg-white rounded-3xl shadow-2xl p-8 border border-slate-200 text-slate-800 max-w-xl mx-auto relative overflow-hidden">
+            <!-- Top Decorative Bar -->
+            <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-500"></div>
+
             <div class="text-center border-b border-slate-200 pb-5 mb-6">
                 <h2 class="text-2xl font-black text-slate-900 tracking-wide">মডেল কোচিং সেন্টার</h2>
-                <p class="text-xs text-slate-600 mt-1 font-medium">পাওয়ার হাউস রোড, গোপালগঞ্জ। মোবাইল: 01716-463116</p>
-                <div class="mt-3 inline-block bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow-sm">পেমেন্ট স্লিপ</div>
+                <p class="text-xs text-slate-500 mt-1 font-semibold">পাওয়ার হাউস রোড, গোপালগঞ্জ। মোবাইল: 01716-463116</p>
+                <div class="mt-3 inline-block bg-blue-600 text-white text-xs font-extrabold px-4 py-1 rounded-full shadow-sm">পেমেন্ট স্লিপ</div>
             </div>
 
-            <div class="grid grid-cols-2 gap-y-4 text-sm mb-6 bg-slate-50/70 p-5 rounded-xl border border-slate-100">
-                <div><span class="text-slate-500 text-xs block font-medium">পেমেন্ট এর তারিখ ও সময়:</span> <span id="lblDate" class="font-bold text-slate-900">--</span></div>
-                <div><span class="text-slate-500 text-xs block font-medium">শিক্ষার্থী পরিচিতি নং:</span> <span id="lblId" class="font-bold text-indigo-600">--</span></div>
-                <div class="col-span-2"><span class="text-slate-500 text-xs block font-medium">শিক্ষার্থীর নাম:</span> <span id="lblName" class="font-extrabold text-lg text-slate-900">--</span></div>
-                <div><span class="text-slate-500 text-xs block font-medium">পিতার নাম:</span> <span id="lblFather" class="font-semibold text-slate-800">--</span></div>
-                <div><span class="text-slate-500 text-xs block font-medium">মাতার নাম:</span> <span id="lblMother" class="font-semibold text-slate-800">--</span></div>
-                <div><span class="text-slate-500 text-xs block font-medium">শ্রেণি:</span> <span id="lblClass" class="font-semibold text-slate-800">--</span></div>
-                <div><span class="text-slate-500 text-xs block font-medium">মাসের নাম:</span> <span id="lblMonth" class="font-bold text-blue-700">--</span></div>
-                <div><span class="text-slate-500 text-xs block font-medium">পেমেন্ট স্ট্যাটাস:</span> <span id="lblAmount" class="inline-block bg-emerald-100 text-emerald-800 text-xs font-extrabold px-3 py-0.5 rounded-full border border-emerald-200">--</span></div>
-                <div><span class="text-slate-500 text-xs block font-medium">গ্রহণকারীর নাম:</span> <span id="lblReceiver" class="font-semibold text-slate-800">--</span></div>
+            <div class="grid grid-cols-2 gap-y-4 text-sm mb-6 bg-slate-50 p-5 rounded-2xl border border-slate-100 shadow-inner">
+                <div><span class="text-slate-400 text-xs block font-semibold">তারিখ ও সময়:</span> <span id="lblDate" class="font-bold text-slate-900">--</span></div>
+                <div><span class="text-slate-400 text-xs block font-semibold">আইডি নম্বর:</span> <span id="lblId" class="font-bold text-indigo-600">--</span></div>
+                <div class="col-span-2"><span class="text-slate-400 text-xs block font-semibold">শিক্ষার্থীর নাম:</span> <span id="lblName" class="font-black text-lg text-slate-900">--</span></div>
+                <div><span class="text-slate-400 text-xs block font-semibold">পিতার নাম:</span> <span id="lblFather" class="font-semibold text-slate-700">--</span></div>
+                <div><span class="text-slate-400 text-xs block font-semibold">মাতার নাম:</span> <span id="lblMother" class="font-semibold text-slate-700">--</span></div>
+                <div><span class="text-slate-400 text-xs block font-semibold">শ্রেণি:</span> <span id="lblClass" class="font-semibold text-slate-700">--</span></div>
+                <div><span class="text-slate-400 text-xs block font-semibold">মাসের নাম:</span> <span id="lblMonth" class="font-bold text-blue-600">--</span></div>
+                <div><span class="text-slate-400 text-xs block font-semibold">স্ট্যাটাস:</span> <span id="lblAmount" class="inline-block bg-emerald-100 text-emerald-800 text-xs font-black px-3 py-0.5 rounded-full border border-emerald-200">--</span></div>
+                <div class="col-span-2 border-t border-slate-200 pt-2"><span class="text-slate-400 text-xs block font-semibold">গ্রহণকারী:</span> <span id="lblReceiver" class="font-bold text-slate-800">--</span></div>
             </div>
 
-            <div class="flex justify-between items-end pt-12 border-t border-dashed border-slate-300 mt-8 text-xs">
+            <div class="flex justify-between items-end pt-10 border-t border-dashed border-slate-300 mt-6 text-xs">
                 <div>
-                    <p class="font-bold text-slate-800 border-b border-slate-400 pb-1 mb-1 min-w-[120px] text-center" id="lblSignName">--</p>
-                    <p class="text-slate-500 text-center font-medium">শিক্ষার্থীর স্বাক্ষর</p>
+                    <p class="font-bold text-slate-800 border-b border-slate-400 pb-1 mb-1 min-w-[130px] text-center" id="lblSignName">--</p>
+                    <p class="text-slate-400 text-center font-semibold">শিক্ষার্থীর স্বাক্ষর</p>
                 </div>
                 <div class="text-right">
-                    <p class="font-bold text-slate-800 border-b border-slate-400 pb-1 mb-1 min-w-[120px] text-center" id="lblReceiverSign">বিলাস চন্দ্র বাড়ৈ</p>
-                    <p class="text-slate-500 text-center font-medium">গ্রহণকারীর স্বাক্ষর</p>
+                    <p class="font-bold text-slate-800 border-b border-slate-400 pb-1 mb-1 min-w-[130px] text-center" id="lblReceiverSign">বিলাস চন্দ্র বাড়ৈ</p>
+                    <p class="text-slate-400 text-center font-semibold">গ্রহণকারীর স্বাক্ষর</p>
                 </div>
             </div>
         </div>
@@ -124,7 +125,7 @@
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyP_UvxzLQ6JfKDIkda7ON9aRsHDXXOV2gYx1rf6HJyMAmHCEXG64p9rW4xZOZodQJ7/exec';
 
         let masterDatabaseStudents = [];
-        let availableMonths = ['October', 'November', 'December', 'September', 'January', 'February'];
+        let availableMonths = ['October', 'November', 'December', 'September', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'];
 
         function getNowFormatted() {
             const now = new Date();
@@ -144,7 +145,7 @@
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, {type: 'array'});
                 
-                // Read Database Sheet
+                // Load from Database Sheet
                 if (workbook.Sheets['Database']) {
                     const dbSheet = workbook.Sheets['Database'];
                     const dbJson = XLSX.utils.sheet_to_json(dbSheet, {header: 1});
@@ -160,20 +161,11 @@
                                 mother: row[4] || '',
                                 whatsapp: String(row[5] || '').trim(),
                                 studentClass: row[6] || '',
-                                date: row[7] || getNowFormatted(),
-                                amount: 'Paid',
                                 receiver: row[9] || 'বিলাস চন্দ্র বাড়ৈ'
                             });
                         }
                     }
                 }
-
-                // Collect months from sheets
-                workbook.SheetNames.forEach(sheetName => {
-                    if (sheetName !== 'Database' && !availableMonths.includes(sheetName)) {
-                        availableMonths.push(sheetName);
-                    }
-                });
 
                 const monthSelect = document.getElementById('monthSelect');
                 monthSelect.innerHTML = '<option value="">-- মাস নির্বাচন করুন --</option>';
@@ -266,8 +258,8 @@
                 phone = '880' + phone;
             }
 
-            // WhatsApp Message Format
-            const message = `Priyo ovivabok, ${student.name} (ID: ${student.id})-er ${monthName} maser payment complete hoyeche. Tarikh: ${currentDateTime}. Model Coaching Center`;
+            // Custom Bangla WhatsApp Message Format
+            const message = `প্রিয় অভিভাবক, ${student.name} (আইডি: ${student.id})-এর ${monthName} মাসের পেমেন্ট কমপ্লিট হয়েছে। তারিখ: ${currentDateTime}। মডেল কোচিং সেন্টার`;
 
             const waBtn = document.getElementById('whatsappBtn');
             waBtn.href = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
@@ -280,7 +272,7 @@
             if (!window.activeStudent) return;
             const btn = document.getElementById('saveBtn');
             btn.disabled = true;
-            btn.innerText = '⏳ Save hocche...';
+            btn.innerText = '⏳ সেভ হচ্ছে...';
 
             const monthName = window.currentSelectedMonth;
             const payload = {
@@ -305,13 +297,13 @@
                     body: JSON.stringify(payload)
                 });
 
-                alert(`✅ Google Sheet-er "${monthName}" sheet-e student info ebong payment status "Paid" auto-save hoyeche!`);
+                alert(`✅ সফলভাবে "${monthName}" শিটে শিক্ষার্থী ও পেমেন্ট স্ট্যাটাস (Paid) সেভ হয়েছে!`);
             } catch (err) {
                 console.error(err);
-                alert('⚠️ Save koray somossya hoyeche.');
+                alert('⚠️ সেভ করতে সমস্যা হয়েছে।');
             } finally {
                 btn.disabled = false;
-                btn.innerText = '💾 Selected Month Sheet-e Save Korun';
+                btn.innerText = '💾 নির্দিষ্ট মাসের শিটে সেভ করুন';
             }
         }
     </script>
