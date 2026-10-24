@@ -32,13 +32,13 @@
 </head>
 <body class="bg-gray-50 min-h-screen py-6 px-4">
 
-    <div class="max-w-2xl mx-auto">
+    <div class="max-w-3xl mx-auto">
         <!-- Control Panel (Hidden during print) -->
         <div class="bg-white rounded-xl shadow-md p-6 mb-6 no-print border border-gray-100">
             <h1 class="text-xl font-bold text-gray-800 mb-1">মডেল কোচিং সেন্টার</h1>
             <p class="text-xs text-gray-500 mb-4">পেমেন্ট স্লিপ ও হোয়াটসঅ্যাপ অটোমেশন পোর্টাল</p>
             
-            <div id="loadingStatus" class="text-sm text-blue-600 font-medium mb-3">🔄 সার্ভার থেকে এক্সেল ফাইল লোড হচ্ছে...</div>
+            <div id="loadingStatus" class="text-sm text-blue-600 font-medium mb-3">🔄 সার্ভার থেকে ফাইল লোড হচ্ছে...</div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
@@ -48,7 +48,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">শিক্ষার্থী / কাস্টমার:</label>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">শিক্ষার্থী / কাস্টমার খুঁজুন:</label>
+                    <input type="text" id="searchInput" placeholder="নাম বা আইডি দিয়ে খুঁজুন..." class="w-full border border-gray-300 rounded-lg p-2 text-xs mb-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" disabled>
                     <select id="studentSelect" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none" disabled>
                         <option value="">মাসের নাম নির্বাচন করুন</option>
                     </select>
@@ -59,9 +60,9 @@
                 <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm py-2.5 px-4 rounded-lg transition flex items-center gap-2 shadow-sm">
                     🖨️ প্রিন্ট / পিডিএফ সংরক্ষণ
                 </button>
-                <button id="whatsappBtn" onclick="sendWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm py-2.5 px-4 rounded-lg transition flex items-center gap-2 shadow-sm opacity-50 cursor-not-allowed" disabled>
+                <a id="whatsappBtn" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm py-2.5 px-4 rounded-lg transition flex items-center gap-2 shadow-sm opacity-50 pointer-events-none">
                     💬 হোয়াটসঅ্যাপে পাঠান
-                </button>
+                </a>
             </div>
         </div>
 
@@ -80,7 +81,7 @@
                 <div><span class="text-gray-500 text-xs block">পিতার নাম:</span> <span id="lblFather" class="font-medium text-gray-950">--</span></div>
                 <div><span class="text-gray-500 text-xs block">মাতার নাম:</span> <span id="lblMother" class="font-medium text-gray-950">--</span></div>
                 <div><span class="text-gray-500 text-xs block">শ্রেণি:</span> <span id="lblClass" class="font-medium text-gray-950">--</span></div>
-                <div><span class="text-gray-500 text-xs block">মাসের নাম / সাল:</span> <span id="lblMonthYear" class="font-medium text-gray-950">--</span></div>
+                <div><span class="text-gray-500 text-xs block">মাসের নাম:</span> <span id="lblMonth" class="font-medium text-gray-950">--</span></div>
                 <div><span class="text-gray-500 text-xs block">স্ট্যাটাস / টাকা:</span> <span id="lblAmount" class="font-bold text-blue-600 text-base">--</span></div>
                 <div><span class="text-gray-500 text-xs block">গ্রহণকারীর নাম:</span> <span id="lblReceiver" class="font-medium text-gray-950">--</span></div>
             </div>
@@ -91,7 +92,7 @@
                     <p class="text-gray-500 text-center">শিক্ষার্থীর স্বাক্ষর</p>
                 </div>
                 <div class="text-right">
-                    <p class="font-semibold text-gray-800 border-b border-gray-400 pb-1 mb-1 min-w-[120px] text-center">বিলাস চন্দ্র বাড়ৈ</p>
+                    <p class="font-semibold text-gray-800 border-b border-gray-400 pb-1 mb-1 min-w-[120px] text-center" id="lblReceiverSign">বিলাস চন্দ্র বাড়ৈ</p>
                     <p class="text-gray-500 text-center">গ্রহণকারীর স্বাক্ষর</p>
                 </div>
             </div>
@@ -99,34 +100,76 @@
     </div>
 
     <script>
-        let workbookData = {};
+        let monthlyStudentsData = {};
+        let activeFilteredList = [];
 
         window.addEventListener('DOMContentLoaded', async () => {
             const statusEl = document.getElementById('loadingStatus');
             try {
-                // Try fetching with absolute path, fallback between lowercase and uppercase extension/filename if needed
                 let response = await fetch('https://satu.pro.bd/slip/slip.xlsx');
-                if (!response.ok) {
-                    response = await fetch('https://satu.pro.bd/slip/SLIP.xlsx');
-                }
-                if (!response.ok) {
-                    throw new Error('File not found (404)');
-                }
+                if (!response.ok) response = await fetch('https://satu.pro.bd/slip/SLIP.xlsx');
+                if (!response.ok) response = await fetch('slip.xlsx');
+                if (!response.ok) throw new Error('File not found');
 
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, {type: 'array'});
                 
+                // Parse Database sheet
+                if (workbook.Sheets['Database']) {
+                    const dbSheet = workbook.Sheets['Database'];
+                    const dbJson = XLSX.utils.sheet_to_json(dbSheet, {header: 1});
+                    
+                    const headerMonth = dbJson[0]?.[7] || 'সেপ্টেম্বর';
+                    const dbStudents = [];
+                    
+                    for (let i = 2; i < dbJson.length; i++) {
+                        const row = dbJson[i];
+                        if (row && row[1]) {
+                            dbStudents.push({
+                                searchNo: row[0] || '',
+                                id: row[1] || '',
+                                name: row[2] || '',
+                                father: row[3] || '',
+                                mother: row[4] || '',
+                                whatsapp: String(row[5] || '').trim(),
+                                studentClass: row[6] || '',
+                                date: row[7] || '',
+                                amount: row[8] || 'Paid',
+                                receiver: row[9] || 'বিলাস চন্দ্র বাড়ৈ',
+                                month: headerMonth
+                            });
+                        }
+                    }
+                    monthlyStudentsData[headerMonth] = dbStudents;
+                }
+
+                // Parse individual monthly template sheets
                 workbook.SheetNames.forEach(sheetName => {
                     if (sheetName !== 'Database') {
                         const sheet = workbook.Sheets[sheetName];
                         const json = XLSX.utils.sheet_to_json(sheet, {header: 1});
-                        workbookData[sheetName] = json;
+                        
+                        const singleStudent = [{
+                            searchNo: json[3]?.[6] || '',
+                            date: json[4]?.[3] || '',
+                            id: json[5]?.[3] || '',
+                            name: json[6]?.[3] || '',
+                            father: json[7]?.[3] || '',
+                            mother: json[8]?.[3] || '',
+                            whatsapp: String(json[9]?.[3] || '').trim(),
+                            studentClass: json[10]?.[3] || '',
+                            month: json[11]?.[3] || sheetName,
+                            amount: json[12]?.[3] || 'Paid',
+                            receiver: json[13]?.[3] || 'বিলাস চন্দ্র বাড়ৈ'
+                        }];
+
+                        monthlyStudentsData[sheetName] = singleStudent;
                     }
                 });
 
                 const monthSelect = document.getElementById('monthSelect');
                 monthSelect.innerHTML = '<option value="">-- মাস নির্বাচন করুন --</option>';
-                Object.keys(workbookData).forEach(m => {
+                Object.keys(monthlyStudentsData).forEach(m => {
                     monthSelect.innerHTML += `<option value="${m}">${m}</option>`;
                 });
                 monthSelect.disabled = false;
@@ -134,7 +177,7 @@
                 statusEl.style.display = 'none';
             } catch (error) {
                 console.error(error);
-                statusEl.innerHTML = '⚠️ "slip.xlsx" ফাইলটি সার্ভারে পাওয়া যায়নি। দয়া করে নিশ্চিত করুন ফাইলটি আপলোড করা হয়েছে এবং নাম সঠিক আছে।';
+                statusEl.innerHTML = '⚠️ "slip.xlsx" ফাইলটি পাওয়া যায়নি। নিশ্চিত করুন ফাইলটি satu.pro.bd/slip/ ফোল্ডারে আছে।';
                 statusEl.className = 'text-sm text-red-600 font-medium mb-3';
             }
         });
@@ -142,72 +185,82 @@
         document.getElementById('monthSelect').addEventListener('change', function() {
             const selectedMonth = this.value;
             const studentSelect = document.getElementById('studentSelect');
+            const searchInput = document.getElementById('searchInput');
             
             if (!selectedMonth) {
                 studentSelect.innerHTML = '<option value="">প্রথমে মাসের নাম নির্বাচন করুন</option>';
                 studentSelect.disabled = true;
+                searchInput.disabled = true;
                 return;
             }
 
-            const data = workbookData[selectedMonth];
-            studentSelect.innerHTML = '<option value="">-- শিক্ষার্থী নির্বাচন করুন --</option>';
-            
-            let student = {
-                date: data[4]?.[3] || '15/09/2026',
-                id: data[5]?.[3] || 'MCC0001',
-                name: data[6]?.[3] || 'ছাত্র/ছাত্রী',
-                father: data[7]?.[3] || '',
-                mother: data[8]?.[3] || '',
-                whatsapp: String(data[9]?.[3] || ''),
-                studentClass: data[10]?.[3] || 'পঞ্চম',
-                month: data[11]?.[3] || selectedMonth,
-                year: data[11]?.[7] || '2026',
-                amount: data[12]?.[3] || 'Paid',
-                receiver: data[13]?.[3] || 'বিলাস চন্দ্র বাড়ৈ'
-            };
-
-            window.currentStudentsMap = [student];
-            studentSelect.innerHTML += `<option value="0">${student.name} (${student.id})</option>`;
-            studentSelect.disabled = false;
+            activeFilteredList = monthlyStudentsData[selectedMonth] || [];
+            searchInput.disabled = false;
+            searchInput.value = '';
+            renderStudentDropdown(activeFilteredList);
         });
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.trim().toLowerCase();
+            const month = document.getElementById('monthSelect').value;
+            if (!month) return;
+            
+            const originalList = monthlyStudentsData[month] || [];
+            const filtered = originalList.filter(s => 
+                s.name.toLowerCase().includes(query) || 
+                s.id.toLowerCase().includes(query)
+            );
+            
+            renderStudentDropdown(filtered);
+        });
+
+        function renderStudentDropdown(list) {
+            const studentSelect = document.getElementById('studentSelect');
+            if (list.length === 0) {
+                studentSelect.innerHTML = '<option value="">কোনো শিক্ষার্থী পাওয়া যায়নি</option>';
+                studentSelect.disabled = true;
+                return;
+            }
+
+            studentSelect.innerHTML = '<option value="">-- শিক্ষার্থী নির্বাচন করুন (' + list.length + ' জন) --</option>';
+            list.forEach((st, index) => {
+                studentSelect.innerHTML += `<option value="${index}">${st.name} (${st.id})</option>`;
+            });
+            studentSelect.disabled = false;
+            window.currentActiveList = list;
+        }
 
         document.getElementById('studentSelect').addEventListener('change', function() {
             const idx = this.value;
             if (idx === "") return;
-            const student = window.currentStudentsMap[idx];
+            const student = window.currentActiveList[idx];
             
-            document.getElementById('lblDate').innerText = student.date;
-            document.getElementById('lblId').innerText = student.id;
-            document.getElementById('lblName').innerText = student.name;
-            document.getElementById('lblFather').innerText = student.father;
-            document.getElementById('lblMother').innerText = student.mother;
-            document.getElementById('lblClass').innerText = student.studentClass;
-            document.getElementById('lblMonthYear').innerText = `${student.month} ${student.year}`;
-            document.getElementById('lblAmount').innerText = student.amount;
-            document.getElementById('lblReceiver').innerText = student.receiver;
-            document.getElementById('lblSignName').innerText = student.name;
+            document.getElementById('lblDate').innerText = student.date || '--';
+            document.getElementById('lblId').innerText = student.id || '--';
+            document.getElementById('lblName').innerText = student.name || '--';
+            document.getElementById('lblFather').innerText = student.father || '--';
+            document.getElementById('lblMother').innerText = student.mother || '--';
+            document.getElementById('lblClass').innerText = student.studentClass || '--';
+            document.getElementById('lblMonth').innerText = student.month || '--';
+            document.getElementById('lblAmount').innerText = student.amount || '--';
+            document.getElementById('lblReceiver').innerText = student.receiver || '--';
+            document.getElementById('lblSignName').innerText = student.name || '--';
+            document.getElementById('lblReceiverSign').innerText = student.receiver || 'বিলাস চন্দ্র বাড়ৈ';
 
-            window.activeStudent = student;
-
-            const waBtn = document.getElementById('whatsappBtn');
-            waBtn.disabled = false;
-            waBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        });
-
-        function sendWhatsApp() {
-            if (!window.activeStudent) return;
-            let student = window.activeStudent;
-            
-            let phone = student.whatsapp.replace(/\D/g, '');
+            // Prepare WhatsApp link
+            let phone = String(student.whatsapp || '').replace(/\D/g, '');
             if (phone.length === 11 && phone.startsWith('0')) {
                 phone = '88' + phone;
+            } else if (phone.length === 10 && !phone.startsWith('88')) {
+                phone = '880' + phone;
             }
 
-            const message = `প্রিয় অভিভাবক,\nমডেল কোচিং সেন্টার-এর পক্ষ থেকে ${student.name} ( আইডি: ${student.id} )-এর ${student.month} ${student.year} মাসের পেমেন্ট স্লিপ আপডেট করা হয়েছে। স্ট্যাটাস: ${student.amount}। ধন্যবাদ!`;
-            
-            const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
-        }
+            const message = `প্রিয় অভিভাবক,\nমডেল কোচিং সেন্টার-এর পক্ষ থেকে ${student.name} ( আইডি: ${student.id} )-এর ${student.month} মাসের পেমেন্ট স্লিপ আপডেট করা হয়েছে।\nস্ট্যাটাস/টাকা: ${student.amount}\nতারিখ: ${student.date}\nধন্যবাদ!`;
+
+            const waBtn = document.getElementById('whatsappBtn');
+            waBtn.href = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+            waBtn.classList.remove('opacity-50', 'pointer-events-none');
+        });
     </script>
 </body>
 </html>
