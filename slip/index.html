@@ -4,36 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>পেমেন্ট স্লিপ পোর্টাল - মডেল কোচিং সেন্টার</title>
-    <!-- Tailwind CSS for modern design -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SheetJS for reading Excel files -->
+    <!-- SheetJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         @media print {
-            body * {
-                visibility: hidden;
-            }
-            #printable-area, #printable-area * {
-                visibility: visible;
-            }
+            body * { visibility: hidden; }
+            #printable-area, #printable-area * { visibility: visible; }
             #printable-area {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                border: none !important;
-                box-shadow: none !important;
+                position: absolute; left: 0; top: 0; width: 100%;
+                border: none !important; box-shadow: none !important;
             }
-            .no-print {
-                display: none !important;
-            }
+            .no-print { display: none !important; }
         }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen py-6 px-4">
 
     <div class="max-w-3xl mx-auto">
-        <!-- Control Panel (Hidden when printing) -->
+        <!-- Control Panel -->
         <div class="bg-white rounded-xl shadow-md p-6 mb-6 no-print border border-gray-100">
             <div class="flex justify-between items-center mb-2">
                 <div>
@@ -129,7 +119,6 @@
     </div>
 
     <script>
-        // Connected directly to your Google Apps Script Web App
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyP_UvxzLQ6JfKDIkda7ON9aRsHDXXOV2gYx1rf6HJyMAmHCEXG64p9rW4xZOZodQJ7/exec';
 
         let monthlyStudentsData = {};
@@ -140,7 +129,7 @@
                 let response = await fetch('https://satu.pro.bd/slip/slip.xlsx');
                 if (!response.ok) response = await fetch('https://satu.pro.bd/slip/SLIP.xlsx');
                 if (!response.ok) response = await fetch('slip.xlsx');
-                if (!response.ok) throw new Error('Excel File not found');
+                if (!response.ok) throw new Error('File not found');
 
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, {type: 'array'});
@@ -170,7 +159,6 @@
                     monthlyStudentsData['সেপ্টেম্বর'] = masterDatabase;
                 }
 
-                // Map individual monthly sheets
                 workbook.SheetNames.forEach(sheetName => {
                     if (sheetName !== 'Database') {
                         const sheet = workbook.Sheets[sheetName];
@@ -194,7 +182,7 @@
                 statusEl.style.display = 'none';
             } catch (error) {
                 console.error(error);
-                statusEl.innerHTML = '⚠️ "slip.xlsx" ফাইলটি সার্ভারে পাওয়া যায়নি। দয়া করে ফাইল আপলোড নিশ্চিত করুন।';
+                statusEl.innerHTML = '⚠️ "slip.xlsx" ফাইলটি সার্ভারে পাওয়া যায়নি।';
                 statusEl.className = 'text-sm text-red-600 font-medium mb-3';
             }
         });
@@ -292,8 +280,16 @@
             btn.disabled = true;
             btn.innerText = '⏳ সেভ হচ্ছে...';
 
+            const monthName = window.currentSelectedMonth;
             const payload = {
+                month: monthName,
+                searchNo: window.activeStudent.searchNo,
                 id: window.activeStudent.id,
+                name: window.activeStudent.name,
+                father: window.activeStudent.father,
+                mother: window.activeStudent.mother,
+                whatsapp: window.activeStudent.whatsapp,
+                studentClass: window.activeStudent.studentClass,
                 amount: document.getElementById('inputAmount').value,
                 date: document.getElementById('inputDate').value,
                 receiver: window.activeStudent.receiver
@@ -307,16 +303,16 @@
                     body: JSON.stringify(payload)
                 });
 
-                // Instantly reflect in UI
+                // Update UI instantly
                 document.getElementById('lblAmount').innerText = payload.amount;
                 document.getElementById('lblDate').innerText = payload.date;
                 window.activeStudent.amount = payload.amount;
                 window.activeStudent.date = payload.date;
 
-                alert('✅ Google Sheet-এ পেমেন্ট তথ্য সফলভাবে অটো-সেভ হয়েছে!');
+                alert(`✅ Google Sheet-er "${monthName}" sheet-e student info soho payment status auto-save hoyeche!`);
             } catch (err) {
                 console.error(err);
-                alert('⚠️ সেভ করতে সমস্যা হয়েছে। ব্রাউজার কনসোল চেক করুন।');
+                alert('⚠️ Save korte somossya hoyeche.');
             } finally {
                 btn.disabled = false;
                 btn.innerText = '💾 Google Sheet-এ সেভ করুন';
