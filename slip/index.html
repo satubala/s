@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>পেমেন্ট স্লিপ পোর্টাল - মডেল কোচিং সেন্টার</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS for reading Excel files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-area, #printable-area * {
+                visibility: visible;
+            }
+            #printable-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen py-6 px-4">
+
+    <div class="max-w-2xl mx-auto">
+        <!-- Control Panel (Hidden during print) -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-6 no-print border border-gray-100">
+            <h1 class="text-xl font-bold text-gray-800 mb-1">মডেল কোচিং সেন্টার</h1>
+            <p class="text-xs text-gray-500 mb-4">পেমেন্ট স্লিপ ও হোয়াটসঅ্যাপ অটোমেশন পোর্টাল</p>
+            
+            <div id="loadingStatus" class="text-sm text-blue-600 font-medium mb-3">🔄 সার্ভার থেকে এক্সেল ফাইল লোড হচ্ছে...</div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">মাসের নাম নির্বাচন:</label>
+                    <select id="monthSelect" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none" disabled>
+                        <option value="">প্রথমে ফাইল লোড করুন</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">শিক্ষার্থী / কাস্টমার:</label>
+                    <select id="studentSelect" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none" disabled>
+                        <option value="">মাসের নাম নির্বাচন করুন</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-3 pt-2 border-t border-gray-100">
+                <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm py-2.5 px-4 rounded-lg transition flex items-center gap-2 shadow-sm">
+                    🖨️ প্রিন্ট / পিডিএফ সংরক্ষণ
+                </button>
+                <button id="whatsappBtn" onclick="sendWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm py-2.5 px-4 rounded-lg transition flex items-center gap-2 shadow-sm opacity-50 cursor-not-allowed" disabled>
+                    💬 হোয়াটসঅ্যাপে পাঠান
+                </button>
+            </div>
+        </div>
+
+        <!-- Printable Payment Slip Area -->
+        <div id="printable-area" class="bg-white rounded-xl shadow-lg p-8 border border-gray-200 text-gray-800 max-w-xl mx-auto">
+            <div class="text-center border-b pb-4 mb-6">
+                <h2 class="text-2xl font-extrabold text-gray-900 tracking-wide">মডেল কোচিং সেন্টার</h2>
+                <p class="text-xs text-gray-600 mt-1">পাওয়ার হাউস রোড, গোপালগঞ্জ। মোবাইল নম্বর: 01716-463116</p>
+                <div class="mt-3 inline-block bg-blue-50 text-blue-800 text-xs font-bold px-3 py-1 rounded-full border border-blue-100">পেমেন্ট স্লিপ</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-y-3 text-sm mb-6">
+                <div><span class="text-gray-500 text-xs block">পেমেন্ট এর তারিখ:</span> <span id="lblDate" class="font-medium text-gray-950">--</span></div>
+                <div><span class="text-gray-500 text-xs block">শিক্ষার্থী পরিচিতি নং:</span> <span id="lblId" class="font-medium text-gray-950">--</span></div>
+                <div class="col-span-2"><span class="text-gray-500 text-xs block">শিক্ষার্থীর নাম:</span> <span id="lblName" class="font-semibold text-base text-gray-950">--</span></div>
+                <div><span class="text-gray-500 text-xs block">পিতার নাম:</span> <span id="lblFather" class="font-medium text-gray-950">--</span></div>
+                <div><span class="text-gray-500 text-xs block">মাতার নাম:</span> <span id="lblMother" class="font-medium text-gray-950">--</span></div>
+                <div><span class="text-gray-500 text-xs block">শ্রেণি:</span> <span id="lblClass" class="font-medium text-gray-950">--</span></div>
+                <div><span class="text-gray-500 text-xs block">মাসের নাম / সাল:</span> <span id="lblMonthYear" class="font-medium text-gray-950">--</span></div>
+                <div><span class="text-gray-500 text-xs block">স্ট্যাটাস / টাকা:</span> <span id="lblAmount" class="font-bold text-blue-600 text-base">--</span></div>
+                <div><span class="text-gray-500 text-xs block">গ্রহণকারীর নাম:</span> <span id="lblReceiver" class="font-medium text-gray-950">--</span></div>
+            </div>
+
+            <div class="flex justify-between items-end pt-10 border-t border-dashed border-gray-300 mt-8 text-xs">
+                <div>
+                    <p class="font-semibold text-gray-800 border-b border-gray-400 pb-1 mb-1 min-w-[120px] text-center" id="lblSignName">--</p>
+                    <p class="text-gray-500 text-center">শিক্ষার্থীর স্বাক্ষর</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-semibold text-gray-800 border-b border-gray-400 pb-1 mb-1 min-w-[120px] text-center">বিলাস চন্দ্র বাড়ৈ</p>
+                    <p class="text-gray-500 text-center">গ্রহণকারীর স্বাক্ষর</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let workbookData = {};
+
+        // Automatically fetch SLIP.xlsx from the same directory on server startup
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('SLIP.xlsx');
+                if (!response.ok) throw new Error('Excel file not found on server.');
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, {type: 'array'});
+                
+                // Process sheets (October, November, December, etc.)
+                workbook.SheetNames.forEach(sheetName => {
+                    if (sheetName !== 'Database') {
+                        const sheet = workbook.Sheets[sheetName];
+                        const json = XLSX.utils.sheet_to_json(sheet, {header: 1});
+                        workbookData[sheetName] = json;
+                    }
+                });
+
+                const monthSelect = document.getElementById('monthSelect');
+                monthSelect.innerHTML = '<option value="">-- মাস নির্বাচন করুন --</option>';
+                Object.keys(workbookData).forEach(m => {
+                    monthSelect.innerHTML += `<option value="${m}">${m}</option>`;
+                });
+                monthSelect.disabled = false;
+                
+                document.getElementById('loadingStatus.').innerText = '';
+                document.getElementById('loadingStatus').style.display = 'none';
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loadingStatus').innerHTML = '⚠️ SLIP.xlsx ফাইলটি পাওয়া যায়নি বা লোড করা যায়নি। দয়া করে নিশ্চিত করুন ফাইলটি একই ফোল্ডারে আছে।';
+                document.getElementById('loadingStatus').className = 'text-sm text-red-600 font-medium mb-3';
+            }
+        });
+
+        document.getElementById('monthSelect').addEventListener('change', function() {
+            const selectedMonth = this.value;
+            const studentSelect = document.getElementById('studentSelect');
+            
+            if (!selectedMonth) {
+                studentSelect.innerHTML = '<option value="">প্রথমে মাসের নাম নির্বাচন করুন</option>';
+                studentSelect.disabled = true;
+                return;
+            }
+
+            const data = workbookData[selectedMonth];
+            studentSelect.innerHTML = '<option value="">-- শিক্ষার্থী নির্বাচন করুন --</option>';
+            
+            // Assuming student records are structured or we can map rows
+            // Let's extract student details from the sheet layout
+            // Based on your template structure:
+            let studentList = [];
+            // If it follows single-view layout per sheet or multi-row:
+            // Let's map standard row indices from your template
+            let student = {
+                date: data[4]?.[3] || '15/09/2026',
+                id: data[5]?.[3] || 'MCC0001',
+                name: data[6]?.[3] || 'ছাত্র/ছাত্রী',
+                father: data[7]?.[3] || '',
+                mother: data[8]?.[3] || '',
+                whatsapp: String(data[9]?.[3] || ''),
+                studentClass: data[10]?.[3] || 'পঞ্চম',
+                month: data[11]?.[3] || selectedMonth,
+                year: data[11]?.[7] || '2026',
+                amount: data[12]?.[3] || 'Paid',
+                receiver: data[13]?.[3] || 'বিলাস চন্দ্র বাড়ৈ'
+            };
+
+            // Store in dataset for dropdown selection
+            window.currentStudentsMap = [student];
+            studentSelect.innerHTML += `<option value="0">${student.name} (${student.id})</option>`;
+            studentSelect.disabled = false;
+        });
+
+        document.getElementById('studentSelect').addEventListener('change', function() {
+            const idx = this.value;
+            if (idx === "") return;
+            const student = window.currentStudentsMap[idx];
+            
+            document.getElementById('lblDate').innerText = student.date;
+            document.getElementById('lblId').innerText = student.id;
+            document.getElementById('lblName').innerText = student.name;
+            document.getElementById('lblFather').innerText = student.father;
+            document.getElementById('lblMother').innerText = student.mother;
+            document.getElementById('lblClass').innerText = student.studentClass;
+            document.getElementById('lblMonthYear').innerText = `${student.month} ${student.year}`;
+            document.getElementById('lblAmount').innerText = student.amount;
+            document.getElementById('lblReceiver').innerText = student.receiver;
+            document.getElementById('lblSignName').innerText = student.name;
+
+            window.activeStudent = student;
+
+            const waBtn = document.getElementById('whatsappBtn');
+            waBtn.disabled = false;
+            waBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        });
+
+        function sendWhatsApp() {
+            if (!window.activeStudent) return;
+            let student = window.activeStudent;
+            
+            let phone = student.whatsapp.replace(/\D/g, '');
+            if (phone.length === 11 && phone.startsWith('0')) {
+                phone = '88' + phone;
+            }
+
+            const message = `প্রিয় অভিভাবক,\nমডেল কোচিং সেন্টার-এর পক্ষ থেকে ${student.name} ( আইডি: ${student.id} )-এর ${student.month} ${student.year} মাসের পেমেন্ট স্লিপ আপডেট করা হয়েছে। স্ট্যাটাস: ${student.amount}। ধন্যবাদ!`;
+            
+            const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+    </script>
+</body>
+</html>
