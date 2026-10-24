@@ -104,7 +104,7 @@
         // Automatically fetch slip.xlsx from the same directory on server startup
         window.addEventListener('DOMContentLoaded', async () => {
             try {
-                const response = await fetch('slip.xlsx');
+                const response = await fetch('slip/slip.xlsx');
                 if (!response.ok) throw new Error('Excel file not found on server.');
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, {type: 'array'});
