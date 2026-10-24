@@ -101,15 +101,21 @@
     <script>
         let workbookData = {};
 
-        // Automatically fetch slip.xlsx from the same directory on server startup
         window.addEventListener('DOMContentLoaded', async () => {
+            const statusEl = document.getElementById('loadingStatus');
             try {
-                const response = await fetch('slip/slip.xlsx');
-                if (!response.ok) throw new Error('Excel file not found on server.');
+                // Try fetching with absolute path, fallback between lowercase and uppercase extension/filename if needed
+                let response = await fetch('https://satu.pro.bd/slip/slip.xlsx');
+                if (!response.ok) {
+                    response = await fetch('https://satu.pro.bd/slip/SLIP.xlsx');
+                }
+                if (!response.ok) {
+                    throw new Error('File not found (404)');
+                }
+
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, {type: 'array'});
                 
-                // Process sheets (October, November, December, etc.)
                 workbook.SheetNames.forEach(sheetName => {
                     if (sheetName !== 'Database') {
                         const sheet = workbook.Sheets[sheetName];
@@ -125,12 +131,11 @@
                 });
                 monthSelect.disabled = false;
                 
-                document.getElementById('loadingStatus.').innerText = '';
-                document.getElementById('loadingStatus').style.display = 'none';
+                statusEl.style.display = 'none';
             } catch (error) {
                 console.error(error);
-                document.getElementById('loadingStatus').innerHTML = '⚠️ slip.xlsx ফাইলটি পাওয়া যায়নি বা লোড করা যায়নি। দয়া করে নিশ্চিত করুন ফাইলটি একই ফোল্ডারে আছে।';
-                document.getElementById('loadingStatus').className = 'text-sm text-red-600 font-medium mb-3';
+                statusEl.innerHTML = '⚠️ "slip.xlsx" ফাইলটি সার্ভারে পাওয়া যায়নি। দয়া করে নিশ্চিত করুন ফাইলটি আপলোড করা হয়েছে এবং নাম সঠিক আছে।';
+                statusEl.className = 'text-sm text-red-600 font-medium mb-3';
             }
         });
 
@@ -147,12 +152,6 @@
             const data = workbookData[selectedMonth];
             studentSelect.innerHTML = '<option value="">-- শিক্ষার্থী নির্বাচন করুন --</option>';
             
-            // Assuming student records are structured or we can map rows
-            // Let's extract student details from the sheet layout
-            // Based on your template structure:
-            let studentList = [];
-            // If it follows single-view layout per sheet or multi-row:
-            // Let's map standard row indices from your template
             let student = {
                 date: data[4]?.[3] || '15/09/2026',
                 id: data[5]?.[3] || 'MCC0001',
@@ -167,7 +166,6 @@
                 receiver: data[13]?.[3] || 'বিলাস চন্দ্র বাড়ৈ'
             };
 
-            // Store in dataset for dropdown selection
             window.currentStudentsMap = [student];
             studentSelect.innerHTML += `<option value="0">${student.name} (${student.id})</option>`;
             studentSelect.disabled = false;
