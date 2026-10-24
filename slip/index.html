@@ -101,10 +101,10 @@
     <script>
         let workbookData = {};
 
-        // Automatically fetch SLIP.xlsx from the same directory on server startup
+        // Automatically fetch slip.xlsx from the same directory on server startup
         window.addEventListener('DOMContentLoaded', async () => {
             try {
-                const response = await fetch('SLIP.xlsx');
+                const response = await fetch('slip.xlsx');
                 if (!response.ok) throw new Error('Excel file not found on server.');
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, {type: 'array'});
@@ -129,7 +129,7 @@
                 document.getElementById('loadingStatus').style.display = 'none';
             } catch (error) {
                 console.error(error);
-                document.getElementById('loadingStatus').innerHTML = '⚠️ SLIP.xlsx ফাইলটি পাওয়া যায়নি বা লোড করা যায়নি। দয়া করে নিশ্চিত করুন ফাইলটি একই ফোল্ডারে আছে।';
+                document.getElementById('loadingStatus').innerHTML = '⚠️ slip.xlsx ফাইলটি পাওয়া যায়নি বা লোড করা যায়নি। দয়া করে নিশ্চিত করুন ফাইলটি একই ফোল্ডারে আছে।';
                 document.getElementById('loadingStatus').className = 'text-sm text-red-600 font-medium mb-3';
             }
         });
