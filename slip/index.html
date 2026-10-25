@@ -1,23 +1,21 @@
 <!DOCTYPE html>
-<html lang="bn" class="dark">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model Coaching Center - Record Sheet Payment Portal</title>
+    <title>মডেল কোচিং সেন্টার - পেমেন্ট পোর্টাল</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        cyber: {
-                            bg: '#030712',
-                            card: '#0b0f19',
-                            border: '#1f293d',
-                            accent: '#6366f1',
-                            glow: '#818cf8'
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            600: '#4f46e5',
+                            700: '#4338ca',
                         }
                     }
                 }
@@ -35,31 +33,30 @@
             }
             .no-print { display: none !important; }
         }
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        .clean-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
-<body class="bg-cyber-bg text-slate-100 min-h-screen py-8 px-4 font-sans selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-50 text-slate-800 min-h-screen py-8 px-4 font-sans selection:bg-indigo-600 selection:text-white">
 
     <div class="max-w-3xl mx-auto">
         <!-- Control Panel -->
-        <div class="glass-panel rounded-3xl p-6 md:p-8 mb-8 no-print relative overflow-hidden">
+        <div class="clean-card rounded-3xl p-6 md:p-8 mb-8 no-print relative overflow-hidden">
             <div class="flex justify-between items-center mb-6 relative z-10">
                 <div>
-                    <h1 class="text-3xl font-black tracking-tight bg-gradient-to-r from-indigo-400 via-sky-400 to-emerald-400 bg-clip-text text-transparent">মডেল কোচিং সেন্টার</h1>
-                    <p class="text-xs text-slate-400 mt-1 font-medium tracking-wide">Record Sheet Master Payment Portal</p>
+                    <h1 class="text-3xl font-black tracking-tight text-slate-900">মডেল কোচিং সেন্টার</h1>
+                    <p class="text-xs text-slate-500 mt-1 font-semibold tracking-wide">Record Sheet Master Payment Portal</p>
                 </div>
-                <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-bold px-3.5 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Record Sheet Mode
+                <span class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold px-3.5 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Light Mode
                 </span>
             </div>
             
-            <div id="loadingStatus" class="text-xs text-sky-400 font-semibold mb-5 flex items-center gap-2.5 bg-sky-950/40 border border-sky-800/50 p-3 rounded-xl">
-                <svg class="animate-spin h-4 w-4 text-sky-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <div id="loadingStatus" class="text-xs text-indigo-700 font-semibold mb-5 flex items-center gap-2.5 bg-indigo-50 border border-indigo-100 p-3.5 rounded-xl">
+                <svg class="animate-spin h-4 w-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -68,51 +65,51 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5 relative z-10">
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">মাসের নাম নির্বাচন:</label>
-                    <select id="monthSelect" class="w-full bg-slate-900/80 border border-slate-700/80 text-slate-200 rounded-2xl p-3.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition shadow-inner" disabled>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">মাসের নাম নির্বাচন:</label>
+                    <select id="monthSelect" class="w-full bg-white border border-slate-300 text-slate-800 rounded-2xl p-3.5 text-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 focus:outline-none transition shadow-sm" disabled>
                         <option value="">ডাটাবেজ লোড হচ্ছে...</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">শিক্ষার্থী খুঁজুন (Google Database):</label>
-                    <input type="text" id="searchInput" placeholder="নাম বা আইডি দিয়ে ফিল্টার করুন..." class="w-full bg-slate-900/80 border border-slate-700/80 text-slate-200 rounded-xl px-3.5 py-2 text-xs mb-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" disabled>
-                    <select id="studentSelect" class="w-full bg-slate-900/80 border border-slate-700/80 text-slate-200 rounded-2xl p-3.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition shadow-inner" disabled>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">শিক্ষার্থী খুঁজুন (Google Database):</label>
+                    <input type="text" id="searchInput" placeholder="নাম বা আইডি দিয়ে ফিল্টার করুন..." class="w-full bg-white border border-slate-300 text-slate-800 rounded-xl px-3.5 py-2 text-xs mb-2 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 focus:outline-none transition shadow-sm" disabled>
+                    <select id="studentSelect" class="w-full bg-white border border-slate-300 text-slate-800 rounded-2xl p-3.5 text-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 focus:outline-none transition shadow-sm" disabled>
                         <option value="">মাসের নাম নির্বাচন করুন</option>
                     </select>
                 </div>
             </div>
 
             <!-- Auto Payment Status Controls -->
-            <div id="paymentEditArea" class="hidden grid grid-cols-1 sm:grid-cols-3 gap-4 p-5 bg-indigo-950/20 rounded-2xl mb-6 border border-indigo-500/20 relative z-10">
+            <div id="paymentEditArea" class="hidden grid grid-cols-1 sm:grid-cols-3 gap-4 p-5 bg-indigo-50/50 rounded-2xl mb-6 border border-indigo-100 relative z-10">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">পেমেন্ট স্ট্যাটাস:</label>
-                    <input type="text" id="inputAmount" value="Paid" readonly class="w-full bg-slate-900 border border-emerald-500/30 text-emerald-400 rounded-xl p-3 text-xs font-bold shadow-inner">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">পেমেন্ট স্ট্যাটাস:</label>
+                    <input type="text" id="inputAmount" value="Paid" readonly class="w-full bg-white border border-emerald-300 text-emerald-600 rounded-xl p-3 text-xs font-bold shadow-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">তারিখ ও সময় (Auto):</label>
-                    <input type="text" id="inputDate" readonly class="w-full bg-slate-900 border border-slate-700 text-slate-400 rounded-xl p-3 text-xs shadow-inner">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">তারিখ ও সময় (Auto):</label>
+                    <input type="text" id="inputDate" readonly class="w-full bg-white border border-slate-300 text-slate-600 rounded-xl p-3 text-xs shadow-sm">
                 </div>
                 <div class="flex items-end">
-                    <button onclick="saveToGoogleSheet()" id="saveBtn" class="w-full bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white font-bold text-xs py-3.5 px-4 rounded-xl transition shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 border border-indigo-400/30">
+                    <button onclick="saveToGoogleSheet()" id="saveBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-3.5 px-4 rounded-xl transition shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2">
                         💾 Record শিটে সেভ করুন
                     </button>
                 </div>
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex flex-wrap gap-4 pt-4 border-t border-slate-800/80 relative z-10">
-                <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm py-3 px-5 rounded-2xl transition flex items-center gap-2.5 shadow-md">
+            <div class="flex flex-wrap gap-4 pt-4 border-t border-slate-200 relative z-10">
+                <button onclick="window.print()" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-semibold text-sm py-3 px-5 rounded-2xl transition flex items-center gap-2.5 shadow-sm">
                     🖨️ প্রিন্ট / পিডিএফ জেনারেট
                 </button>
-                <a id="whatsappBtn" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm py-3 px-5 rounded-2xl transition flex items-center gap-2.5 shadow-lg shadow-emerald-600/25 opacity-50 pointer-events-none border border-emerald-400/30">
+                <a id="whatsappBtn" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm py-3 px-5 rounded-2xl transition flex items-center gap-2.5 shadow-md shadow-emerald-600/20 opacity-50 pointer-events-none">
                     💬 হোয়াটসঅ্যাপে বাংলায় পাঠান
                 </a>
             </div>
         </div>
 
         <!-- Premium Printable Payment Slip Area -->
-        <div id="printable-area" class="bg-white text-slate-900 rounded-3xl shadow-2xl p-8 border border-slate-200 max-w-xl mx-auto relative overflow-hidden">
-            <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-indigo-600 via-sky-500 to-emerald-400"></div>
+        <div id="printable-area" class="bg-white text-slate-900 rounded-3xl shadow-xl p-8 border border-slate-200 max-w-xl mx-auto relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-2 bg-indigo-600"></div>
 
             <div class="text-center border-b border-slate-200 pb-6 mb-6">
                 <h2 class="text-2xl font-black tracking-tight text-slate-900">মডেল কোচিং সেন্টার</h2>
@@ -120,33 +117,48 @@
                 <div class="mt-3.5 inline-block bg-indigo-600 text-white text-xs font-black px-4 py-1.5 rounded-full shadow-sm tracking-wider uppercase">পেমেন্ট স্লিপ</div>
             </div>
 
-            <div class="grid grid-cols-2 gap-y-4 text-sm mb-6 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-inner">
-                <div><span class="text-slate-400 text-xs block font-bold uppercase tracking-wider">তারিখ ও সময়:</span> <span id="lblDate" class="font-bold text-slate-900">--</span></div>
-                <div><span class="text-slate-400 text-xs block font-bold uppercase tracking-wider">আইডি নম্বর:</span> <span id="lblId" class="font-bold text-indigo-600">--</span></div>
-                <div class="col-span-2"><span class="text-slate-400 text-xs block font-bold uppercase tracking-wider">শিক্ষার্থীর নাম:</span> <span id="lblName" class="font-black text-lg text-slate-900">--</span></div>
-                <div><span class="text-slate-400 text-xs block font-bold uppercase tracking-wider">পিতার নাম:</span> <span id="lblFather" class="font-semibold text-slate-700">--</span></div>
-                <div><span class="text-slate-400 text-xs block font-bold uppercase tracking-wider">মাতার নাম:</span> <span id="lblMother" class="font-semibold text-slate-700">--</span></div>
-                <div><span class="text-slate-400 text-xs block font-bold uppercase tracking-wider">শ্রেণি:</span> <span id="lblClass" class="font-semibold text-slate-700">--</span></div>
-                <div><span class="text-slate-400 text-xs block font-bold uppercase tracking-wider">মাসের নাম:</span> <span id="lblMonth" class="font-bold text-indigo-600">--</span></div>
-                <div><span class="text-slate-400 text-xs block font-bold uppercase tracking-wider">স্ট্যাটাস:</span> <span id="lblAmount" class="inline-block bg-emerald-100 text-emerald-800 text-xs font-black px-3 py-0.5 rounded-full border border-emerald-200 mt-0.5">--</span></div>
-                <div class="col-span-2 border-t border-slate-200 pt-3"><span class="text-slate-400 text-xs block font-bold uppercase tracking-wider">গ্রহণকারী:</span> <span id="lblReceiver" class="font-bold text-slate-800">--</span></div>
+            <div class="grid grid-cols-2 gap-y-4 text-sm mb-6 bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div><span class="text-slate-500 text-xs block font-bold uppercase tracking-wider">তারিখ ও সময়:</span> <span id="lblDate" class="font-bold text-slate-900">--</span></div>
+                <div><span class="text-slate-500 text-xs block font-bold uppercase tracking-wider">আইডি নম্বর:</span> <span id="lblId" class="font-bold text-indigo-600">--</span></div>
+                <div class="col-span-2"><span class="text-slate-500 text-xs block font-bold uppercase tracking-wider">শিক্ষার্থীর নাম:</span> <span id="lblName" class="font-black text-lg text-slate-900">--</span></div>
+                <div><span class="text-slate-500 text-xs block font-bold uppercase tracking-wider">পিতার নাম:</span> <span id="lblFather" class="font-semibold text-slate-700">--</span></div>
+                <div><span class="text-slate-500 text-xs block font-bold uppercase tracking-wider">মাতার নাম:</span> <span id="lblMother" class="font-semibold text-slate-700">--</span></div>
+                <div><span class="text-slate-500 text-xs block font-bold uppercase tracking-wider">শ্রেণি:</span> <span id="lblClass" class="font-semibold text-slate-700">--</span></div>
+                <div><span class="text-slate-500 text-xs block font-bold uppercase tracking-wider">মাসের নাম:</span> <span id="lblMonth" class="font-bold text-indigo-600">--</span></div>
+                <div><span class="text-slate-500 text-xs block font-bold uppercase tracking-wider">স্ট্যাটাস:</span> <span id="lblAmount" class="inline-block bg-emerald-100 text-emerald-800 text-xs font-black px-3 py-0.5 rounded-full border border-emerald-200 mt-0.5">--</span></div>
+                <div class="col-span-2 border-t border-slate-200 pt-3"><span class="text-slate-500 text-xs block font-bold uppercase tracking-wider">গ্রহণকারী:</span> <span id="lblReceiver" class="font-bold text-slate-800">--</span></div>
             </div>
 
             <div class="flex justify-end pt-8 border-t border-dashed border-slate-300 mt-6 text-xs">
                 <div class="text-right">
-                    <p class="font-bold text-slate-800 border-b border-slate-400 pb-1 mb-1 min-w-[140px] text-center" id="lblReceiverSign">বিলাস চন্দ্র বাড়ৈ</p>
-                    <p class="text-slate-400 text-center font-semibold uppercase tracking-wider">গ্রহণকারীর স্বাক্ষর</p>
+                    <p class="font-bold text-slate-800 border-b border-slate-400 pb-1 mb-1 min-w-[140px] text-center" id="lblReceiverSign">বিলাস চন্দ্র বাড়ৈ</p>
+                    <p class="text-slate-500 text-center font-semibold uppercase tracking-wider">গ্রহণকারীর স্বাক্ষর</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzHoXLvsklayDtqRKckXmozHhr84I4GQQu7-7zREI-M7NB4fTDUNIiqGnfkHAbNgbzhzA/exec';
-        const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1QA6Hi82YKwelSJ2Sy4IQemy3yvOXXOef-ugN0iyGf3g/export?format=csv&gid=0';
+        // আপনার নতুন প্রদান করা ওয়েব অ্যাপ ইউআরএল
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxHzQE-4QcjgGhBEUGu9J0O9WXhCxvSJNNE3B2eOAj46K0YRePBGPKDspoMCTZ706bhtg/exec';
+        // ডাটাবেজ শিটের সঠিক সিএসভি লিংক
+        const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1eZ1XwNdz2PGyI-tCjZAs_KYQBn4e86JFE-4biY21_-A/export?format=csv&gid=1532506524';
 
         let masterDatabaseStudents = [];
-        let availableMonths = ['October', 'November', 'December', 'September', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'];
+        
+        // October 2024 থেকে December 2027 পর্যন্ত মাসের তালিকা
+        const availableMonths = [
+            "October 2024", "November 2024", "December 2024",
+            "January 2025", "February 2025", "March 2025", "April 2025", 
+            "May 2025", "June 2025", "July 2025", "August 2025", 
+            "September 2025", "October 2025", "November 2025", "December 2025",
+            "January 2026", "February 2026", "March 2026", "April 2026", 
+            "May 2026", "June 2026", "July 2026", "August 2026", 
+            "September 2026", "October 2026", "November 2026", "December 2026",
+            "January 2027", "February 2027", "March 2027", "April 2027", 
+            "May 2027", "June 2027", "July 2027", "August 2027", 
+            "September 2027", "October 2027", "November 2027", "December 2027"
+        ];
 
         function getNowFormatted() {
             const now = new Date();
@@ -195,13 +207,13 @@
                     if (row && row[0]) {
                         masterDatabaseStudents.push({
                             searchNo: row[0] || '',
-                            id: row[0] || '',
-                            name: row[1] || '',
-                            father: row[2] || '',
-                            mother: row[3] || '',
-                            whatsapp: String(row[4] || '').trim(),
-                            studentClass: row[5] || '',
-                            receiver: 'বিলাস চন্দ্র বাড়ৈ'
+                            id: row[1] || '',
+                            name: row[2] || '',
+                            father: row[3] || '',
+                            mother: row[4] || '',
+                            whatsapp: String(row[5] || '').trim(),
+                            studentClass: row[6] || '',
+                            receiver: 'বিলাস চন্দ্র বাড়ৈ'
                         });
                     }
                 }
@@ -215,8 +227,8 @@
                 statusEl.style.display = 'none';
             } catch (error) {
                 console.error(error);
-                statusEl.innerHTML = '⚠️ গুগল শিট থেকে ডাটাবেজ লোড করা যায়নি।';
-                statusEl.className = 'text-xs text-rose-400 font-semibold mb-5 bg-rose-950/40 border border-rose-800/50 p-3 rounded-xl flex items-center gap-2';
+                statusEl.innerHTML = '⚠️ গুগল শিট থেকে ডাটাবেজ লোড করা যায়নি।';
+                statusEl.className = 'text-xs text-rose-600 font-semibold mb-5 bg-rose-50 border border-rose-200 p-3.5 rounded-xl flex items-center gap-2';
             }
         });
 
@@ -253,7 +265,7 @@
         function renderStudentDropdown(list, monthName) {
             const studentSelect = document.getElementById('studentSelect');
             if (list.length === 0) {
-                studentSelect.innerHTML = '<option value="">কোনো শিক্ষার্থী পাওয়া যায়নি</option>';
+                studentSelect.innerHTML = '<option value="">কোনো শিক্ষার্থী পাওয়া যায়নি</option>';
                 studentSelect.disabled = true;
                 return;
             }
@@ -282,8 +294,8 @@
             document.getElementById('lblClass').innerText = student.studentClass || '--';
             document.getElementById('lblMonth').innerText = monthName || '--';
             document.getElementById('lblAmount').innerText = 'Paid';
-            document.getElementById('lblReceiver').innerText = student.receiver || 'বিলাস চন্দ্র বাড়ৈ';
-            document.getElementById('lblReceiverSign').innerText = student.receiver || 'বিলাস চন্দ্র বাড়ৈ';
+            document.getElementById('lblReceiver').innerText = student.receiver || 'বিলাস চন্দ্র বাড়ৈ';
+            document.getElementById('lblReceiverSign').innerText = student.receiver || 'বিলাস চন্দ্র বাড়ৈ';
 
             document.getElementById('inputAmount').value = 'Paid';
             document.getElementById('inputDate').value = currentDateTime;
@@ -296,7 +308,7 @@
                 phone = '880' + phone;
             }
 
-            const message = `প্রিয় অভিভাবক, ${student.name} (আইডি: ${student.id})-এর ${monthName} মাসের পেমেন্ট কমপ্লিট হয়েছে। তারিখ: ${currentDateTime}। মডেল কোচিং সেন্টার`;
+            const message = `প্রিয় অভিভাবক, ${student.name} (আইডি: ${student.id})-এর ${monthName} মাসের পেমেন্ট কমপ্লিট হয়েছে। তারিখ: ${currentDateTime}। মডেল কোচিং সেন্টার`;
 
             const waBtn = document.getElementById('whatsappBtn');
             waBtn.href = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
@@ -329,15 +341,14 @@
             try {
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
 
-                alert(`✅ সফলভাবে "Record" শিটে ${window.activeStudent.name}-এর ${monthName} মাসের পেমেন্ট (Paid) সেভ হয়েছে!`);
+                alert(`✅ সফলভাবে "Record" শিটে ${window.activeStudent.name}-এর ${monthName} মাসের পেমেন্ট (Paid) সেভ হয়েছে!`);
             } catch (err) {
                 console.error(err);
-                alert('⚠️ সেভ করতে সমস্যা হয়েছে।');
+                alert('⚠️ সেভ করতে সমস্যা হয়েছে।');
             } finally {
                 btn.disabled = false;
                 btn.innerText = '💾 Record শিটে সেভ করুন';
