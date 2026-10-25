@@ -4,14 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>মডেল কোচিং সেন্টার - পেমেন্ট পোর্টাল</title>
+    
     <!-- Google Font: Kalpurush (Fallback to SolaimanLipi / Arial / sans-serif) -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['"Kalpurush"', '"Hind Siliguri"', 'Arial', 'sans-serif'],
+                    },
                     colors: {
                         primary: {
                             50: '#eef2ff',
@@ -25,6 +30,20 @@
         }
     </script>
     <style>
+        /* Kalpurush Font Face Integration */
+        @font-face {
+            font-family: 'Kalpurush';
+            src: url('https://cdn.jsdelivr.net/npm/eb-garamond@0.1.0/fonts/Kalpurush.ttf') format('truetype'),
+                 url('https://fonts.cdnfonts.com/s/14174/Kalpurush.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        body {
+            font-family: 'Kalpurush', 'Hind Siliguri', Arial, sans-serif !important;
+        }
+
         /* A5 Print Settings */
         @page {
             size: A5 portrait;
@@ -74,10 +93,10 @@
             <div class="flex justify-between items-center mb-6 relative z-10">
                 <div>
                     <h1 class="text-3xl font-black tracking-tight text-slate-900">মডেল কোচিং সেন্টার</h1>
-                    <p class="text-xs text-slate-500 mt-1 font-semibold tracking-wide">Record Sheet Payment Portal</p>
+                    <p class="text-xs text-slate-500 mt-1 font-semibold tracking-wide">Record Sheet Master Payment Portal</p>
                 </div>
                 <span class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold px-3.5 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Active
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Light Mode
                 </span>
             </div>
             
@@ -165,7 +184,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxVXSQDjst9xmt4SVPbzrhrsqASn11MZ6Q5CQl869izvMjl9_4w1zCylrtzddyKrV1tOw/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxHzQE-4QcjgGhBEUGu9J0O9WXhCxvSJNNE3B2eOAj46K0YRePBGPKDspoMCTZ706bhtg/exec';
         const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1eZ1XwNdz2PGyI-tCjZAs_KYQBn4e86JFE-4biY21_-A/export?format=csv&gid=1532506524';
 
         let masterDatabaseStudents = [];
@@ -177,7 +196,6 @@
             "September 2027", "October 2027", "November 2027", "December 2027"
         ];
 
-        // Modern Toast Notification Function
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
