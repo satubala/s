@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model Coaching Center - Live Google Sheets Payment Portal</title>
+    <title>Model Coaching Center - Record Sheet Payment Portal</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -48,17 +48,13 @@
     <div class="max-w-3xl mx-auto">
         <!-- Control Panel -->
         <div class="glass-panel rounded-3xl p-6 md:p-8 mb-8 no-print relative overflow-hidden">
-            <!-- Background Glow Decor -->
-            <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none"></div>
-
             <div class="flex justify-between items-center mb-6 relative z-10">
                 <div>
                     <h1 class="text-3xl font-black tracking-tight bg-gradient-to-r from-indigo-400 via-sky-400 to-emerald-400 bg-clip-text text-transparent">মডেল কোচিং সেন্টার</h1>
-                    <p class="text-xs text-slate-400 mt-1 font-medium tracking-wide">Live Google Sheets Synchronized Payment Portal</p>
+                    <p class="text-xs text-slate-400 mt-1 font-medium tracking-wide">Record Sheet Master Payment Portal</p>
                 </div>
                 <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-bold px-3.5 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Cloud Connected
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Record Sheet Mode
                 </span>
             </div>
             
@@ -98,7 +94,7 @@
                 </div>
                 <div class="flex items-end">
                     <button onclick="saveToGoogleSheet()" id="saveBtn" class="w-full bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white font-bold text-xs py-3.5 px-4 rounded-xl transition shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 border border-indigo-400/30">
-                        💾 গুগল শিটে সেভ করুন
+                        💾 Record শিটে সেভ করুন
                     </button>
                 </div>
             </div>
@@ -116,7 +112,6 @@
 
         <!-- Premium Printable Payment Slip Area -->
         <div id="printable-area" class="bg-white text-slate-900 rounded-3xl shadow-2xl p-8 border border-slate-200 max-w-xl mx-auto relative overflow-hidden">
-            <!-- Top Futuristic Gradient Bar -->
             <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-indigo-600 via-sky-500 to-emerald-400"></div>
 
             <div class="text-center border-b border-slate-200 pb-6 mb-6">
@@ -137,7 +132,6 @@
                 <div class="col-span-2 border-t border-slate-200 pt-3"><span class="text-slate-400 text-xs block font-bold uppercase tracking-wider">গ্রহণকারী:</span> <span id="lblReceiver" class="font-bold text-slate-800">--</span></div>
             </div>
 
-            <!-- Receiver Signature -->
             <div class="flex justify-end pt-8 border-t border-dashed border-slate-300 mt-6 text-xs">
                 <div class="text-right">
                     <p class="font-bold text-slate-800 border-b border-slate-400 pb-1 mb-1 min-w-[140px] text-center" id="lblReceiverSign">বিলাস চন্দ্র বাড়ৈ</p>
@@ -148,9 +142,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyaQOJQaDigQ3rzn8XYOlRMzXlfvMZmyVG10RsyxlXsnPVuSCqGavpsqTJ2dHweRwY9';
-        
-        // Direct Google Sheet Live CSV Endpoint
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzHoXLvsklayDtqRKckXmozHhr84I4GQQu7-7zREI-M7NB4fTDUNIiqGnfkHAbNgbzhzA/exec';
         const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1QA6Hi82YKwelSJ2Sy4IQemy3yvOXXOef-ugN0iyGf3g/export?format=csv&gid=0';
 
         let masterDatabaseStudents = [];
@@ -158,7 +150,7 @@
 
         function getNowFormatted() {
             const now = new Date();
-            const dateStr = now.toLocaleDateString('en-GB'); // DD/MM/YYYY
+            const dateStr = now.toLocaleDateString('en-GB');
             const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
             return `${dateStr} ${timeStr}`;
         }
@@ -223,7 +215,7 @@
                 statusEl.style.display = 'none';
             } catch (error) {
                 console.error(error);
-                statusEl.innerHTML = '⚠️ গুগল শিট থেকে ডাটাবেজ লোড করা যায়নি। ইন্টারনেট সংযোগ বা গুগল শিটের এক্সেস পারমিশন যাচাই করুন।';
+                statusEl.innerHTML = '⚠️ গুগল শিট থেকে ডাটাবেজ লোড করা যায়নি।';
                 statusEl.className = 'text-xs text-rose-400 font-semibold mb-5 bg-rose-950/40 border border-rose-800/50 p-3 rounded-xl flex items-center gap-2';
             }
         });
@@ -342,13 +334,13 @@
                     body: JSON.stringify(payload)
                 });
 
-                alert(`✅ সফলভাবে "${monthName}" গুগল শিটে শিক্ষার্থী ও পেমেন্ট স্ট্যাটাস সেভ হয়েছে!`);
+                alert(`✅ সফলভাবে "Record" শিটে ${window.activeStudent.name}-এর ${monthName} মাসের পেমেন্ট (Paid) সেভ হয়েছে!`);
             } catch (err) {
                 console.error(err);
                 alert('⚠️ সেভ করতে সমস্যা হয়েছে।');
             } finally {
                 btn.disabled = false;
-                btn.innerText = '💾 গুগল শিটে সেভ করুন';
+                btn.innerText = '💾 Record শিটে সেভ করুন';
             }
         }
     </script>
