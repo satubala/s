@@ -231,7 +231,7 @@
                             <div class="w-40 border-b border-slate-600 pb-1 mb-1 text-center">
                                 <span class="font-bold text-slate-900" id="lblReceiverSign">বিলাস চন্দ্র বাড়ৈ</span>
                             </div>
-                            <p class="text-slate-500 text-center font-bold uppercase tracking-wider text-[10px] w-40">অফিস গ্রহণকারীর স্বাক্ষর</p>
+                            <p class="text-slate-500 text-center font-bold uppercase tracking-wider text-[10px] w-40">গ্রহণকারীর স্বাক্ষর</p>
                         </div>
                     </div>
 
@@ -420,7 +420,7 @@
                 phone = '880' + phone;
             }
 
-            const message = `প্রিয় অভিভাবক, ${student.name} (আইডি: ${student.id})-এর ${monthName} মাসের পেমেন্ট কমপ্লিট হয়েছে। তারিখ: ${currentDateTime}। মডেল কোচিং সেন্টার`;
+            const message = `প্রিয় অভিভাবক, ${student.name} (আইডি: ${student.id})-এর ${monthName} মাসের বেতন পরিশোধ করা হয়েছে। তারিখ: ${currentDateTime}। মডেল কোচিং সেন্টার`;
 
             const waBtn = document.getElementById('whatsappBtn');
             waBtn.href = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
