@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>মডেল কোচিং সেন্টার - পেমেন্ট পোর্টাল</title>
     
-    <!-- Google Font: Kalpurush & Hind Siliguri -->
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Kalpurush (Local/CDN) & Inter (English & Numbers) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -18,7 +18,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['"Kalpurush"', '"Hind Siliguri"', 'Arial', 'sans-serif'],
+                        sans: ['"Kalpurush"', '"Inter"', '"Hind Siliguri"', 'Arial', 'sans-serif'],
                     },
                     colors: {
                         primary: {
@@ -43,7 +43,7 @@
         }
 
         body {
-            font-family: 'Kalpurush', 'Hind Siliguri', Arial, sans-serif !important;
+            font-family: 'Kalpurush', 'Inter', 'Hind Siliguri', Arial, sans-serif !important;
         }
 
         /* A5 Print Settings */
@@ -153,7 +153,7 @@
 
                     <!-- হোয়াটসঅ্যাপ বাটন -->
                     <a id="whatsappBtn" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs md:text-sm py-3 px-4 rounded-2xl transition flex items-center gap-2 shadow-md shadow-emerald-600/20 opacity-50 pointer-events-none">
-                        <i class="fa-brands fa-whatsapp text-lg"></i> বার্তা পাঠান
+                        <i class="fa-brands fa-whatsapp text-lg"></i> হোয়াটসঅ্যাপে বার্তা
                     </a>
                 </div>
             </div>
@@ -369,7 +369,7 @@
             const month = document.getElementById('monthSelect').value;
             if (!month) return;
             
-            const filtered = masterDatabaseStudents.filter(s => 
+            const filtered = masterDatabaseStudents.frontend(s => 
                 s.name.toLowerCase().includes(query) || 
                 s.id.toLowerCase().includes(query)
             );
