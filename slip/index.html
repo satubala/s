@@ -8,6 +8,9 @@
     <!-- Google Font: Kalpurush & Hind Siliguri -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -99,10 +102,7 @@
                 </div>
                 
                 <div id="loadingStatus" class="text-xs text-indigo-700 font-semibold mb-5 flex items-center gap-2.5 bg-indigo-50 border border-indigo-100 p-3.5 rounded-xl">
-                    <svg class="animate-spin h-4 w-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                    <i class="fa-solid fa-spinner fa-spin text-indigo-600 text-sm"></i>
                     গুগল শিট ডাটাবেজ থেকে লাইভ তথ্য লোড হচ্ছে...
                 </div>
 
@@ -134,29 +134,31 @@
                     </div>
                     <div class="flex items-end">
                         <button onclick="saveToGoogleSheet()" id="saveBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-3.5 px-4 rounded-xl transition shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2">
-                            💾 Record শিটে সেভ করুন
+                            <i class="fa-solid fa-floppy-disk text-sm"></i> Record শিটে সেভ করুন
                         </button>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="flex flex-wrap gap-4 pt-4 border-t border-slate-200 relative z-10">
-                    <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm py-3 px-5 rounded-2xl transition flex items-center gap-2 shadow-md shadow-indigo-600/20">
-                        🖨️ প্রিন্ট / A5 পিডিএফ জেনারেট
+                <div class="flex flex-wrap gap-3 pt-4 border-t border-slate-200 relative z-10">
+                    <!-- প্রিন্ট বাটন -->
+                    <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs md:text-sm py-3 px-4 rounded-2xl transition flex items-center gap-2 shadow-md shadow-indigo-600/20">
+                        <i class="fa-solid fa-print text-base"></i> প্রিন্ট / A5 পিডিএফ
                     </button>
                     
                     <!-- গুগল শিট বাটন -->
-                    <a href="https://docs.google.com/spreadsheets/d/1eZ1XwNdz2PGyI-tCjZAs_KYQBn4e86JFE-4biY21_-A/edit?usp=sharing" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm py-3 px-5 rounded-2xl transition flex items-center gap-2 shadow-md shadow-blue-600/20">
-                        📊 গুগল শিট খুলুন
+                    <a href="https://docs.google.com/spreadsheets/d/1eZ1XwNdz2PGyI-tCjZAs_KYQBn4e86JFE-4biY21_-A/edit?usp=sharing" target="_blank" class="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs md:text-sm py-3 px-4 rounded-2xl transition flex items-center gap-2 shadow-md shadow-emerald-700/20">
+                        <i class="fa-solid fa-file-excel text-base"></i> গুগল শিট খুলুন
                     </a>
 
-                    <a id="whatsappBtn" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm py-3 px-5 rounded-2xl transition flex items-center gap-2 shadow-md shadow-emerald-600/20 opacity-50 pointer-events-none">
-                        💬 হোয়াটসঅ্যাপে বার্তা পাঠান
+                    <!-- হোয়াটসঅ্যাপ বাটন -->
+                    <a id="whatsappBtn" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs md:text-sm py-3 px-4 rounded-2xl transition flex items-center gap-2 shadow-md shadow-emerald-600/20 opacity-50 pointer-events-none">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> হোয়াটসঅ্যাপে বার্তা
                     </a>
                 </div>
             </div>
 
-            <!-- Right Side: Ultra-Professional Printable Payment Slip Preview -->
+            <!-- Right Side: Printable Payment Slip Preview -->
             <div class="lg:col-span-6 w-full">
                 <div id="printable-area" class="bg-white text-slate-900 rounded-3xl shadow-xl p-6 sm:p-8 border-2 border-slate-300 w-full relative overflow-hidden sticky top-8">
                     
@@ -231,7 +233,7 @@
                             <div class="w-40 border-b border-slate-600 pb-1 mb-1 text-center">
                                 <span class="font-bold text-slate-900" id="lblReceiverSign">বিলাস চন্দ্র বাড়ৈ</span>
                             </div>
-                            <p class="text-slate-500 text-center font-bold uppercase tracking-wider text-[10px] w-40">গ্রহণকারীর স্বাক্ষর</p>
+                            <p class="text-slate-500 text-center font-bold uppercase tracking-wider text-[10px] w-40">অফিস গ্রহণকারীর স্বাক্ষর</p>
                         </div>
                     </div>
 
@@ -259,10 +261,10 @@
             const toast = document.createElement('div');
             
             const bgColor = type === 'success' ? 'bg-slate-900 border-emerald-500/50 text-white' : 'bg-slate-900 border-rose-500/50 text-white';
-            const icon = type === 'success' ? '✅' : '⚠️';
+            const icon = type === 'success' ? '<i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>' : '<i class="fa-solid fa-triangle-exclamation text-rose-400 text-base"></i>';
 
             toast.className = `toast-enter flex items-center gap-3 px-5 py-4 rounded-2xl shadow-2xl border ${bgColor} text-xs font-semibold backdrop-blur-md`;
-            toast.innerHTML = `<span class="text-base">${icon}</span> <span>${message}</span>`;
+            toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
             
             container.appendChild(toast);
 
@@ -340,7 +342,7 @@
                 statusEl.style.display = 'none';
             } catch (error) {
                 console.error(error);
-                statusEl.innerHTML = '⚠️ গুগল শিট থেকে ডাটাবেজ লোড করা যায়নি।';
+                statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-rose-500"></i> গুগল শিট থেকে ডাটাবেজ লোড করা যায়নি।';
                 statusEl.className = 'text-xs text-rose-600 font-semibold mb-5 bg-rose-50 border border-rose-200 p-3.5 rounded-xl flex items-center gap-2';
             }
         });
@@ -420,7 +422,7 @@
                 phone = '880' + phone;
             }
 
-            const message = `প্রিয় অভিভাবক, ${student.name} (আইডি: ${student.id})-এর ${monthName} মাসের বেতন পরিশোধ করা হয়েছে। তারিখ: ${currentDateTime}। মডেল কোচিং সেন্টার`;
+            const message = `প্রিয় অভিভাবক, ${student.name} (আইডি: ${student.id})-এর ${monthName} মাসের পেমেন্ট কমপ্লিট হয়েছে। তারিখ: ${currentDateTime}। মডেল কোচিং সেন্টার`;
 
             const waBtn = document.getElementById('whatsappBtn');
             waBtn.href = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
@@ -433,7 +435,7 @@
             if (!window.activeStudent) return;
             const btn = document.getElementById('saveBtn');
             btn.disabled = true;
-            btn.innerText = '⏳ সেভ হচ্ছে...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> সেভ হচ্ছে...';
 
             const monthName = window.currentSelectedMonth;
             const payload = {
@@ -463,7 +465,7 @@
                 showToast('সেভ করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।', 'error');
             } finally {
                 btn.disabled = false;
-                btn.innerText = '💾 Record শিটে সেভ করুন';
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk text-sm"></i> Record শিটে সেভ করুন';
             }
         }
     </script>
