@@ -141,10 +141,16 @@
 
                 <!-- Action Buttons -->
                 <div class="flex flex-wrap gap-4 pt-4 border-t border-slate-200 relative z-10">
-                    <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm py-3 px-6 rounded-2xl transition flex items-center gap-2.5 shadow-md shadow-indigo-600/20">
+                    <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm py-3 px-5 rounded-2xl transition flex items-center gap-2 shadow-md shadow-indigo-600/20">
                         🖨️ প্রিন্ট / A5 পিডিএফ জেনারেট
                     </button>
-                    <a id="whatsappBtn" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm py-3 px-6 rounded-2xl transition flex items-center gap-2.5 shadow-md shadow-emerald-600/20 opacity-50 pointer-events-none">
+                    
+                    <!-- গুগল শিট বাটন -->
+                    <a href="https://docs.google.com/spreadsheets/d/1eZ1XwNdz2PGyI-tCjZAs_KYQBn4e86JFE-4biY21_-A/edit?usp=sharing" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm py-3 px-5 rounded-2xl transition flex items-center gap-2 shadow-md shadow-blue-600/20">
+                        📊 গুগল শিট খুলুন
+                    </a>
+
+                    <a id="whatsappBtn" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm py-3 px-5 rounded-2xl transition flex items-center gap-2 shadow-md shadow-emerald-600/20 opacity-50 pointer-events-none">
                         💬 হোয়াটসঅ্যাপে বার্তা পাঠান
                     </a>
                 </div>
@@ -154,18 +160,17 @@
             <div class="lg:col-span-6 w-full">
                 <div id="printable-area" class="bg-white text-slate-900 rounded-3xl shadow-xl p-6 sm:p-8 border-2 border-slate-300 w-full relative overflow-hidden sticky top-8">
                     
-                
                     <!-- Header Section (Centered) -->
                     <div class="text-center border-b-2 border-slate-800 pb-4 mb-5 pt-2">
                         <div class="inline-block bg-indigo-700 text-white text-[11px] font-black px-3.5 py-1 rounded-md shadow-sm tracking-wider uppercase mb-2">পেমেন্ট রসিদ</div>
                         <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 leading-tight">মডেল কোচিং সেন্টার</h2>
                         <p class="text-xs text-slate-600 mt-0.5 font-bold">পাওয়ার হাউস রোড, গোপালগঞ্জ।</p>
-                        <p class="text-[11px] text-slate-500">মোবাইল: 01716-463116 | ইমেইল: shobujrahman67@gmail.com</p>
+                        <p class="text-[11px] text-slate-500 mt-0.5">মোবাইল: 01716-463116</p>
                     </div>
 
                     <!-- Meta Information Row -->
                     <div class="flex justify-between items-center text-xs mb-4 bg-slate-100/70 p-3 rounded-xl border border-slate-200">
-                        <div><span class="text-slate-500 font-bold uppercase tracking-wider">তারিখ ও সময়:</span> <span id="lblDate" class="font-bold text-slate-900 ml-1">--</span></div>
+                        <div><span class="text-slate-500 font-bold uppercase tracking-wider">তারিখ ও সময়:</span> <span id="lblDate" class="font-bold text-slate-900 ml-1">--</span></div>
                         <div><span class="text-slate-500 font-bold uppercase tracking-wider">পরিচিতি নং (ID):</span> <span id="lblId" class="font-black text-indigo-700 text-sm ml-1">--</span></div>
                     </div>
 
@@ -222,9 +227,11 @@
                                 * এটি একটি কম্পিউটার জেনারেটেড রসিদ।
                             </p>
                         </div>
-                        <div class="text-right">
-                            <p class="font-bold text-slate-900 border-b border-slate-600 pb-1 mb-1 min-w-[130px] inline-block text-center" id="lblReceiverSign">বিলাস চন্দ্র বাড়ৈ</p>
-                            <p class="text-slate-500 text-center font-bold uppercase tracking-wider text-[10px]">অফিস গ্রহণকারীর স্বাক্ষর</p>
+                        <div class="flex flex-col items-center justify-end text-right">
+                            <div class="w-40 border-b border-slate-600 pb-1 mb-1 text-center">
+                                <span class="font-bold text-slate-900" id="lblReceiverSign">বিলাস চন্দ্র বাড়ৈ</span>
+                            </div>
+                            <p class="text-slate-500 text-center font-bold uppercase tracking-wider text-[10px] w-40">অফিস গ্রহণকারীর স্বাক্ষর</p>
                         </div>
                     </div>
 
