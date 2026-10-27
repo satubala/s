@@ -3,562 +3,852 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>satu.pro.bd | Pro Image Studio</title>
-    <link rel="icon" type="image/svg+xml" href="/icon.svg">
-    <link rel="manifest" href="/manifest.json">
+    <title>Pro Image Studio</title>
     
     <!-- Scripts & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
     
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brandcyan: '#0891b2',
+                        brandcyanlight: '#22d3ee',
+                        brandgold: '#b45309',
+                    },
+                    fontFamily: {
+                        sans: ['SolaimanLipi', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
     <style>
         :root {
-            --bg-main: #f1f5f9;
             --bg-gradient: radial-gradient(circle at top right, #e2e8f0, #f1f5f9);
             --glass: rgba(255, 255, 255, 0.75);
-            --glass-hover: rgba(255, 255, 255, 0.9);
             --glass-border: rgba(0, 0, 0, 0.08);
-            --accent-cyan: #0891b2;
-            --accent-gold: #b45309;
-            --accent-red: #e11d48;
             --text-main: #0f172a;
-            --text-dim: #475569;
-            --header-bg: rgba(255, 255, 255, 0.85);
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-main: #0a0f1d;
-                --bg-gradient: radial-gradient(circle at top right, #1e293b, #0a0f1d);
-                --glass: rgba(30, 41, 59, 0.7);
-                --glass-hover: rgba(51, 65, 85, 0.9);
-                --glass-border: rgba(255, 255, 255, 0.1);
-                --accent-cyan: #22d3ee;
-                --accent-gold: #fbbf24;
-                --accent-red: #f43f5e;
-                --text-main: #f1f5f9;
-                --text-dim: #94a3b8;
-                --header-bg: rgba(10, 15, 29, 0.85);
-            }
+        .dark {
+            --bg-gradient: radial-gradient(circle at top right, #1e293b, #0a0f1d);
+            --glass: rgba(15, 23, 42, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f1f5f9;
         }
 
         * { box-sizing: border-box; }
 
-        html, body {
-            margin: 0; padding: 0;
+        body {
             background: var(--bg-gradient);
             background-attachment: fixed;
-            font-family: 'SolaimanLipi', sans-serif;
             color: var(--text-main);
+            font-family: 'SolaimanLipi', sans-serif;
             min-height: 100vh;
         }
 
-        header {
-            display: flex; justify-content: center; align-items: center;
-            padding: 12px 15px; background: var(--header-bg);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--glass-border);
-            position: sticky; top: 0; z-index: 1000;
-        }
-
-        .header-img { height: 35px; filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.4)); }
-
-        /* Modern 2-Column App Layout */
-        main {
-            max-width: 1200px;
-            margin: 25px auto;
-            padding: 0 20px 40px;
-        }
-
-        .workspace-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 25px;
-        }
-
-        @media (min-width: 900px) {
-            .workspace-grid {
-                grid-template-columns: 1fr 440px;
-                align-items: start;
-            }
-        }
-
-        .card {
+        .glass-panel {
             background: var(--glass);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
         }
 
-        /* Preview Area */
-        .preview-sticky-wrapper {
-            position: sticky;
-            top: 80px;
-        }
+        /* Custom scrollbar for tab navigation on mobile */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .drop-zone {
-            border: 2px dashed var(--accent-cyan);
-            border-radius: 18px;
-            padding: 30px 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s ease;
-            margin-bottom: 20px;
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-        }
-        .drop-zone:hover, .drop-zone.drag-over {
-            background: rgba(34, 211, 238, 0.1);
-            border-color: var(--accent-gold);
-        }
-
-        .preview-box {
-            width: 100%;
-            min-height: 280px;
-            max-height: 480px;
-            background: #000;
-            border-radius: 18px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--glass-border);
-            position: relative;
-        }
-
-        .preview-box img {
-            max-width: 100%;
-            max-height: 480px;
-            object-fit: contain;
-            display: block;
-            transition: transform 0.2s ease, filter 0.1s ease;
-        }
-
-        .file-stats {
-            display: flex; justify-content: space-between;
-            margin-top: 12px; font-size: 0.85rem; color: var(--text-dim);
-        }
-
-        /* Glassmorphism Navigation Tabs */
-        .tabs-header {
-            display: flex;
-            gap: 8px;
-            background: var(--glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            padding: 6px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px 12px;
-            border: none;
-            background: transparent;
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            font-weight: 600;
-            font-family: inherit;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .tab-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
-
-        .tab-btn.active {
-            background: var(--glass-hover);
-            color: var(--accent-cyan);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        /* Controls Grid */
-        .section-label {
-            font-size: 0.9rem; color: var(--accent-cyan);
-            font-weight: 700; margin-bottom: 12px; display: block;
-        }
-
-        .settings-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;
-        }
-
-        .field { display: flex; flex-direction: column; gap: 6px; }
-        label { font-size: 0.85rem; opacity: 0.85; }
-
-        input[type="number"], select {
-            padding: 10px 12px; border-radius: 10px; border: 1px solid var(--glass-border);
-            background: var(--glass); color: var(--text-main); font-size: 15px;
-            font-family: inherit; outline: none;
-        }
-
-        /* Glassmorphism Range Sliders */
+        /* Range Sliders */
         input[type="range"] {
             -webkit-appearance: none; appearance: none;
-            width: 100%; height: 8px;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
+            width: 100%; height: 6px;
+            background: rgba(148, 163, 184, 0.3);
             border-radius: 10px; outline: none; cursor: pointer;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none; appearance: none;
-            width: 20px; height: 20px; border-radius: 50%;
-            background: var(--accent-cyan); border: 2px solid var(--text-main);
-            box-shadow: 0 0 10px var(--accent-cyan);
+            width: 18px; height: 18px; border-radius: 50%;
+            background: #0891b2; border: 2px solid #ffffff;
+            box-shadow: 0 0 8px rgba(8, 145, 178, 0.5);
             transition: transform 0.15s ease;
         }
 
-        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
-        /* Presets & Buttons */
-        .preset-row { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-        .preset-btn, .action-btn {
-            flex: 1; min-width: 75px; padding: 10px; font-size: 0.85rem; border-radius: 10px;
-            background: var(--glass); border: 1px solid var(--glass-border);
-            color: var(--text-main); cursor: pointer; transition: 0.2s;
-            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        /* Crop Box Styles */
+        #cropOverlay {
+            position: absolute;
+            border: 2px dashed #22d3ee;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+            cursor: move;
+            display: none;
         }
-        .preset-btn:hover, .action-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
-
-        .btn-process {
-            width: 100%; padding: 16px; border-radius: 16px;
-            background: var(--accent-cyan); color: #fff; border: none;
-            font-weight: 700; font-size: 1.05rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 8px 20px rgba(34, 211, 238, 0.3);
-            margin-top: 15px;
+        .crop-handle {
+            position: absolute; width: 10px; height: 10px;
+            background: #22d3ee; border: 1px solid #ffffff;
         }
-        .btn-process:disabled { background: var(--text-dim); opacity: 0.5; box-shadow: none; cursor: not-allowed; }
-
-        footer { text-align: center; padding: 30px; opacity: 0.6; font-size: 0.85rem; }
+        .handle-nw { top: -5px; left: -5px; cursor: nwse-resize; }
+        .handle-ne { top: -5px; right: -5px; cursor: nesw-resize; }
+        .handle-sw { bottom: -5px; left: -5px; cursor: nesw-resize; }
+        .handle-se { bottom: -5px; right: -5px; cursor: nwse-resize; }
     </style>
 </head>
-<body>
+<body class="transition-colors duration-300">
 
-<header>
-    <a href="/"><img src="/logo.svg" alt="satu.pro.bd" class="header-img"></a>
-</header>
-
-<main>
-    <div class="workspace-grid">
-        
-        <!-- Left Pane: Live Viewport -->
-        <div class="preview-sticky-wrapper">
-            <div class="card">
-                <div class="drop-zone" id="dropZone">
-                    <i data-lucide="upload-cloud" size="38" style="color:var(--accent-cyan)"></i>
-                    <span id="dropText">ছবি ড্রাগ করুন অথবা এখানে ক্লিক করুন</span>
-                    <input type="file" id="fileInput" accept="image/*" style="display:none">
-                </div>
-
-                <div class="preview-box">
-                    <img id="previewImg" style="display:none;">
-                    <span id="placeholderText" style="color:var(--text-dim);">কোন ছবি সিলেক্ট করা হয়নি</span>
-                </div>
-
-                <div class="file-stats">
-                    <span id="origSize">মূল সাইজ: -</span>
-                    <span id="calcDimensions">ডাইমেনশন: -</span>
-                </div>
-            </div>
+    <!-- Sticky Navigation Header -->
+    <header class="glass-panel sticky top-0 z-50 px-4 py-3 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-cyan-600 flex items-center justify-center text-white font-bold text-lg">S</div>
+            <span class="font-bold text-lg tracking-wide text-cyan-600 dark:text-cyan-400">satu.pro.bd</span>
+            <span class="hidden sm:inline-block text-xs bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 px-2 py-0.5 rounded-full font-medium">Pro Image Studio</span>
         </div>
+        <div class="flex items-center gap-2">
+            <button id="themeToggleBtn" class="p-2 rounded-xl glass-panel hover:bg-black/5 dark:hover:bg-white/10 transition" title="Theme Toggle">
+                <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-amber-400"></i>
+                <i data-lucide="moon" class="w-5 h-5 block dark:hidden text-slate-700"></i>
+            </button>
+            <a href="#" onclick="location.reload()" class="p-2 rounded-xl glass-panel hover:bg-black/5 dark:hover:bg-white/10 transition text-slate-600 dark:text-slate-300" title="Reset Workspace">
+                <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+            </a>
+        </div>
+    </header>
 
-        <!-- Right Pane: Controls & Editor -->
-        <div>
-            <!-- Navigation Tabs -->
-            <div class="tabs-header">
-                <button class="tab-btn active" onclick="switchTab('tab-resize', this)">
-                    <i data-lucide="scaling" size="18"></i> রিসাইজ
-                </button>
-                <button class="tab-btn" onclick="switchTab('tab-filters', this)">
-                    <i data-lucide="sliders" size="18"></i> ফিল্টার
-                </button>
-                <button class="tab-btn" onclick="switchTab('tab-export', this)">
-                    <i data-lucide="download" size="18"></i> এক্সপোর্ট
-                </button>
-            </div>
-
-            <div class="card">
-                <!-- Tab 1: Resize & Presets -->
-                <div id="tab-resize" class="tab-content active">
-                    <span class="section-label">প্রিসেট সাইজ (Quick Presets)</span>
-                    <div class="preset-row">
-                        <button onclick="setPreset(300, 300)" class="preset-btn">ID (1:1)</button>
-                        <button onclick="setPreset(1280, 720)" class="preset-btn">News (16:9)</button>
-                        <button onclick="setPreset(1080, 1920)" class="preset-btn">Story (9:16)</button>
-                        <button onclick="setPreset(1200, 630)" class="preset-btn">FB Post</button>
+    <main class="max-w-7xl mx-auto p-3 sm:p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- LEFT COLUMN: Canvas / Live Preview Studio (Sticky on Desktop) -->
+            <div class="lg:col-span-6 lg:sticky lg:top-20 space-y-4">
+                <div class="glass-panel rounded-3xl p-4 sm:p-5 shadow-xl">
+                    
+                    <!-- Upload Dropzone -->
+                    <div id="dropZone" class="border-2 border-dashed border-cyan-500/50 hover:border-cyan-500 rounded-2xl p-6 text-center cursor-pointer transition bg-cyan-500/5 hover:bg-cyan-500/10 flex flex-col items-center justify-center gap-3">
+                        <div class="p-3 bg-cyan-500/10 rounded-2xl text-cyan-600 dark:text-cyan-400">
+                            <i data-lucide="upload-cloud" class="w-8 h-8"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm sm:text-base text-slate-800 dark:text-slate-200" id="dropTitle">ছবি নির্বাচন করুন অথবা ড্রাগ করে আনুন</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Paste standard images or press Ctrl+V directly</p>
+                        </div>
+                        <input type="file" id="fileInput" accept="image/*" class="hidden">
                     </div>
 
-                    <span class="section-label">রোটেশন ও ফ্লিপ</span>
-                    <div class="preset-row">
-                        <button onclick="rotateImage(-90)" class="action-btn"><i data-lucide="rotate-ccw" size="16"></i> -90°</button>
-                        <button onclick="rotateImage(90)" class="action-btn"><i data-lucide="rotate-cw" size="16"></i> +90°</button>
-                        <button onclick="flipImage('h')" class="action-btn"><i data-lucide="flip-horizontal" size="16"></i> Flip H</button>
-                        <button onclick="flipImage('v')" class="action-btn"><i data-lucide="flip-vertical" size="16"></i> Flip V</button>
+                    <!-- Canvas Preview Container -->
+                    <div class="relative mt-4 w-full bg-slate-950/80 dark:bg-black rounded-2xl overflow-hidden flex items-center justify-center min-h-[300px] max-h-[500px] border border-slate-700/30">
+                        <span id="canvasPlaceholder" class="text-sm text-slate-400 flex items-center gap-2">
+                            <i data-lucide="image" class="w-5 h-5"></i> কোন ছবি সিলেট করা হয়নি
+                        </span>
+                        
+                        <div id="viewport" class="relative max-w-full max-h-[500px] overflow-hidden flex items-center justify-center">
+                            <canvas id="mainCanvas" class="max-w-full max-h-[500px] object-contain hidden shadow-2xl"></canvas>
+                            
+                            <!-- Interactive Crop Box Overlay -->
+                            <div id="cropOverlay">
+                                <div class="crop-handle handle-nw" data-handle="nw"></div>
+                                <div class="crop-handle handle-ne" data-handle="ne"></div>
+                                <div class="crop-handle handle-sw" data-handle="sw"></div>
+                                <div class="crop-handle handle-se" data-handle="se"></div>
+                            </div>
+                        </div>
                     </div>
 
-                    <span class="section-label">কাস্টম ডাইমেনশন</span>
-                    <div class="settings-grid">
-                        <div class="field">
-                            <label>প্রস্থ (Width px)</label>
-                            <input type="number" id="wInput" placeholder="0">
-                        </div>
-                        <div class="field">
-                            <label>উচ্চতা (Height px)</label>
-                            <input type="number" id="hInput" placeholder="0">
-                        </div>
+                    <!-- Live File Stats Bar -->
+                    <div class="flex flex-wrap items-center justify-between text-xs sm:text-sm text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-200 dark:border-slate-800 gap-2">
+                        <span id="statOriginalSize" class="flex items-center gap-1"><i data-lucide="hard-drive" class="w-3.5 h-3.5"></i> মূল সাইজ: -</span>
+                        <span id="statDimensions" class="flex items-center gap-1"><i data-lucide="maximize-2" class="w-3.5 h-3.5"></i> ডাইমেনশন: -</span>
+                        <span id="statEstimated" class="flex items-center gap-1 font-semibold text-cyan-600 dark:text-cyan-400"><i data-lucide="file-check" class="w-3.5 h-3.5"></i> অনুমানিক: -</span>
                     </div>
                 </div>
 
-                <!-- Tab 2: Filter Adjustments -->
-                <div id="tab-filters" class="tab-content">
-                    <span class="section-label">কালার ও টোন টিউনিং</span>
-                    <div class="field" style="margin-bottom:15px;">
-                        <label>উজ্জ্বলতা (Brightness: <span id="brVal">100</span>%)</label>
-                        <input type="range" id="brightness" min="50" max="150" value="100">
+                <!-- Crop Action Toolbar (Visible when crop tab active) -->
+                <div id="cropControlsPanel" class="hidden glass-panel rounded-2xl p-3 flex-wrap items-center justify-between gap-2 shadow-md">
+                    <div class="flex items-center gap-1 overflow-x-auto no-scrollbar py-1">
+                        <button onclick="setCropAspect(0)" class="px-2.5 py-1 text-xs rounded-lg glass-panel hover:bg-cyan-500/20 active font-medium">Freeform</button>
+                        <button onclick="setCropAspect(1)" class="px-2.5 py-1 text-xs rounded-lg glass-panel hover:bg-cyan-500/20 font-medium">1:1</button>
+                        <button onclick="setCropAspect(4/3)" class="px-2.5 py-1 text-xs rounded-lg glass-panel hover:bg-cyan-500/20 font-medium">4:3</button>
+                        <button onclick="setCropAspect(16/9)" class="px-2.5 py-1 text-xs rounded-lg glass-panel hover:bg-cyan-500/20 font-medium">16:9</button>
+                        <button onclick="setCropAspect(9/16)" class="px-2.5 py-1 text-xs rounded-lg glass-panel hover:bg-cyan-500/20 font-medium">9:16</button>
                     </div>
-                    <div class="field" style="margin-bottom:15px;">
-                        <label>কন্ট্রাস্ট (Contrast: <span id="ctVal">100</span>%)</label>
-                        <input type="range" id="contrast" min="50" max="150" value="100">
+                    <div class="flex items-center gap-2">
+                        <button onclick="applyCrop()" class="px-3 py-1.5 text-xs bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-bold flex items-center gap-1 shadow"><i data-lucide="check" class="w-3.5 h-3.5"></i> ক্রপ করুন</button>
+                        <button onclick="cancelCrop()" class="px-3 py-1.5 text-xs bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-bold flex items-center gap-1"><i data-lucide="x" class="w-3.5 h-3.5"></i> বাতিল</button>
                     </div>
-                    <div class="field" style="margin-bottom:15px;">
-                        <label>স্যাচুরেশন (Saturation: <span id="stVal">100</span>%)</label>
-                        <input type="range" id="saturation" min="0" max="200" value="100">
-                    </div>
+                </div>
+            </div>
 
-                    <button onclick="resetFilters()" class="action-btn" style="width:100%; margin-top:10px;">
-                        <i data-lucide="refresh-cw" size="16"></i> ফিল্টার রিসেট করুন
+            <!-- RIGHT COLUMN: Tool Control Panel -->
+            <div class="lg:col-span-6 space-y-4">
+                
+                <!-- Scrollable Mobile Tabs -->
+                <div class="glass-panel rounded-2xl p-1.5 flex gap-1 overflow-x-auto no-scrollbar shadow-md">
+                    <button onclick="switchTab('tab-resize', this)" class="tab-btn active flex-1 min-w-[90px] py-2 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition text-cyan-600 dark:text-cyan-400 bg-white dark:bg-slate-800 shadow-sm">
+                        <i data-lucide="scaling" class="w-4 h-4"></i> রিসাইজ
+                    </button>
+                    <button onclick="switchTab('tab-crop', this)" class="tab-btn flex-1 min-w-[90px] py-2 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition text-slate-600 dark:text-slate-400 hover:text-cyan-600">
+                        <i data-lucide="crop" class="w-4 h-4"></i> ক্রপ
+                    </button>
+                    <button onclick="switchTab('tab-filters', this)" class="tab-btn flex-1 min-w-[90px] py-2 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition text-slate-600 dark:text-slate-400 hover:text-cyan-600">
+                        <i data-lucide="sliders" class="w-4 h-4"></i> কালার
+                    </button>
+                    <button onclick="switchTab('tab-effects', this)" class="tab-btn flex-1 min-w-[90px] py-2 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition text-slate-600 dark:text-slate-400 hover:text-cyan-600">
+                        <i data-lucide="wand-2" class="w-4 h-4"></i> ইফেক্ট
+                    </button>
+                    <button onclick="switchTab('tab-export', this)" class="tab-btn flex-1 min-w-[90px] py-2 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition text-slate-600 dark:text-slate-400 hover:text-cyan-600">
+                        <i data-lucide="download" class="w-4 h-4"></i> এক্সপোর্ট
                     </button>
                 </div>
 
-                <!-- Tab 3: Format & Export Settings -->
-                <div id="tab-export" class="tab-content">
-                    <span class="section-label">আউটপুট কনফিগারেশন</span>
-                    <div class="settings-grid">
-                        <div class="field">
-                            <label>ফরম্যাট</label>
-                            <select id="format">
-                                <option value="image/webp">WebP (Modern)</option>
-                                <option value="image/jpeg">JPEG (Small)</option>
-                                <option value="image/png">PNG (Clear)</option>
-                            </select>
+                <!-- Main Settings Container -->
+                <div class="glass-panel rounded-3xl p-5 shadow-xl space-y-5">
+                    
+                    <!-- TAB 1: RESIZE MODES -->
+                    <div id="tab-resize" class="tab-content space-y-4">
+                        
+                        <!-- Mode Selector -->
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">রিসাইজ মোড (Resize Type)</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="setResizeMode('scale')" id="modeScaleBtn" class="py-2 px-2 text-xs font-semibold rounded-xl border border-cyan-500 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">পার্সেন্টেজ (%)</button>
+                                <button onclick="setResizeMode('dimensions')" id="modeDimBtn" class="py-2 px-2 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-black/5 dark:hover:bg-white/5">ডাইমেনশন (px)</button>
+                                <button onclick="setResizeMode('filesize')" id="modeSizeBtn" class="py-2 px-2 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-black/5 dark:hover:bg-white/5">টার্গেট KB</button>
+                            </div>
                         </div>
-                        <div class="field">
-                            <label>কোয়ালিটি (<span id="qVal">90</span>%)</label>
-                            <input type="range" id="quality" min="1" max="100" value="90">
+
+                        <!-- Percentage Scale Controls -->
+                        <div id="sectionScale" class="space-y-3">
+                            <label class="text-xs font-medium text-slate-600 dark:text-slate-400 flex justify-between">
+                                <span>স্কেল পার্সেন্টেজ:</span>
+                                <span id="scaleVal" class="font-bold text-cyan-600 dark:text-cyan-400">100%</span>
+                            </label>
+                            <input type="range" id="scaleInput" min="10" max="200" value="100">
+                            <div class="flex gap-2">
+                                <button onclick="setScale(25)" class="flex-1 py-1 text-xs rounded-lg glass-panel hover:border-cyan-500">25%</button>
+                                <button onclick="setScale(50)" class="flex-1 py-1 text-xs rounded-lg glass-panel hover:border-cyan-500">50%</button>
+                                <button onclick="setScale(75)" class="flex-1 py-1 text-xs rounded-lg glass-panel hover:border-cyan-500">75%</button>
+                                <button onclick="setScale(100)" class="flex-1 py-1 text-xs rounded-lg glass-panel hover:border-cyan-500">100%</button>
+                            </div>
+                        </div>
+
+                        <!-- Custom Dimension Controls -->
+                        <div id="sectionDimensions" class="space-y-3 hidden">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-xs font-medium text-slate-600 dark:text-slate-400">প্রস্থ (Width px)</label>
+                                    <input type="number" id="widthInput" placeholder="Width" class="w-full mt-1 px-3 py-2 rounded-xl glass-panel border border-slate-300 dark:border-slate-700 focus:outline-none focus:border-cyan-500 text-sm">
+                                </div>
+                                <div>
+                                    <label class="text-xs font-medium text-slate-600 dark:text-slate-400">উচ্চতা (Height px)</label>
+                                    <input type="number" id="heightInput" placeholder="Height" class="w-full mt-1 px-3 py-2 rounded-xl glass-panel border border-slate-300 dark:border-slate-700 focus:outline-none focus:border-cyan-500 text-sm">
+                                </div>
+                            </div>
+                            <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-600 dark:text-slate-400">
+                                <input type="checkbox" id="aspectLock" checked class="rounded text-cyan-600 focus:ring-cyan-500">
+                                <span>অ্যাসপেক্ট রেশিও লক রাখুন (Aspect Ratio Lock)</span>
+                            </label>
+                        </div>
+
+                        <!-- Target KB Control -->
+                        <div id="sectionFileSize" class="space-y-2 hidden">
+                            <label class="text-xs font-medium text-slate-600 dark:text-slate-400">সর্বোচ্চ ফাইল সাইজ লিমিট (Max Target KB)</label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" id="targetKbInput" placeholder="যেমন: 100" class="w-full px-3 py-2 rounded-xl glass-panel border border-slate-300 dark:border-slate-700 focus:outline-none focus:border-cyan-500 text-sm">
+                                <span class="text-xs font-bold text-slate-500">KB</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400">এক্সপোর্টের সময় স্বয়ংক্রিয়ভাবে মানসম্মত কোয়ালিটি অ্যাডজাস্ট হবে।</p>
+                        </div>
+
+                        <!-- Quick Social Presets -->
+                        <div class="space-y-2 border-t border-slate-200 dark:border-slate-800 pt-3">
+                            <label class="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">রেডি প্রিসেট (Quick Presets)</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                <button onclick="applyPreset(300, 300)" class="p-2 text-left rounded-xl glass-panel hover:border-cyan-500 transition">
+                                    <p class="text-xs font-semibold">Passport (1:1)</p>
+                                    <p class="text-[10px] text-slate-400">300 x 300 px</p>
+                                </button>
+                                <button onclick="applyPreset(1200, 630)" class="p-2 text-left rounded-xl glass-panel hover:border-cyan-500 transition">
+                                    <p class="text-xs font-semibold">FB Post</p>
+                                    <p class="text-[10px] text-slate-400">1200 x 630 px</p>
+                                </button>
+                                <button onclick="applyPreset(1080, 1920)" class="p-2 text-left rounded-xl glass-panel hover:border-cyan-500 transition">
+                                    <p class="text-xs font-semibold">Story / Reel</p>
+                                    <p class="text-[10px] text-slate-400">1080 x 1920 px</p>
+                                </button>
+                                <button onclick="applyPreset(1280, 720)" class="p-2 text-left rounded-xl glass-panel hover:border-cyan-500 transition">
+                                    <p class="text-xs font-semibold">YT Thumbnail</p>
+                                    <p class="text-[10px] text-slate-400">1280 x 720 px</p>
+                                </button>
+                                <button onclick="applyPreset(1080, 1080)" class="p-2 text-left rounded-xl glass-panel hover:border-cyan-500 transition">
+                                    <p class="text-xs font-semibold">Insta Square</p>
+                                    <p class="text-[10px] text-slate-400">1080 x 1080 px</p>
+                                </button>
+                                <button onclick="applyPreset(1500, 500)" class="p-2 text-left rounded-xl glass-panel hover:border-cyan-500 transition">
+                                    <p class="text-xs font-semibold">Twitter Header</p>
+                                    <p class="text-[10px] text-slate-400">1500 x 500 px</p>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Rotation & Flip -->
+                        <div class="space-y-2 border-t border-slate-200 dark:border-slate-800 pt-3">
+                            <label class="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">রোটেশন ও ফ্লিপ</label>
+                            <div class="grid grid-cols-4 gap-2">
+                                <button onclick="rotate(90)" class="py-2 rounded-xl glass-panel hover:border-cyan-500 flex flex-col items-center gap-1 text-[11px]"><i data-lucide="rotate-cw" class="w-4 h-4"></i> +90°</button>
+                                <button onclick="rotate(-90)" class="py-2 rounded-xl glass-panel hover:border-cyan-500 flex flex-col items-center gap-1 text-[11px]"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> -90°</button>
+                                <button onclick="flip('h')" class="py-2 rounded-xl glass-panel hover:border-cyan-500 flex flex-col items-center gap-1 text-[11px]"><i data-lucide="flip-horizontal" class="w-4 h-4"></i> Flip H</button>
+                                <button onclick="flip('v')" class="py-2 rounded-xl glass-panel hover:border-cyan-500 flex flex-col items-center gap-1 text-[11px]"><i data-lucide="flip-vertical" class="w-4 h-4"></i> Flip V</button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="field">
-                        <label>সর্বোচ্চ ফাইল সাইজ লিমিট (Max KB, اختیاری)</label>
-                        <input type="number" id="maxKbInput" placeholder="e.g. 200 (Optional)">
+                    <!-- TAB 2: CROP INSTRUCTIONS -->
+                    <div id="tab-crop" class="tab-content hidden space-y-4">
+                        <div class="p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-700 dark:text-cyan-300 space-y-2 text-xs leading-relaxed">
+                            <p class="font-bold flex items-center gap-1.5"><i data-lucide="info" class="w-4 h-4"></i> ক্রপ টুল ব্যবহারের নিয়ম:</p>
+                            <ol class="list-decimal list-inside space-y-1">
+                                <li>বাম পাশের ক্যানভাসে মাউস ড্রাগ করে ক্রপ বক্স সামঞ্জস্য করুন।</li>
+                                <li>উপরে থাকা অ্যাসপেক্ট রেশিও নির্বাচন করতে পারেন।</li>
+                                <li>'ক্রপ করুন' বোতামে চাপ দিলে ছবি নির্বাচন চূড়ান্ত হবে।</li>
+                            </ol>
+                        </div>
+                        <button onclick="startCropMode()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-bold text-sm shadow flex items-center justify-center gap-2">
+                            <i data-lucide="crop" class="w-4 h-4"></i> ক্রপ মোড অন করুন
+                        </button>
                     </div>
+
+                    <!-- TAB 3: COLOR ADJUSTMENTS -->
+                    <div id="tab-filters" class="tab-content hidden space-y-4">
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600 dark:text-slate-400 flex justify-between">
+                                    <span>উজ্জ্বলতা (Brightness):</span><span id="brightnessVal">100%</span>
+                                </label>
+                                <input type="range" id="brightness" min="0" max="200" value="100">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600 dark:text-slate-400 flex justify-between">
+                                    <span>কন্ট্রাস্ট (Contrast):</span><span id="contrastVal">100%</span>
+                                </label>
+                                <input type="range" id="contrast" min="0" max="200" value="100">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600 dark:text-slate-400 flex justify-between">
+                                    <span>স্যাচুরেশন (Saturation):</span><span id="saturationVal">100%</span>
+                                </label>
+                                <input type="range" id="saturation" min="0" max="200" value="100">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600 dark:text-slate-400 flex justify-between">
+                                    <span>হিউ রোটেশন (Hue Rotate):</span><span id="hueVal">0°</span>
+                                </label>
+                                <input type="range" id="hue" min="0" max="360" value="0">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600 dark:text-slate-400 flex justify-between">
+                                    <span>ব্লার (Blur):</span><span id="blurVal">0px</span>
+                                </label>
+                                <input type="range" id="blur" min="0" max="10" value="0">
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 border-t border-slate-200 dark:border-slate-800 pt-3">
+                            <button onclick="applyPresetFilter('grayscale')" class="flex-1 py-1.5 text-xs rounded-xl glass-panel hover:border-cyan-500">Grayscale</button>
+                            <button onclick="applyPresetFilter('sepia')" class="flex-1 py-1.5 text-xs rounded-xl glass-panel hover:border-cyan-500">Sepia</button>
+                            <button onclick="resetFilters()" class="flex-1 py-1.5 text-xs rounded-xl border border-rose-500/50 text-rose-500 hover:bg-rose-500/10">Reset</button>
+                        </div>
+                    </div>
+
+                    <!-- TAB 4: EFFECTS, BORDER & WATERMARK -->
+                    <div id="tab-effects" class="tab-content hidden space-y-4">
+                        
+                        <!-- Border Generator -->
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">বর্ডার / ফ্রেম (Border)</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-xs text-slate-500">মোটা (Thickness px)</label>
+                                    <input type="number" id="borderWidth" value="0" min="0" max="100" class="w-full mt-1 px-3 py-1.5 rounded-xl glass-panel border border-slate-300 dark:border-slate-700 text-xs">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-slate-500">বর্ডার কালার</label>
+                                    <input type="color" id="borderColor" value="#ffffff" class="w-full h-8 mt-1 rounded-xl glass-panel border border-slate-300 dark:border-slate-700 cursor-pointer">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Watermark Overlay -->
+                        <div class="space-y-2 border-t border-slate-200 dark:border-slate-800 pt-3">
+                            <label class="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">ওয়াটারমার্ক (Watermark Text)</label>
+                            <input type="text" id="watermarkText" placeholder="যেমন: © satu.pro.bd" class="w-full px-3 py-2 rounded-xl glass-panel border border-slate-300 dark:border-slate-700 text-xs focus:outline-none focus:border-cyan-500">
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-500">সাইজ (px)</label>
+                                    <input type="number" id="wmSize" value="24" class="w-full mt-0.5 px-2 py-1 rounded-lg glass-panel text-xs">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">কালার</label>
+                                    <input type="color" id="wmColor" value="#ffffff" class="w-full h-7 mt-0.5 rounded-lg glass-panel cursor-pointer">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">পজিশন</label>
+                                    <select id="wmPos" class="w-full mt-0.5 px-1 py-1 rounded-lg glass-panel text-xs">
+                                        <option value="bottom-right">Bottom R</option>
+                                        <option value="bottom-left">Bottom L</option>
+                                        <option value="center">Center</option>
+                                        <option value="top-right">Top R</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Background Color Fill -->
+                        <div class="space-y-2 border-t border-slate-200 dark:border-slate-800 pt-3">
+                            <label class="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">ব্যাকগ্রাউন্ড কালার (PNG/JPEG Fill)</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" id="bgColor" value="#ffffff" class="w-10 h-8 rounded-xl glass-panel border border-slate-300 dark:border-slate-700 cursor-pointer">
+                                <span class="text-xs text-slate-500">স্বচ্ছ বা PNG ছবির ব্যাকগ্রাউন্ড ফিল করুন</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 5: EXPORT SETTINGS -->
+                    <div id="tab-export" class="tab-content hidden space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600 dark:text-slate-400">ফরম্যাট (Format)</label>
+                                <select id="exportFormat" class="w-full mt-1 px-3 py-2 rounded-xl glass-panel border border-slate-300 dark:border-slate-700 text-xs focus:outline-none focus:border-cyan-500">
+                                    <option value="image/webp">WebP (Best & Light)</option>
+                                    <option value="image/jpeg">JPEG (Standard)</option>
+                                    <option value="image/png">PNG (Lossless)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600 dark:text-slate-400">কোয়ালিটি (<span id="qualityVal">90%</span>)</label>
+                                <input type="range" id="exportQuality" min="1" max="100" value="90" class="mt-3">
+                            </div>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1">
+                            <p class="text-xs font-semibold text-slate-700 dark:text-slate-300">ডাউনলোড সামারি</p>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400 flex justify-between">
+                                <span>আউটপুট ডাইমেনশন:</span>
+                                <span id="exportDimText" class="font-mono text-cyan-600 dark:text-cyan-400">0 x 0 px</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Download Button -->
+                    <button id="downloadBtn" disabled class="w-full py-4 bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl font-bold text-base shadow-lg shadow-cyan-600/30 flex items-center justify-center gap-2 transition active:scale-[0.99]">
+                        <i data-lucide="download" class="w-5 h-5"></i> প্রসেস ও ডাউনলোড করুন
+                    </button>
                 </div>
-
-                <!-- Process Button -->
-                <button class="btn-process" id="saveBtn" disabled>
-                    <i data-lucide="download"></i> প্রসেস ও ডাউনলোড
-                </button>
             </div>
+
         </div>
+    </main>
 
-    </div>
-</main>
+    <footer class="text-center py-6 text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800 mt-8">
+        &copy; 2026 <b>satu.pro.bd</b> | Designed for Fast Mobile & Desktop Image Processing.
+    </footer>
 
-<footer>
-    &copy; 2026 <b>satu.pro.bd</b> | All Rights Reserved.
-</footer>
+    <!-- Main JS Application Engine -->
+    <script>
+        // DOM Helper
+        const $ = id => document.getElementById(id);
 
-<canvas id="canvas" style="display:none"></canvas>
+        // State Store
+        const state = {
+            rawImage: new Image(),
+            isLoaded: false,
+            fileSizeKB: 0,
+            fileName: 'processed-image',
+            resizeMode: 'scale', // scale | dimensions | filesize
+            scale: 100,
+            targetWidth: 0,
+            targetHeight: 0,
+            aspectRatio: 1,
+            rotation: 0,
+            flipH: 1,
+            flipV: 1,
+            crop: { active: false, x: 0, y: 0, w: 0, h: 0, aspect: 0 },
+            filters: { brightness: 100, contrast: 100, saturation: 100, hue: 0, blur: 0 }
+        };
 
-<script>
-    const $ = id => document.getElementById(id);
-    let originalImg = new Image();
-    let ratio = 1;
-    let rotation = 0;
-    let flipH = 1;
-    let flipV = 1;
+        // Initialize Lucide Icons
+        lucide.createIcons();
 
-    lucide.createIcons();
+        // Theme Toggle Logic
+        const themeToggleBtn = $('themeToggleBtn');
+        themeToggleBtn.onclick = () => {
+            document.documentElement.classList.toggle('dark');
+        };
 
-    // Tab Switcher
-    window.switchTab = (tabId, btn) => {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        $(tabId).classList.add('active');
-        btn.classList.add('active');
-    };
+        // Tab Switcher
+        window.switchTab = (tabId, btn) => {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active', 'text-cyan-600', 'dark:text-cyan-400', 'bg-white', 'dark:bg-slate-800', 'shadow-sm');
+                el.classList.add('text-slate-600', 'dark:text-slate-400');
+            });
+            $(tabId).classList.remove('hidden');
+            btn.classList.add('active', 'text-cyan-600', 'dark:text-cyan-400', 'bg-white', 'dark:bg-slate-800', 'shadow-sm');
+            
+            if(tabId === 'tab-crop') startCropMode();
+            else cancelCrop();
+        };
 
-    // File Handling Logic
-    const handleFile = file => {
-        if (!file || !file.type.startsWith('image/')) return;
-        $('origSize').innerText = `মূল সাইজ: ${(file.size / 1024).toFixed(1)} KB`;
-        
-        const reader = new FileReader();
-        reader.onload = e => originalImg.src = e.target.result;
-        reader.readAsDataURL(file);
-        $('dropText').innerText = file.name;
-    };
+        // Handle Image Load
+        const loadImageFile = (file) => {
+            if (!file || !file.type.startsWith('image/')) return;
+            state.fileSizeKB = (file.size / 1024).toFixed(1);
+            state.fileName = file.name.substring(0, file.name.lastIndexOf('.')) || 'image';
+            
+            const reader = new FileReader();
+            reader.onload = e => {
+                state.rawImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
 
-    $('dropZone').onclick = () => $('fileInput').click();$('fileInput').onchange = e => handleFile(e.target.files[0]);
+        state.rawImage.onload = () => {
+            state.isLoaded = true;
+            state.aspectRatio = state.rawImage.width / state.rawImage.height;
+            state.targetWidth = state.rawImage.width;
+            state.targetHeight = state.rawImage.height;
 
-    // Drag-over styling
-    const dropZone = $('dropZone');
-    dropZone.ondragover = e => { e.preventDefault(); dropZone.classList.add('drag-over'); };
-    dropZone.ondragleave = () => dropZone.classList.remove('drag-over');
-    dropZone.ondrop = e => {
-        e.preventDefault();
-        dropZone.classList.remove('drag-over');
-        handleFile(e.dataTransfer.files[0]);
-    };
+            $('widthInput').value = state.rawImage.width;
+            $('heightInput').value = state.rawImage.height;
+            $('statOriginalSize').innerHTML = `<i data-lucide="hard-drive" class="w-3.5 h-3.5"></i> মূল: ${state.fileSizeKB} KB`;
+            $('statDimensions').innerHTML = `<i data-lucide="maximize-2" class="w-3.5 h-3.5"></i> ${state.rawImage.width} x ${state.rawImage.height}px`;
+            
+            $('canvasPlaceholder').classList.add('hidden');
+            $('mainCanvas').classList.remove('hidden');
+            $('downloadBtn').disabled = false;
 
-    originalImg.onload = () => {
-        ratio = originalImg.width / originalImg.height;
-        $('wInput').value = originalImg.width;
-        $('hInput').value = originalImg.height;
-        $('calcDimensions').innerText = `ডাইমেনশন: ${originalImg.width}x${originalImg.height}px`;
-        
-        $('previewImg').src = originalImg.src;
-        $('previewImg').style.display = 'block';
-        $('placeholderText').style.display = 'none';$('saveBtn').disabled = false;
-        resetTransformations();
-    };
+            renderCanvas();
+            lucide.createIcons();
+        };
 
-    // Live CSS Preview Filter Update
-    function updateLivePreview() {
-        const br = $('brightness').value;
-        const ct = $('contrast').value;
-        const st = $('saturation').value;
-        $('previewImg').style.filter = `brightness(${br}%) contrast(${ct}%) saturate(${st}%)`;
-        $('previewImg').style.transform = `rotate(${rotation}deg) scale(${flipH}, ${flipV})`;
-    }
+        // File Drag & Drop + Clipboard Upload
+        const dropZone = $('dropZone');
+        dropZone.onclick = () => $('fileInput').click();
+        $('fileInput').onchange = e => loadImageFile(e.target.files[0]);
 
-    $('brightness').oninput = e => {$('brVal').innerText = e.target.value; updateLivePreview(); };
-    $('contrast').oninput = e => {$('ctVal').innerText = e.target.value; updateLivePreview(); };
-    $('saturation').oninput = e => {$('stVal').innerText = e.target.value; updateLivePreview(); };
-    $('quality').oninput = e =>$('qVal').innerText = e.target.value;
+        dropZone.ondragover = e => { e.preventDefault(); dropZone.classList.add('border-cyan-500', 'bg-cyan-500/20'); };
+        dropZone.ondragleave = () => dropZone.classList.remove('border-cyan-500', 'bg-cyan-500/20');
+        dropZone.ondrop = e => {
+            e.preventDefault();
+            dropZone.classList.remove('border-cyan-500', 'bg-cyan-500/20');
+            loadImageFile(e.dataTransfer.files[0]);
+        };
 
-    // Resizing Inputs
-    $('wInput').oninput = () => {
-        if (ratio) $('hInput').value = Math.round($('wInput').value / ratio);
-    };
-    $('hInput').oninput = () => {
-        if (ratio) $('wInput').value = Math.round($('hInput').value * ratio);
-    };
-
-    window.setPreset = (w, h) => {
-        if (!originalImg.src) return;
-        $('wInput').value = w;
-        $('hInput').value = h;
-    };
-
-    window.rotateImage = deg => {
-        rotation = (rotation + deg) % 360;
-        updateLivePreview();
-    };
-
-    window.flipImage = dir => {
-        if (dir === 'h') flipH *= -1;
-        if (dir === 'v') flipV *= -1;
-        updateLivePreview();
-    };
-
-    window.resetFilters = () => {
-        $('brightness').value = 100; $('brVal').innerText = '100';
-        $('contrast').value = 100; $('ctVal').innerText = '100';
-        $('saturation').value = 100; $('stVal').innerText = '100';
-        resetTransformations();
-    };
-
-    function resetTransformations() {
-        rotation = 0; flipH = 1; flipV = 1;
-        updateLivePreview();
-    }
-
-    // Canvas Export Handler with JPEG Protection & Max KB Guard
-    $('saveBtn').onclick = () => {
-        const canvas = $('canvas');
-        const ctx = canvas.getContext('2d');
-        const w = parseInt($('wInput').value) || originalImg.width;
-        const h = parseInt($('hInput').value) || originalImg.height;
-        const format = $('format').value;
-        const maxKb = parseFloat($('maxKbInput').value);
-
-        // Swap canvas aspect for vertical rotations
-        if (Math.abs(rotation) === 90 || Math.abs(rotation) === 270) {
-            canvas.width = h;
-            canvas.height = w;
-        } else {
-            canvas.width = w;
-            canvas.height = h;
-        }
-
-        ctx.save();
-
-        // Fill white background for JPEG to prevent black transparent regions
-        if (format === 'image/jpeg') {
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-
-        // Apply Transformation Matrix
-        ctx.translate(canvas.width / 2, canvas.height / 2);
-        ctx.rotate((rotation * Math.PI) / 180);
-        ctx.scale(flipH, flipV);
-
-        // Apply Filters
-        ctx.filter = `brightness(${$('brightness').value}%) contrast(${$('contrast').value}%) saturate(${$('saturation').value}%)`;
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-
-        ctx.drawImage(originalImg, -w / 2, -h / 2, w, h);
-        ctx.restore();
-
-        // Target File Size Auto-Optimization (Quality Binary Search)
-        let qualityVal = $('quality').value / 100;
-        let dataUrl = canvas.toDataURL(format, qualityVal);
-
-        if (maxKb && (format === 'image/jpeg' || format === 'image/webp')) {
-            let minQ = 0.05, maxQ = qualityVal;
-            for (let i = 0; i < 6; i++) {
-                let midQ = (minQ + maxQ) / 2;
-                let testUrl = canvas.toDataURL(format, midQ);
-                let sizeKb = (testUrl.length * (3 / 4)) / 1024;
-                if (sizeKb > maxKb) {
-                    maxQ = midQ;
-                } else {
-                    minQ = midQ;
-                    dataUrl = testUrl;
+        document.addEventListener('paste', e => {
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let item of items) {
+                if (item.kind === 'file' && item.type.startsWith('image/')) {
+                    loadImageFile(item.getAsFile());
+                    break;
                 }
             }
+        });
+
+        // Resize Mode Switcher
+        window.setResizeMode = (mode) => {
+            state.resizeMode = mode;
+            $('sectionScale').classList.toggle('hidden', mode !== 'scale');
+            $('sectionDimensions').classList.toggle('hidden', mode !== 'dimensions');
+            $('sectionFileSize').classList.toggle('hidden', mode !== 'filesize');
+
+            ['modeScaleBtn', 'modeDimBtn', 'modeSizeBtn'].forEach(id => {
+                $(id).className = "py-2 px-2 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-black/5 dark:hover:bg-white/5";
+            });
+
+            if (mode === 'scale') $('modeScaleBtn').className = "py-2 px-2 text-xs font-semibold rounded-xl border border-cyan-500 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400";
+            if (mode === 'dimensions') $('modeDimBtn').className = "py-2 px-2 text-xs font-semibold rounded-xl border border-cyan-500 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400";
+            if (mode === 'filesize') $('modeSizeBtn').className = "py-2 px-2 text-xs font-semibold rounded-xl border border-cyan-500 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400";
+
+            renderCanvas();
+        };
+
+        // Dimension & Scale Inputs Handler
+        $('scaleInput').oninput = e => {
+            state.scale = parseInt(e.target.value);
+            $('scaleVal').innerText = `${state.scale}%`;
+            renderCanvas();
+        };
+
+        window.setScale = (val) => {
+            $('scaleInput').value = val;
+            state.scale = val;
+            $('scaleVal').innerText = `${val}%`;
+            setResizeMode('scale');
+        };
+
+        $('widthInput').oninput = e => {
+            state.targetWidth = parseInt(e.target.value) || 0;
+            if ($('aspectLock').checked && state.aspectRatio) {
+                state.targetHeight = Math.round(state.targetWidth / state.aspectRatio);
+                $('heightInput').value = state.targetHeight;
+            }
+            renderCanvas();
+        };
+
+        $('heightInput').oninput = e => {
+            state.targetHeight = parseInt(e.target.value) || 0;
+            if ($('aspectLock').checked && state.aspectRatio) {
+                state.targetWidth = Math.round(state.targetHeight * state.aspectRatio);
+                $('widthInput').value = state.targetWidth;
+            }
+            renderCanvas();
+        };
+
+        window.applyPreset = (w, h) => {
+            if (!state.isLoaded) return;
+            setResizeMode('dimensions');
+            $('widthInput').value = w;
+            $('heightInput').value = h;
+            state.targetWidth = w;
+            state.targetHeight = h;
+            renderCanvas();
+        };
+
+        // Rotation & Flip
+        window.rotate = (deg) => {
+            state.rotation = (state.rotation + deg) % 360;
+            renderCanvas();
+        };
+
+        window.flip = (dir) => {
+            if (dir === 'h') state.flipH *= -1;
+            if (dir === 'v') state.flipV *= -1;
+            renderCanvas();
+        };
+
+        // Filters Event Listeners
+        const filterIds = ['brightness', 'contrast', 'saturation', 'hue', 'blur'];
+        filterIds.forEach(id => {
+            $(id).oninput = e => {
+                state.filters[id] = parseInt(e.target.value);
+                const suffix = id === 'hue' ? '°' : id === 'blur' ? 'px' : '%';
+                $(`${id}Val`).innerText = `${e.target.value}${suffix}`;
+                renderCanvas();
+            };
+        });
+
+        window.applyPresetFilter = (type) => {
+            if (type === 'grayscale') {
+                state.filters.saturation = 0;
+                $('saturation').value = 0;
+                $('saturationVal').innerText = '0%';
+            } else if (type === 'sepia') {
+                state.filters.hue = 35;
+                state.filters.saturation = 140;
+                $('hue').value = 35; $('hueVal').innerText = '35°';
+                $('saturation').value = 140; $('saturationVal').innerText = '140%';
+            }
+            renderCanvas();
+        };
+
+        window.resetFilters = () => {
+            state.filters = { brightness: 100, contrast: 100, saturation: 100, hue: 0, blur: 0 };
+            filterIds.forEach(id => {
+                const defVal = id === 'hue' || id === 'blur' ? 0 : 100;
+                $(id).value = defVal;
+                const suffix = id === 'hue' ? '°' : id === 'blur' ? 'px' : '%';
+                $(`${id}Val`).innerText = `${defVal}${suffix}`;
+            });
+            renderCanvas();
+        };
+
+        // Dynamic Canvas Rendering Core
+        function getComputedDimensions() {
+            let w = state.rawImage.width;
+            let h = state.rawImage.height;
+
+            if (state.resizeMode === 'scale') {
+                w = Math.round(w * (state.scale / 100));
+                h = Math.round(h * (state.scale / 100));
+            } else if (state.resizeMode === 'dimensions') {
+                w = state.targetWidth || w;
+                h = state.targetHeight || h;
+            }
+            return { w, h };
         }
 
-        // Trigger File Download
-        const link = document.createElement('a');
-        link.download = `satu-pro-${Date.now()}.${format.split('/')[1]}`;
-        link.href = dataUrl;
-        link.click();
-    };
+        function renderCanvas() {
+            if (!state.isLoaded) return;
 
-    // Service Worker Registration
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js').catch(() => {});
+            const canvas = $('mainCanvas');
+            const ctx = canvas.getContext('2d');
+            const dim = getComputedDimensions();
+
+            // Swap dimensions if 90/270 deg rotated
+            const isVertical = Math.abs(state.rotation) === 90 || Math.abs(state.rotation) === 270;
+            const finalW = isVertical ? dim.h : dim.w;
+            const finalH = isVertical ? dim.w : dim.h;
+
+            const borderWidth = parseInt($('borderWidth').value) || 0;
+            canvas.width = finalW + (borderWidth * 2);
+            canvas.height = finalH + (borderWidth * 2);
+
+            ctx.save();
+            
+            // Draw Background Color Fill
+            ctx.fillStyle = $('bgColor').value;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Border
+            if (borderWidth > 0) {
+                ctx.fillStyle = $('borderColor').value;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            // Move Context to Image Core area
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate((state.rotation * Math.PI) / 180);
+            ctx.scale(state.flipH, state.flipV);
+
+            // Apply Color Filters
+            const f = state.filters;
+            ctx.filter = `brightness(${f.brightness}%) contrast(${f.contrast}%) saturate(${f.saturation}%) hue-rotate(${f.hue}deg) blur(${f.blur}px)`;
+
+            // Draw Image (Cropped or Full)
+            const sx = state.crop.active ? state.crop.x : 0;
+            const sy = state.crop.active ? state.crop.y : 0;
+            const sw = state.crop.active ? state.crop.w : state.rawImage.width;
+            const sh = state.crop.active ? state.crop.h : state.rawImage.height;
+
+            ctx.drawImage(state.rawImage, sx, sy, sw, sh, -dim.w / 2, -dim.h / 2, dim.w, dim.h);
+            ctx.restore();
+
+            // Render Text Watermark Overlay
+            const wmText = $('watermarkText').value.trim();
+            if (wmText) {
+                ctx.save();
+                const wmSize = parseInt($('wmSize').value) || 24;
+                ctx.font = `bold ${wmSize}px SolaimanLipi, sans-serif`;
+                ctx.fillStyle = $('wmColor').value;
+                ctx.shadowColor = 'rgba(0,0,0,0.6)';
+                ctx.shadowBlur = 4;
+                
+                const pos = $('wmPos').value;
+                let tx = 20, ty = wmSize + 20;
+                if (pos === 'bottom-right') {
+                    tx = canvas.width - ctx.measureText(wmText).width - 20;
+                    ty = canvas.height - 20;
+                } else if (pos === 'bottom-left') {
+                    tx = 20;
+                    ty = canvas.height - 20;
+                } else if (pos === 'center') {
+                    tx = (canvas.width - ctx.measureText(wmText).width) / 2;
+                    ty = canvas.height / 2;
+                } else if (pos === 'top-right') {
+                    tx = canvas.width - ctx.measureText(wmText).width - 20;
+                    ty = wmSize + 20;
+                }
+                ctx.fillText(wmText, tx, ty);
+                ctx.restore();
+            }
+
+            // Update UI Stats Text
+            $('exportDimText').innerText = `${canvas.width} x ${canvas.height} px`;
+            estimateOutputFileSize(canvas);
+        }
+
+        // Live Size Estimator
+        function estimateOutputFileSize(canvas) {
+            const format = $('exportFormat').value;
+            const quality = parseInt($('exportQuality').value) / 100;
+            const dataUrl = canvas.toDataURL(format, quality);
+            const approxKB = ((dataUrl.length * (3 / 4)) / 1024).toFixed(1);
+            $('statEstimated').innerHTML = `<i data-lucide="file-check" class="w-3.5 h-3.5"></i> অনুমানিক: ${approxKB} KB`;
+        }
+
+        // Additional Realtime Input Triggers
+        ['borderWidth', 'borderColor', 'watermarkText', 'wmSize', 'wmColor', 'wmPos', 'bgColor', 'exportFormat', 'exportQuality'].forEach(id => {
+            $(id).oninput = () => {
+                if (id === 'exportQuality') $('qualityVal').innerText = `${$(id).value}%`;
+                renderCanvas();
+            };
         });
-    }
-</script>
 
+        // Interactive Crop Box Functionality
+        function startCropMode() {
+            if (!state.isLoaded) return;
+            $('cropControlsPanel').classList.remove('hidden');
+            $('cropControlsPanel').classList.add('flex');
+            const overlay = $('cropOverlay');
+            overlay.style.display = 'block';
+            overlay.style.top = '10%'; overlay.style.left = '10%';
+            overlay.style.width = '80%'; overlay.style.height = '80%';
+        }
+
+        window.setCropAspect = (ratio) => {
+            state.crop.aspect = ratio;
+            const overlay = $('cropOverlay');
+            if (ratio > 0) {
+                const currentW = overlay.offsetWidth;
+                overlay.style.height = `${currentW / ratio}px`;
+            }
+        };
+
+        window.cancelCrop = () => {
+            $('cropControlsPanel').classList.add('hidden');
+            $('cropControlsPanel').classList.remove('flex');
+            $('cropOverlay').style.display = 'none';
+        };
+
+        window.applyCrop = () => {
+            const overlay = $('cropOverlay');
+            const canvas = $('mainCanvas');
+            const rect = canvas.getBoundingClientRect();
+            
+            const scaleX = state.rawImage.width / rect.width;
+            const scaleY = state.rawImage.height / rect.height;
+
+            const cropX = (overlay.offsetLeft - canvas.offsetLeft) * scaleX;
+            const cropY = (overlay.offsetTop - canvas.offsetTop) * scaleY;
+            const cropW = overlay.offsetWidth * scaleX;
+            const cropH = overlay.offsetHeight * scaleY;
+
+            state.crop = { active: true, x: cropX, y: cropY, w: cropW, h: cropH };
+            cancelCrop();
+            renderCanvas();
+        };
+
+        // Process & Download Binary Target Optimizer
+        $('downloadBtn').onclick = () => {
+            const canvas = $('mainCanvas');
+            const format = $('exportFormat').value;
+            let quality = parseInt($('exportQuality').value) / 100;
+            const targetKB = parseFloat($('targetKbInput').value);
+
+            let finalDataUrl = canvas.toDataURL(format, quality);
+
+            // Target File Size Binary Search Optimization
+            if (state.resizeMode === 'filesize' && targetKB && (format === 'image/jpeg' || format === 'image/webp')) {
+                let minQ = 0.05, maxQ = 1.0;
+                for (let i = 0; i < 7; i++) {
+                    let midQ = (minQ + maxQ) / 2;
+                    let testUrl = canvas.toDataURL(format, midQ);
+                    let sizeKb = (testUrl.length * (3 / 4)) / 1024;
+                    if (sizeKb > targetKB) maxQ = midQ;
+                    else { minQ = midQ; finalDataUrl = testUrl; }
+                }
+            }
+
+            // Trigger Direct Browser Download
+            const ext = format.split('/')[1];
+            const link = document.createElement('a');
+            link.download = `${state.fileName}-satu.pro.${ext}`;
+            link.href = finalDataUrl;
+            link.click();
+        };
+    </script>
 </body>
 </html>
