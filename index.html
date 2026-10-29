@@ -288,7 +288,7 @@
             <a href="/age" class="menu-link"><i data-lucide="calendar"></i> Age Calculator</a>
             <a href="/photo" class="menu-link"><i data-lucide="image"></i> Photo Tools</a>
             <a href="/data" class="menu-link"><i data-lucide="school"></i> Student Management</a>
-          </nav>
+         </nav>
     </div>
 
     <header>
@@ -394,15 +394,17 @@
                 try {
                     const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&t=${Date.now()}`);
                     const data = await res.json();
-                    if (data.status === 'ok') {
-                        return data.items.map(item => ({ ...item, source: feed.name, ts: new Date(item.pubDate).getTime() }));
+                    if (data.status === 'ok' && data.items) {
+                        return data.items.map(item => ({ ...item, source: feed.name, ts: new Date(item.pubDate).getTime() || 0 }));
                     }
-                } catch (e) { console.error(feed.name + " failed"); }
+                } catch (e) { 
+                    console.error(feed.name + " failed to load"); 
+                }
                 return [];
             });
 
             const results = await Promise.all(promises);
-            combinedItems = results.flat().sort((a, b) => b.ts - a.ts);
+            combinedItems = results.flat().filter(item => !isNaN(item.ts)).sort((a, b) => b.ts - a.ts);
 
             if (combinedItems.length > 0) {
                 grid.innerHTML = '';
@@ -410,24 +412,37 @@
                 combinedItems.forEach((item, idx) => {
                     if(idx < 25) tickerHTML += `<span class="ticker-item"><b>${item.source}</b> ${item.title}</span>`;
                     const card = document.createElement('a');
-                    card.href = item.link; card.target = "_blank"; card.className = "card";
+                    card.href = item.link; 
+                    card.target = "_blank"; 
+                    card.className = "card";
                     card.setAttribute('data-title', item.title.toLowerCase());
                     card.innerHTML = `<span style="font-size:0.85rem; color:var(--accent-cyan); font-weight:700;">${item.source}</span><div class="card-title">${item.title}</div>`;
                     grid.appendChild(card);
                 });
                 ticker.innerHTML = tickerHTML;
                 ticker.style.animationDuration = (ticker.scrollWidth / 55) + "s";
+            } else {
+                grid.innerHTML = '<div style="text-align:center; color:var(--text-dim); padding:40px;">দুঃখিত, কোনো সংবাদ লোড করা সম্ভব হয়নি।</div>';
+                ticker.innerHTML = '<span class="ticker-item">সংবাদ লোড করতে ব্যর্থ হয়েছে।</span>';
             }
         }
 
         document.getElementById('newsSearch').addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
-            document.querySelectorAll('.card').forEach(c => c.style.display = c.getAttribute('data-title').includes(term) ? "flex" : "none");
+            document.querySelectorAll('.card').forEach(c => {
+                const titleAttr = c.getAttribute('data-title');
+                c.style.display = (titleAttr && titleAttr.includes(term)) ? "flex" : "none";
+            });
         });
 
         setInterval(updateBengaliClock, 1000);
         updateBengaliClock();
-        lucide.createIcons();
+        
+        // Initializing Lucide icons after DOM content is loaded
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+
         fetchNews();
     </script>
 </body>
