@@ -327,6 +327,17 @@
     </footer>
 
     <script>
+        /*
+         * =========================================================================
+         * COPYRIGHT & INTELLECTUAL PROPERTY NOTICE
+         * =========================================================================
+         * Property of SATU (https://satu.pro.bd).
+         * Unauthorized copying, modification, or reverse engineering of this 
+         * script or UI layout is strictly prohibited under international 
+         * copyright laws.
+         * =========================================================================
+         */
+
         // Domain Lock Security Protection
         if (window.location.hostname !== 'satu.pro.bd' && 
             window.location.hostname !== 'www.satu.pro.bd' && 
@@ -336,9 +347,13 @@
             window.location.href = 'https://satu.pro.bd';
         }
 
+        // Hidden Watermark Stamp (Base64 Encoded)
+        const __sys_signature = atob("Q29weXJpZ2h0IChjKSBmMDI2IFNBVFUgKHNhdHUucHJvLmJkKS4gQWxsIFJpZ2h0cyBSZXNlcnZlZC4=");
+
         const feeds = [
             { name: "প্রথম আলো", url: "https://www.prothomalo.com/feed" },
             { name: "বিবিসি বাংলা", url: "https://www.bbc.com/bengali/index.xml" },
+            { name: "সময় নিউজ", url: "https://www.somoynews.tv/rss.xml" },
             { name: "যুগান্তর", url: "https://www.jugantor.com/feed/rss.xml" },
             { name: "বাংলা ট্রিবিউন", url: "https://www.banglatribune.com/feed" },
             { name: "কালের কণ্ঠ", url: "https://www.kalerkantho.com/rss.xml" },
@@ -370,11 +385,15 @@
             const ticker = document.getElementById('newsTicker');
             let combinedItems = [];
 
-            // এক এক করে রিকোয়েস্ট পাঠানোর জন্য লুপ ব্যবহার করা হয়েছে যাতে একসাথে বেশি লোড না পড়ে
             for (let feed of feeds) {
                 try {
-                    const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`);
+                    // CORS প্রক্সি যুক্ত করা হয়েছে যাতে ব্রাউজার ব্লক করতে না পারে
+                    const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&t=${Date.now()}`;
+                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+                    
+                    const res = await fetch(proxyUrl);
                     const data = await res.json();
+                    
                     if (data.status === 'ok' && data.items) {
                         const items = data.items.map(item => ({ 
                             ...item, 
@@ -383,12 +402,11 @@
                         }));
                         combinedItems.push(...items);
                     }
-                } catch (e) {
-                    console.error(feed.name + " failed to load");
+                } catch (e) { 
+                    console.error(feed.name + " failed to load", e); 
                 }
             }
 
-            // যদি কোনো কারণে সব ফিড থেকে ডেটা না আসে, তবে ফলব্যাক হিসেবে একটি মেসেজ বা ডিফল্ট নিউজ রাখা যেতে পারে
             combinedItems.sort((a, b) => b.ts - a.ts);
 
             if (combinedItems.length > 0) {
@@ -407,7 +425,7 @@
                 ticker.innerHTML = tickerHTML;
                 ticker.style.animationDuration = (ticker.scrollWidth / 55) + "s";
             } else {
-                grid.innerHTML = '<div style="text-align:center; color:var(--text-dim); padding:40px;">দুঃখিত, এই মুহূর্তে সার্ভার থেকে সংবাদ লোড করা সম্ভব হয়নি। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।</div>';
+                grid.innerHTML = '<div style="text-align:center; color:var(--text-dim); padding:40px;">দুঃখিত, কোনো সংবাদ লোড করা সম্ভব হয়নি।</div>';
                 ticker.innerHTML = '<span class="ticker-item">সংবাদ লোড করতে ব্যর্থ হয়েছে।</span>';
             }
         }
