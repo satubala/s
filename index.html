@@ -327,17 +327,6 @@
     </footer>
 
     <script>
-        /*
-         * =========================================================================
-         * COPYRIGHT & INTELLECTUAL PROPERTY NOTICE
-         * =========================================================================
-         * Property of SATU (https://satu.pro.bd).
-         * Unauthorized copying, modification, or reverse engineering of this 
-         * script or UI layout is strictly prohibited under international 
-         * copyright laws.
-         * =========================================================================
-         */
-
         // Domain Lock Security Protection
         if (window.location.hostname !== 'satu.pro.bd' && 
             window.location.hostname !== 'www.satu.pro.bd' && 
@@ -347,22 +336,13 @@
             window.location.href = 'https://satu.pro.bd';
         }
 
-        // Hidden Watermark Stamp (Base64 Encoded)
-        const __sys_signature = atob("Q29weXJpZ2h0IChjKSBmMDI2IFNBVFUgKHNhdHUucHJvLmJkKS4gQWxsIFJpZ2h0cyBSZXNlcnZlZC4=");
-
         const feeds = [
             { name: "প্রথম আলো", url: "https://www.prothomalo.com/feed" },
             { name: "বিবিসি বাংলা", url: "https://www.bbc.com/bengali/index.xml" },
-            { name: "সময় নিউজ", url: "https://www.somoynews.tv/rss.xml" },
             { name: "যুগান্তর", url: "https://www.jugantor.com/feed/rss.xml" },
             { name: "বাংলা ট্রিবিউন", url: "https://www.banglatribune.com/feed" },
-            { name: "বিডিনিউজ২৪", url: "https://bdnews24.com/?widgetName=rssfeed&widgetId=1150&getXmlFeed=true" },
-            { name: "জাগো নিউজ", url: "https://www.jagonews24.com/rss.xml" },
             { name: "কালের কণ্ঠ", url: "https://www.kalerkantho.com/rss.xml" },
-            { name: "চ্যানেল ২৪", url: "https://www.channel24bd.tv/rss/rss.xml" },
-            { name: "বাংলানিউজ২৪", url: "https://www.banglanews24.com/rss/rss.xml" },
-            { name: "দৈনিক ইনকিলাব", url: "https://www.dailyinqilab.com/rss.xml" },
-            { name: "নয়াদিগন্ত", url: "https://www.dailynayadiganta.com/rss.xml" }
+            { name: "জাগো নিউজ", url: "https://www.jagonews24.com/rss.xml" }
         ];
 
         function toggleMenu() {
@@ -390,21 +370,26 @@
             const ticker = document.getElementById('newsTicker');
             let combinedItems = [];
 
-            const promises = feeds.map(async (feed) => {
+            // এক এক করে রিকোয়েস্ট পাঠানোর জন্য লুপ ব্যবহার করা হয়েছে যাতে একসাথে বেশি লোড না পড়ে
+            for (let feed of feeds) {
                 try {
-                    const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&t=${Date.now()}`);
+                    const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`);
                     const data = await res.json();
                     if (data.status === 'ok' && data.items) {
-                        return data.items.map(item => ({ ...item, source: feed.name, ts: new Date(item.pubDate).getTime() || 0 }));
+                        const items = data.items.map(item => ({ 
+                            ...item, 
+                            source: feed.name, 
+                            ts: new Date(item.pubDate).getTime() || Date.now() 
+                        }));
+                        combinedItems.push(...items);
                     }
-                } catch (e) { 
-                    console.error(feed.name + " failed to load"); 
+                } catch (e) {
+                    console.error(feed.name + " failed to load");
                 }
-                return [];
-            });
+            }
 
-            const results = await Promise.all(promises);
-            combinedItems = results.flat().filter(item => !isNaN(item.ts)).sort((a, b) => b.ts - a.ts);
+            // যদি কোনো কারণে সব ফিড থেকে ডেটা না আসে, তবে ফলব্যাক হিসেবে একটি মেসেজ বা ডিফল্ট নিউজ রাখা যেতে পারে
+            combinedItems.sort((a, b) => b.ts - a.ts);
 
             if (combinedItems.length > 0) {
                 grid.innerHTML = '';
@@ -422,7 +407,7 @@
                 ticker.innerHTML = tickerHTML;
                 ticker.style.animationDuration = (ticker.scrollWidth / 55) + "s";
             } else {
-                grid.innerHTML = '<div style="text-align:center; color:var(--text-dim); padding:40px;">দুঃখিত, কোনো সংবাদ লোড করা সম্ভব হয়নি।</div>';
+                grid.innerHTML = '<div style="text-align:center; color:var(--text-dim); padding:40px;">দুঃখিত, এই মুহূর্তে সার্ভার থেকে সংবাদ লোড করা সম্ভব হয়নি। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।</div>';
                 ticker.innerHTML = '<span class="ticker-item">সংবাদ লোড করতে ব্যর্থ হয়েছে।</span>';
             }
         }
@@ -438,7 +423,6 @@
         setInterval(updateBengaliClock, 1000);
         updateBengaliClock();
         
-        // Initializing Lucide icons after DOM content is loaded
         window.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
         });
