@@ -327,17 +327,6 @@
     </footer>
 
     <script>
-        /*
-         * =========================================================================
-         * COPYRIGHT & INTELLECTUAL PROPERTY NOTICE
-         * =========================================================================
-         * Property of SATU (https://satu.pro.bd).
-         * Unauthorized copying, modification, or reverse engineering of this 
-         * script or UI layout is strictly prohibited under international 
-         * copyright laws.
-         * =========================================================================
-         */
-
         // Domain Lock Security Protection
         if (window.location.hostname !== 'satu.pro.bd' && 
             window.location.hostname !== 'www.satu.pro.bd' && 
@@ -347,18 +336,7 @@
             window.location.href = 'https://satu.pro.bd';
         }
 
-        // Hidden Watermark Stamp (Base64 Encoded)
-        const __sys_signature = atob("Q29weXJpZ2h0IChjKSBmMDI2IFNBVFUgKHNhdHUucHJvLmJkKS4gQWxsIFJpZ2h0cyBSZXNlcnZlZC4=");
-
-        const feeds = [
-            { name: "প্রথম আলো", url: "https://www.prothomalo.com/feed" },
-            { name: "বিবিসি বাংলা", url: "https://www.bbc.com/bengali/index.xml" },
-            { name: "সময় নিউজ", url: "https://www.somoynews.tv/rss.xml" },
-            { name: "যুগান্তর", url: "https://www.jugantor.com/feed/rss.xml" },
-            { name: "বাংলা ট্রিবিউন", url: "https://www.banglatribune.com/feed" },
-            { name: "কালের কণ্ঠ", url: "https://www.kalerkantho.com/rss.xml" },
-            { name: "জাগো নিউজ", url: "https://www.jagonews24.com/rss.xml" }
-        ];
+        const feedUrl = "https://news.google.com/rss?hl=bn&gl=BD&ceid=BD:bn";
 
         function toggleMenu() {
             document.getElementById('sideMenu').classList.toggle('active');
@@ -383,50 +361,37 @@
         async function fetchNews() {
             const grid = document.getElementById('newsGrid');
             const ticker = document.getElementById('newsTicker');
-            let combinedItems = [];
 
-            for (let feed of feeds) {
-                try {
-                    // CORS প্রক্সি যুক্ত করা হয়েছে যাতে ব্রাউজার ব্লক করতে না পারে
-                    const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&t=${Date.now()}`;
-                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-                    
-                    const res = await fetch(proxyUrl);
-                    const data = await res.json();
-                    
-                    if (data.status === 'ok' && data.items) {
-                        const items = data.items.map(item => ({ 
-                            ...item, 
-                            source: feed.name, 
-                            ts: new Date(item.pubDate).getTime() || Date.now() 
-                        }));
-                        combinedItems.push(...items);
-                    }
-                } catch (e) { 
-                    console.error(feed.name + " failed to load", e); 
+            try {
+                // rss2json ব্যবহার করে গুগল নিউজের ফিড পার্স করা
+                const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+                const res = await fetch(apiUrl);
+                const data = await res.json();
+
+                if (data.status === 'ok' && data.items && data.items.length > 0) {
+                    grid.innerHTML = '';
+                    let tickerHTML = "";
+
+                    data.items.forEach((item, idx) => {
+                        if(idx < 25) tickerHTML += `<span class="ticker-item"><b>গুগল নিউজ</b> ${item.title}</span>`;
+                        
+                        const card = document.createElement('a');
+                        card.href = item.link; 
+                        card.target = "_blank"; 
+                        card.className = "card";
+                        card.setAttribute('data-title', item.title.toLowerCase());
+                        card.innerHTML = `<span style="font-size:0.85rem; color:var(--accent-cyan); font-weight:700;">গুগল নিউজ</span><div class="card-title">${item.title}</div>`;
+                        grid.appendChild(card);
+                    });
+
+                    ticker.innerHTML = tickerHTML;
+                    ticker.style.animationDuration = (ticker.scrollWidth / 55) + "s";
+                } else {
+                    grid.innerHTML = '<div style="text-align:center; color:var(--text-dim); padding:40px;">দুঃখিত, এই মুহূর্তে সংবাদ লোড করা সম্ভব হয়নি।</div>';
+                    ticker.innerHTML = '<span class="ticker-item">সংবাদ লোড করতে ব্যর্থ হয়েছে।</span>';
                 }
-            }
-
-            combinedItems.sort((a, b) => b.ts - a.ts);
-
-            if (combinedItems.length > 0) {
-                grid.innerHTML = '';
-                let tickerHTML = "";
-                combinedItems.forEach((item, idx) => {
-                    if(idx < 25) tickerHTML += `<span class="ticker-item"><b>${item.source}</b> ${item.title}</span>`;
-                    const card = document.createElement('a');
-                    card.href = item.link; 
-                    card.target = "_blank"; 
-                    card.className = "card";
-                    card.setAttribute('data-title', item.title.toLowerCase());
-                    card.innerHTML = `<span style="font-size:0.85rem; color:var(--accent-cyan); font-weight:700;">${item.source}</span><div class="card-title">${item.title}</div>`;
-                    grid.appendChild(card);
-                });
-                ticker.innerHTML = tickerHTML;
-                ticker.style.animationDuration = (ticker.scrollWidth / 55) + "s";
-            } else {
-                grid.innerHTML = '<div style="text-align:center; color:var(--text-dim); padding:40px;">দুঃখিত, কোনো সংবাদ লোড করা সম্ভব হয়নি।</div>';
-                ticker.innerHTML = '<span class="ticker-item">সংবাদ লোড করতে ব্যর্থ হয়েছে।</span>';
+            } catch (e) {
+                grid.innerHTML = '<div style="text-align:center; color:var(--text-dim); padding:40px;">নেটওয়ার্ক ত্রুটি বা এপিআই ব্লক হয়েছে।</div>';
             }
         }
 
