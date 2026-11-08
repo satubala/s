@@ -295,7 +295,7 @@
             <button class="close-btn" onclick="toggleMenu()"><i data-lucide="x" size="24"></i></button>
         </div>
         <nav style="display:flex; flex-direction:column; gap:4px;">
-            <a href="/" class="menu-link"><i data-lucide="home" size="18"></i> হোম পেজ (নিউজ ফিড)</a>
+            <a href="/" class="menu-link"><i data-lucide="home" size="18"></i> Home</a>
             <a href="https://dpe.gopalganj.gov.bd/pages/notices" class="menu-link" target="_blank"><i data-lucide="map-pin" size="18"></i> DPE Gopalganj</a>
             <a href="https://dpe.gov.bd/pages/notices" class="menu-link" target="_blank"><i data-lucide="bell" size="18"></i> DPE Notice</a>
             <a href="/salary" class="menu-link"><i data-lucide="wallet" size="18"></i> Salary Calculator</a>
@@ -495,7 +495,7 @@
         $("gr").innerHTML = Object.keys(OS).map(g=>`<option value="${g}">গ্রেড ${bn(g)}${g==1?" (নির্ধারিত)":""}</option>`).join("");
         $("gr").value = "13";
         $("lc").innerHTML = LOC.map((l,i)=>`<option value="${l[1]}">${l[0]}</option>`).join("");
-        $("lc").value = "40"; $("hr").value = "40";
+        $("lc").value = "45"; $("hr").value = "45";
         $("tOld").value = txt(OLD); $("tNew").value = txt(NEW);
         fillSteps();
         $("gr").onchange = ()=>{fillSteps();calc()};
