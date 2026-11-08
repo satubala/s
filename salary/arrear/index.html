@@ -35,19 +35,16 @@
             --input-border: #cbd5e1;
         }
 
-        /* --- Dark Mode (Triggered by OS Settings or System Preference) --- */
-        
         @media print {
-  @page {
-    size: A4;
-    margin: 10mm;
-  }
-
-  body {
-    width: 100%;
-    margin: 0;
-  }
-}
+          @page {
+            size: A4;
+            margin: 10mm;
+          }
+          body {
+            width: 100%;
+            margin: 0;
+          }
+        }
 
         @media (prefers-color-scheme: dark) {
             :root {
@@ -315,7 +312,7 @@
                 <img src="/logo.png" alt="satu.pro.bd" class="header-img">
             </a>
         </div>
-        <div style="width: 42px;"></div> <!-- Spacer for symmetry -->
+        <div style="width: 42px;"></div>
     </header>
 
     <div class="wrap">
@@ -351,8 +348,8 @@
                 <div class="grid" style="margin-top:10px">
                     <div><label for="o_new">নতুন স্কেলে নির্ধারিত পূর্ণ মূল বেতন <span class="hint">(iBAS++/গেজেট অনুযায়ী)</span></label><input id="o_new" type="number" min="0"></div>
                     <div><label for="o_inst">প্রথম ধাপে (জুলাই–ডিসেম্বর ২০২৬) প্রাপ্য মূল বেতন <span class="hint">(জানা থাকলে সরাসরি দিন)</span></label><input id="o_inst" type="number" min="0"></div>
-                    <div><label for="o_hr">জুলাইয়ে প্রকৃত তোলা বাড়ি ভাড়া</label><input id="o_hr" type="number" min="0"></div>
-                    <div><label for="o_sp">জুলাইয়ে প্রকৃত তোলা বিশেষ সুবিধা</label><input id="o_sp" type="number" min="0"></div>
+                    <div><label for="o_hr">জুলাইয়ে প্রকৃত তোলা বাড়ি ভাড়া</label><input id="o_hr" type="number" min="0" step="any"></div>
+                    <div><label for="o_sp">জুলাইয়ে প্রকৃত তোলা বিশেষ সুবিধা</label><input id="o_sp" type="number" min="0" step="any"></div>
                 </div></details>
             </div>
         </div>
@@ -439,38 +436,70 @@
            if(eq!==null)fxs.push(`১ জানুয়ারি ২০২৭: পরবর্তী ${bn(g<=9?30:25)}% (${bn(Math.round((eq-old)*(g<=9?.3:.25)))}) যোগে ৳${bn(instB+Math.round((eq-old)*(g<=9?.3:.25)))}; ১ জুলাই ২০২৭: পূর্ণ ৳${bn(full)}`);
            $("fx").innerHTML=fxs.map(x=>"<li>"+x+"</li>").join("");
            
-           // বাড়ি ভাড়ার সঠিক দশমিক হিসাবের জন্য parseFloat ব্যবহার করা হয়েছে
            const rate = (parseFloat($("hr").value) || 0) / 100;
-           const hrE = Math.round(old * rate);
-           const hrD = +$("o_hr").value > 0 ? +$("o_hr").value : Math.round(dr * rate);
+           const hrE = old * rate; 
+           const hrD = +$("o_hr").value > 0 ? +$("o_hr").value : (dr * rate); 
            
-           let sp=+$("o_sp").value>0?+$("o_sp").value:(g<=9?Math.round(dr*0.10):Math.max(1500,Math.round(dr*0.15)));
-           const bd=instB-dr,hd=hrE-hrD,mon=bd+hd-sp;
-           const m=Math.max(1,Math.min(6,+$("mo").value||3));
-           const names=["জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
-           const neg=v=>v<0?`<span class="neg">−${bn(-v)}</span>`:bn(v);
-           let h=`<tr><th>বিবরণ</th><th>প্রাপ্য (নতুন আদেশে)</th><th>গৃহীত (যা তুলেছেন)</th><th>সমন্বয় (প্রাপ্য − গৃহীত)</th></tr>`;
-           h+=row(["মূল বেতন",bn(instB),bn(dr),neg(bd)]);
-           h+=row([`বাড়ি ভাড়া (${bn(rate*100)}%) — প্রাপ্য: ৩০ জুনের মূল বেতনে; গৃহীত: তোলা মূল বেতনে`,bn(hrE),bn(hrD),neg(hd)]);
-           h+=row([`বিশেষ সুবিধা (${g<=9?"১০%":"১৫%"}) — ১ জুলাই ২০২৬ থেকে বিলুপ্ত`,"০",bn(sp),neg(-sp)]);
-           h+=row(["মাসিক বকেয়া","","",neg(mon)],"tot");
-           $("tb").innerHTML=h;
-           let rows=`<table><tr><th>মাস</th><th>মাসিক বকেয়া</th></tr>`;
-           for(let i=0;i<m;i++)rows+=row([names[i]+" ২০২৬",neg(mon)]);
-           rows+=row([`সর্বমোট বকেয়া (${bn(m)} মাস)`,neg(mon*m)],"tot")+"</table>";
-           $("mn").innerHTML=rows+`<p class="big">৳ ${mon*m<0?"−":""}${bn(Math.abs(mon*m))}</p>`;
-           const n=$("nm").value,d=$("dg").value,o=$("of").value;
-           $("who").innerHTML=[n&&`<b>নাম:</b> ${n}`,d&&`<b>পদবি:</b> ${d}`,o&&`<b>অফিস:</b> ${o}`,`<b>গ্রেড:</b> ${bn(g)}`].filter(Boolean).join(" &nbsp;|&nbsp; ");
+           let sp=+$("o_sp").value>0?+$("o_sp").value:(g<=9?(dr*0.10):Math.max(1500,(dr*0.15)));
+           
+           const bd = instB - dr;
+           const hd = hrE - hrD;
+           const mon = bd + hd - sp;
+           const m = Math.max(1, Math.min(6, +$("mo").value || 3));
+           const names = ["জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+           
+           const neg = v => v < 0 ? `<span class="neg">−${bn(-v)}</span>` : bn(v);
+           const negDec = v => v < 0 ? `<span class="neg">−${Math.abs(v).toLocaleString('bn-BD', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>` : v.toLocaleString('bn-BD', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+           let h = `<tr><th>বিবরণ</th><th>প্রাপ্য (নতুন আদেশে)</th><th>গৃহীত (যা তুলেছেন)</th><th>সমন্বয় (প্রাপ্য − গৃহীত)</th></tr>`;
+           h += row([
+               "মূল বেতন", 
+               bn(instB), 
+               bn(dr), 
+               neg(bd)
+           ]);
+           h += row([
+               `বাড়ি ভাড়া (${bn(rate*100)}%) — প্রাপ্য: ৩০ জুনের মূল বেতনে; গৃহীত: তোলা মূল বেতনে`, 
+               hrE % 1 !== 0 ? hrE.toLocaleString('bn-BD', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : bn(hrE), 
+               hrD % 1 !== 0 ? hrD.toLocaleString('bn-BD', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : bn(hrD), 
+               negDec(hd)
+           ]);
+           h += row([
+               `বিশেষ সুবিধা (${g<=9?"১০%":"১৫%"}) — ১ জুলাই ২০২৬ থেকে বিলুপ্ত`, 
+               "০", 
+               sp % 1 !== 0 ? sp.toLocaleString('bn-BD', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : bn(sp), 
+               negDec(-sp)
+           ]);
+           h += row([
+               "মাসিক বকেয়া", 
+               "", 
+               "", 
+               negDec(mon)
+           ], "tot");
+           
+           $("tb").innerHTML = h;
+           
+           let rows = `<table><tr><th>মাস</th><th>মাসিক বকেয়া</th></tr>`;
+           for(let i = 0; i < m; i++) rows += row([names[i] + " ২০২৬", negDec(mon)]);
+           
+           const totalDue = mon * m;
+           rows += row([`সর্বমোট বকেয়া (${bn(m)} মাস)`, negDec(totalDue)], "tot") + "</table>";
+           
+           $("mn").innerHTML = rows + `<p class="big">৳ ${totalDue < 0 ? "−" : ""}${Math.abs(totalDue).toLocaleString('bn-BD', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>`;
+           
+           const n = $("nm").value, d = $("dg").value, o = $("of").value;
+           $("who").innerHTML = [n && `<b>নাম:</b> ${n}`, d && `<b>পদবি:</b> ${d}`, o && `<b>অফিস:</b> ${o}`, `<b>গ্রেড:</b> ${bn(g)}`].filter(Boolean).join(" &nbsp;|&nbsp; ");
            $("out").classList.remove("hide");
         }
-        $("gr").innerHTML=Object.keys(OS).map(g=>`<option value="${g}">গ্রেড ${bn(g)}${g==1?" (নির্ধারিত)":""}</option>`).join("");
-        $("gr").value="13";
-        $("lc").innerHTML=LOC.map((l,i)=>`<option value="${l[1]}">${l[0]}</option>`).join("");
-        $("lc").value="40";$("hr").value="40";
-        $("tOld").value=txt(OLD);$("tNew").value=txt(NEW);
+        
+        $("gr").innerHTML = Object.keys(OS).map(g=>`<option value="${g}">গ্রেড ${bn(g)}${g==1?" (নির্ধারিত)":""}</option>`).join("");
+        $("gr").value = "13";
+        $("lc").innerHTML = LOC.map((l,i)=>`<option value="${l[1]}">${l[0]}</option>`).join("");
+        $("lc").value = "40"; $("hr").value = "40";
+        $("tOld").value = txt(OLD); $("tNew").value = txt(NEW);
         fillSteps();
-        $("gr").onchange=()=>{fillSteps();calc()};
-        $("lc").onchange=()=>{$("hr").value=$("lc").value;calc()};
+        $("gr").onchange = ()=>{fillSteps();calc()};
+        $("lc").onchange = ()=>{$("hr").value=$("lc").value;calc()};
         document.querySelectorAll("input,select").forEach(e=>{if(!["gr","lc"].includes(e.id))e.addEventListener("input",calc)});
         lucide.createIcons();
     </script>
