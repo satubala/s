@@ -39,8 +39,8 @@
         
         @media print {
   @page {
-    size: A4; /* অথবা A4 portrait / A4 landscape */
-    margin: 10mm; /* আপনার প্রয়োজন অনুযায়ী মার্জিন সেট করতে পারেন */
+    size: A4;
+    margin: 10mm;
   }
 
   body {
@@ -416,49 +416,52 @@
         function val(s,c){const v=$(s).value;$(c).classList.toggle("hide",v!=="x");return v==="x"?+$(c).value:+v}
         function row(cells,cls){return `<tr class="${cls||""}">${cells.map(c=>`<td>${c}</td>`).join("")}</tr>`}
         function calc(){
-         const g=+$("gr").value,old=val("b30","b30c"),dr=val("bd","bdc");
-         if(!old||!dr){$("out").classList.add("hide");return}
-         const os=OLD[g][0],ns=NEW[g],oldInc=$("inc").checked;
-         let full,fxs=[],eq=null,incv=0;
-         if(+$("o_new").value>0){full=+$("o_new").value;fxs.push(`নতুন স্কেলে নির্ধারিত পূর্ণ মূল বেতন (হাতে দেওয়া অঙ্ক): <b>৳${bn(full)}</b>`)}
-         else if(g===1){full=ns[0];fxs.push(`১ম গ্রেডের নির্ধারিত বেতন: <b>৳${bn(full)}</b>`)}
-         else{
-          const diff=old-os,t=ns[0]+diff;let i=ns.findIndex(x=>x>=t);if(i<0)i=ns.length-1;
-          fxs.push(`বর্তমান বেতন − পুরাতন প্রারম্ভিক ধাপ = ${bn(old)} − ${bn(os)} = <b>${bn(diff)}</b>`);
-          fxs.push(`নতুন প্রারম্ভিক ধাপ + পার্থক্য = ${bn(ns[0])} + ${bn(diff)} = <b>${bn(t)}</b>`);
-          fxs.push(ns[i]===t?`সমান ধাপ আছে: ৳${bn(ns[i])}`:`সমান ধাপ নেই, পরবর্তী উচ্চতর ধাপ: <b>৳${bn(ns[i])}</b>`);
-          eq=ns[i];if(oldInc&&i<ns.length-1)i++;
-          full=ns[i];incv=full-eq;
-          fxs.push(oldInc?`১ জুলাই ২০২৬-এর বার্ষিক বেতনবৃদ্ধিসহ পূর্ণ নতুন মূল বেতন: <b>৳${bn(full)}</b>`:`বার্ষিক বেতনবৃদ্ধি যোগ হয়নি। পূর্ণ নতুন মূল বেতন: <b>৳${bn(full)}</b>`);
-         }
-         const pct=g<=9?0.4:0.5;
-         let instB=eq!==null?Math.round(old+(eq-old)*pct)+incv:Math.round(old+(full-old)*pct);
-         if(+$("o_inst").value>0){instB=+$("o_inst").value;fxs.push(`প্রথম ধাপে প্রাপ্য মূল বেতন (হাতে দেওয়া অঙ্ক): <b>৳${bn(instB)}</b>`)}
-         else if(eq!==null)fxs.push(`বেতন বৃদ্ধির পরিমাণ = ${bn(eq)} − ${bn(old)} = ${bn(eq-old)}; ${bn(pct*100)}% = ${bn(Math.round((eq-old)*pct))}; প্রাপ্য বেতন = ${bn(old)} + ${bn(Math.round((eq-old)*pct))} = ${bn(old+Math.round((eq-old)*pct))}; ইনক্রিমেন্টসহ (জুলাই–ডিসেম্বর ২০২৬): + ${bn(incv)} = <b>৳${bn(instB)}</b>`);
-         else fxs.push(`প্রথম ধাপ (জুলাই–ডিসেম্বর ২০২৬): বৃদ্ধির ${bn(pct*100)}% = ${bn(old)} + ${bn(pct*100)}% × (${bn(full)} − ${bn(old)}) = <b>৳${bn(instB)}</b>`);
-         if(eq!==null)fxs.push(`১ জানুয়ারি ২০২৭: পরবর্তী ${bn(g<=9?30:25)}% (${bn(Math.round((eq-old)*(g<=9?.3:.25)))}) যোগে ৳${bn(instB+Math.round((eq-old)*(g<=9?.3:.25)))}; ১ জুলাই ২০২৭: পূর্ণ ৳${bn(full)}`);
-         $("fx").innerHTML=fxs.map(x=>"<li>"+x+"</li>").join("");
-         const rate=(+$("hr").value||0)/100;
-         const hrE=Math.round(old*rate);
-         const hrD=+$("o_hr").value>0?+$("o_hr").value:Math.round(dr*rate);
-         let sp=+$("o_sp").value>0?+$("o_sp").value:(g<=9?Math.round(dr*0.10):Math.max(1500,Math.round(dr*0.15)));
-         const bd=instB-dr,hd=hrE-hrD,mon=bd+hd-sp;
-         const m=Math.max(1,Math.min(6,+$("mo").value||3));
-         const names=["জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
-         const neg=v=>v<0?`<span class="neg">−${bn(-v)}</span>`:bn(v);
-         let h=`<tr><th>বিবরণ</th><th>প্রাপ্য (নতুন আদেশে)</th><th>গৃহীত (যা তুলেছেন)</th><th>সমন্বয় (প্রাপ্য − গৃহীত)</th></tr>`;
-         h+=row(["মূল বেতন",bn(instB),bn(dr),neg(bd)]);
-         h+=row([`বাড়ি ভাড়া (${bn(rate*100)}%) — প্রাপ্য: ৩০ জুনের মূল বেতনে; গৃহীত: তোলা মূল বেতনে`,bn(hrE),bn(hrD),neg(hd)]);
-         h+=row([`বিশেষ সুবিধা (${g<=9?"১০%":"১৫%"}) — ১ জুলাই ২০২৬ থেকে বিলুপ্ত`,"০",bn(sp),neg(-sp)]);
-         h+=row(["মাসিক বকেয়া","","",neg(mon)],"tot");
-         $("tb").innerHTML=h;
-         let rows=`<table><tr><th>মাস</th><th>মাসিক বকেয়া</th></tr>`;
-         for(let i=0;i<m;i++)rows+=row([names[i]+" ২০২৬",neg(mon)]);
-         rows+=row([`সর্বমোট বকেয়া (${bn(m)} মাস)`,neg(mon*m)],"tot")+"</table>";
-         $("mn").innerHTML=rows+`<p class="big">৳ ${mon*m<0?"−":""}${bn(Math.abs(mon*m))}</p>`;
-         const n=$("nm").value,d=$("dg").value,o=$("of").value;
-         $("who").innerHTML=[n&&`<b>নাম:</b> ${n}`,d&&`<b>পদবি:</b> ${d}`,o&&`<b>অফিস:</b> ${o}`,`<b>গ্রেড:</b> ${bn(g)}`].filter(Boolean).join(" &nbsp;|&nbsp; ");
-         $("out").classList.remove("hide");
+           const g=+$("gr").value,old=val("b30","b30c"),dr=val("bd","bdc");
+           if(!old||!dr){$("out").classList.add("hide");return}
+           const os=OLD[g][0],ns=NEW[g],oldInc=$("inc").checked;
+           let full,fxs=[],eq=null,incv=0;
+           if(+$("o_new").value>0){full=+$("o_new").value;fxs.push(`নতুন স্কেলে নির্ধারিত পূর্ণ মূল বেতন (হাতে দেওয়া অঙ্ক): <b>৳${bn(full)}</b>`)}
+           else if(g===1){full=ns[0];fxs.push(`১ম গ্রেডের নির্ধারিত বেতন: <b>৳${bn(full)}</b>`)}
+           else{
+            const diff=old-os,t=ns[0]+diff;let i=ns.findIndex(x=>x>=t);if(i<0)i=ns.length-1;
+            fxs.push(`বর্তমান বেতন − পুরাতন প্রারম্ভিক ধাপ = ${bn(old)} − ${bn(os)} = <b>${bn(diff)}</b>`);
+            fxs.push(`নতুন প্রারম্ভিক ধাপ + পার্থক্য = ${bn(ns[0])} + ${bn(diff)} = <b>${bn(t)}</b>`);
+            fxs.push(ns[i]===t?`সমান ধাপ আছে: ৳${bn(ns[i])}`:`সমান ধাপ নেই, পরবর্তী উচ্চতর ধাপ: <b>৳${bn(ns[i])}</b>`);
+            eq=ns[i];if(oldInc&&i<ns.length-1)i++;
+            full=ns[i];incv=full-eq;
+            fxs.push(oldInc?`১ জুলাই ২০২৬-এর বার্ষিক বেতনবৃদ্ধিসহ পূর্ণ নতুন মূল বেতন: <b>৳${bn(full)}</b>`:`বার্ষিক বেতনবৃদ্ধি যোগ হয়নি। পূর্ণ নতুন মূল বেতন: <b>৳${bn(full)}</b>`);
+           }
+           const pct=g<=9?0.4:0.5;
+           let instB=eq!==null?Math.round(old+(eq-old)*pct)+incv:Math.round(old+(full-old)*pct);
+           if(+$("o_inst").value>0){instB=+$("o_inst").value;fxs.push(`প্রথম ধাপে প্রাপ্য মূল বেতন (হাতে দেওয়া অঙ্ক): <b>৳${bn(instB)}</b>`)}
+           else if(eq!==null)fxs.push(`বেতন বৃদ্ধির পরিমাণ = ${bn(eq)} − ${bn(old)} = ${bn(eq-old)}; ${bn(pct*100)}% = ${bn(Math.round((eq-old)*pct))}; প্রাপ্য বেতন = ${bn(old)} + ${bn(Math.round((eq-old)*pct))} = ${bn(old+Math.round((eq-old)*pct))}; ইনক্রিমেন্টসহ (জুলাই–ডিসেম্বর ২০২৬): + ${bn(incv)} = <b>৳${bn(instB)}</b>`);
+           else fxs.push(`প্রথম ধাপ (জুলাই–ডিসেম্বর ২০২৬): বৃদ্ধির ${bn(pct*100)}% = ${bn(old)} + ${bn(pct*100)}% × (${bn(full)} − ${bn(old)}) = <b>৳${bn(instB)}</b>`);
+           if(eq!==null)fxs.push(`১ জানুয়ারি ২০২৭: পরবর্তী ${bn(g<=9?30:25)}% (${bn(Math.round((eq-old)*(g<=9?.3:.25)))}) যোগে ৳${bn(instB+Math.round((eq-old)*(g<=9?.3:.25)))}; ১ জুলাই ২০২৭: পূর্ণ ৳${bn(full)}`);
+           $("fx").innerHTML=fxs.map(x=>"<li>"+x+"</li>").join("");
+           
+           // বাড়ি ভাড়ার সঠিক দশমিক হিসাবের জন্য parseFloat ব্যবহার করা হয়েছে
+           const rate = (parseFloat($("hr").value) || 0) / 100;
+           const hrE = Math.round(old * rate);
+           const hrD = +$("o_hr").value > 0 ? +$("o_hr").value : Math.round(dr * rate);
+           
+           let sp=+$("o_sp").value>0?+$("o_sp").value:(g<=9?Math.round(dr*0.10):Math.max(1500,Math.round(dr*0.15)));
+           const bd=instB-dr,hd=hrE-hrD,mon=bd+hd-sp;
+           const m=Math.max(1,Math.min(6,+$("mo").value||3));
+           const names=["জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+           const neg=v=>v<0?`<span class="neg">−${bn(-v)}</span>`:bn(v);
+           let h=`<tr><th>বিবরণ</th><th>প্রাপ্য (নতুন আদেশে)</th><th>গৃহীত (যা তুলেছেন)</th><th>সমন্বয় (প্রাপ্য − গৃহীত)</th></tr>`;
+           h+=row(["মূল বেতন",bn(instB),bn(dr),neg(bd)]);
+           h+=row([`বাড়ি ভাড়া (${bn(rate*100)}%) — প্রাপ্য: ৩০ জুনের মূল বেতনে; গৃহীত: তোলা মূল বেতনে`,bn(hrE),bn(hrD),neg(hd)]);
+           h+=row([`বিশেষ সুবিধা (${g<=9?"১০%":"১৫%"}) — ১ জুলাই ২০২৬ থেকে বিলুপ্ত`,"০",bn(sp),neg(-sp)]);
+           h+=row(["মাসিক বকেয়া","","",neg(mon)],"tot");
+           $("tb").innerHTML=h;
+           let rows=`<table><tr><th>মাস</th><th>মাসিক বকেয়া</th></tr>`;
+           for(let i=0;i<m;i++)rows+=row([names[i]+" ২০২৬",neg(mon)]);
+           rows+=row([`সর্বমোট বকেয়া (${bn(m)} মাস)`,neg(mon*m)],"tot")+"</table>";
+           $("mn").innerHTML=rows+`<p class="big">৳ ${mon*m<0?"−":""}${bn(Math.abs(mon*m))}</p>`;
+           const n=$("nm").value,d=$("dg").value,o=$("of").value;
+           $("who").innerHTML=[n&&`<b>নাম:</b> ${n}`,d&&`<b>পদবি:</b> ${d}`,o&&`<b>অফিস:</b> ${o}`,`<b>গ্রেড:</b> ${bn(g)}`].filter(Boolean).join(" &nbsp;|&nbsp; ");
+           $("out").classList.remove("hide");
         }
         $("gr").innerHTML=Object.keys(OS).map(g=>`<option value="${g}">গ্রেড ${bn(g)}${g==1?" (নির্ধারিত)":""}</option>`).join("");
         $("gr").value="13";
